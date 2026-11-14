@@ -31,6 +31,9 @@
 
 [diff]
    algorithm = histogram
+
+[merge]
+merge.null.driver = true
 [log]
 graphcolors = true
 
