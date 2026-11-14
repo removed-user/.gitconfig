@@ -1,0 +1,3 @@
+[helpers]
+    cmdv = command -v
+    today = date +%Y-%m-%d
