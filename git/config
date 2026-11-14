@@ -9,3 +9,11 @@
     path = ~/.config/git/host/gitlab
 [includeIf "hasconfig:remote.*.url:git@gitlab.com:*/**"]
     path = ~/.config/git/host/gitlab
+
+
+
+[init]
+defaultBranch = main
+
+[rebase]
+autostash = 1
