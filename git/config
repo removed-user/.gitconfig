@@ -20,3 +20,9 @@ defaultBranch = main
 
 [rebase]
 autostash = 1
+[core]
+ignoreCase = false
+protectHFS = false
+protectNTFS = false
+autocrlf = false
+eol = lf
