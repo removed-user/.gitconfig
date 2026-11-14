@@ -28,9 +28,5 @@ graphcolors = true
    autocorrect = "50"
 
 [include]
-    path = ~/.config/git/host/platform
-
-[url git@github.com:]
-   insteadOf = https://git@github.com/
-[url git@gitlab.com:]
-   insteadOf = https://git@gitlab.com/
+    path = ~/.config/git/host/perhost_switch
+    path = ~/.config/git/host/insteadOf
