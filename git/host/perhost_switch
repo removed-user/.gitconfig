@@ -1,0 +1,5 @@
+# GitLab (HTTPS and SSH)
+[includeIf "hasconfig:remote.*.url:https://gitlab.com/**"]
+    path = ~/.config/git/host/gitlab
+[includeIf "hasconfig:remote.*.url:git@gitlab.com:*/**"]
+    path = ~/.config/git/host/gitlab
