@@ -26,9 +26,13 @@
    protectNTFS = false
    autocrlf = false
    eol = lf
-attributesfile = ~/.config/git/attributes
-excludesFile = ~/.config/git/ignore
+   attributesfile = ~/.config/git/attributes
+   excludesFile = ~/.config/git/ignore
+
+[diff]
+   algorithm = histogram
 [log]
 graphcolors = true
+
 [help]
    autocorrect = "50"
