@@ -26,3 +26,6 @@ protectHFS = false
 protectNTFS = false
 autocrlf = false
 eol = lf
+
+[log]
+graphcolors = true
