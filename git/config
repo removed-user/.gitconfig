@@ -26,6 +26,7 @@
    protectNTFS = false
    autocrlf = false
    eol = lf
+attributesfile = ~/.config/git/attributes
 
 [log]
 graphcolors = true
