@@ -3,3 +3,10 @@
     path = ~/.config/git/host/gitlab
 [includeIf "hasconfig:remote.*.url:git@gitlab.com:*/**"]
     path = ~/.config/git/host/gitlab
+
+
+# GitHub (HTTPS and SSH)
+[includeIf "hasconfig:remote.*.url:https://github.com/**"]
+    path = ~/.config/git/host/github
+[includeIf "hasconfig:remote.*.url:git@github.com:*/**"]
+    path = ~/.config/git/host/github
