@@ -27,20 +27,10 @@ graphcolors = true
 [help]
    autocorrect = "50"
 
+[include]
+    path = ~/.config/git/host/platform
 
 [url git@github.com:]
    insteadOf = https://git@github.com/
 [url git@gitlab.com:]
    insteadOf = https://git@gitlab.com/
-
-# GitHub (HTTPS and SSH)
-[includeIf "hasconfig:remote.*.url:https://github.com/**"]
-    path = ~/.config/git/host/github
-[includeIf "hasconfig:remote.*.url:git@github.com:*/**"]
-    path = ~/.config/git/host/github
-
-# GitLab (HTTPS and SSH)
-[includeIf "hasconfig:remote.*.url:https://gitlab.com/**"]
-    path = ~/.config/git/host/gitlab
-[includeIf "hasconfig:remote.*.url:git@gitlab.com:*/**"]
-    path = ~/.config/git/host/gitlab
