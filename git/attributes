@@ -1,1 +1,8 @@
-
+package-lock.json -diff
+yarn.lock -diff
+pnpm-lock.yaml -diff
+Cargo.lock -diff
+Gemfile.lock -diff
+poetry.lock -diff
+composer.lock -diff
+flake.lock -diff
