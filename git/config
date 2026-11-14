@@ -9,7 +9,6 @@
    eol = lf
    attributesfile = ~/.config/git/attributes
    excludesFile = ~/.config/git/ignore
-   
 
 [init]
    defaultBranch = main
@@ -21,14 +20,16 @@
    algorithm = histogram
 
 [merge]
-merge.null.driver = true
+   merge.null.driver = true
+
 [log]
-graphcolors = true
+   graphcolors = true
+
 [help]
    autocorrect = "50"
 
 [include]
-    path = ~/.config/git/host/perhost_switch
-    path = ~/.config/git/host/insteadOf
-    path = ~/.config/git/aliases/core
-    path = ~/.config/git/aliases/helpers
+    path = host/perhost_switch
+    path = host/insteadOf
+    path = aliases/core
+    path = aliases/helpers
