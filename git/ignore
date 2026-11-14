@@ -1,1 +1,21 @@
+aclocal.m4
+aclocal.m4.bak
+autom4te.cache
+autoscan.log
+*.cache*
+config.cache
+config.guess
+config.log
 
+*.pyc
+*__pychache__*
+
+tmp
+t
+tt
+b 
+w
+v
+temp
+
+test
