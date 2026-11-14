@@ -16,16 +16,18 @@
     path = ~/.config/git/host/gitlab
 
 [init]
-defaultBranch = main
+   defaultBranch = main
 
 [rebase]
-autostash = 1
+   autostash = 1
 [core]
-ignoreCase = false
-protectHFS = false
-protectNTFS = false
-autocrlf = false
-eol = lf
+   ignoreCase = false
+   protectHFS = false
+   protectNTFS = false
+   autocrlf = false
+   eol = lf
 
 [log]
 graphcolors = true
+[help]
+   autocorrect = "50"
