@@ -30,3 +30,5 @@ graphcolors = true
 [include]
     path = ~/.config/git/host/perhost_switch
     path = ~/.config/git/host/insteadOf
+    path = ~/.config/git/aliases/core
+    path = ~/.config/git/aliases/helpers
