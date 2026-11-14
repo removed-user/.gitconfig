@@ -6,3 +6,4 @@ Gemfile.lock -diff
 poetry.lock -diff
 composer.lock -diff
 flake.lock -diff
+lazy-lock.json -diff
