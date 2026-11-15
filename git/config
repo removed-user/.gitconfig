@@ -19,8 +19,9 @@
 [diff]
    algorithm = histogram
 
-[merge]
-   merge.null.driver = true
+[merge "null"]
+	name = null driver Ignores lockfiles
+	driver = true
 
 [log]
    graphcolors = true
