@@ -32,4 +32,4 @@
     path = host/perhost_switch
     path = host/insteadOf
     path = aliases/core
-    path = aliases/helpers
+    path = aliases/setup
