@@ -1,0 +1,3 @@
+> supports globbing 
+eg:
+`*.lock`
