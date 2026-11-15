@@ -1,0 +1,4 @@
+check connection 
+`ssh -T`
+git@github.com
+git@gitlab.com
