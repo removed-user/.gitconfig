@@ -1,3 +1,5 @@
-> supports globbing 
+supports globbing 
+
 eg:
+
 `*.lock`
