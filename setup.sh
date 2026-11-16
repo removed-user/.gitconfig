@@ -16,6 +16,7 @@ if [ "$SCRIPT_DIR" != "~/gitconfig" ];
 then 
 [ -e ~/gitconfig ] && rm -rf ~/gitconfig
 mv "$SCRIPT_DIR" ~/gitconfig
+chmod +x ~/gitconfig/setup.sh
 exec sh -c ~/gitconfig/setup.sh
 fi 
 
