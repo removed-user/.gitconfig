@@ -83,6 +83,8 @@ _run_setup_helper = "!f() { \
 # Generic if/else helper:
     # Usage: git _run_setup_helper if_cmd <command_to_check> <command_if_true> [command_if_false]
     if_cmd = if command -v "$1" >/dev/null 2>&1; then exit 0; else echo missing command "$1"; fi
+    iter_pkg_keys = git config --name-only --get-regexp '^helpers\.setup\.require_pkg\.' | sed 's/^helpers\.setup\.require_pkg\.//'
+    iter_env_keys = git config --name-only --get-regexp '^helpers\.setup\.env\.' | sed 's/^helpers\.setup\.env\.//'
 
 [helpers "setup.env"]
     GIT_CONFIG_GLOBAL = GIT_CONFIG_GLOBAL=~/.config/git/config
