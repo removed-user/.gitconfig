@@ -1,19 +1,4 @@
-package-lock.json -diff
-yarn.lock -diff
-pnpm-lock.yaml -diff
-Cargo.lock -diff
-Gemfile.lock -diff
-poetry.lock -diff
-composer.lock -diff
-flake.lock -diff
-lazy-lock.json -diff
-
-package-lock.json merge=null
-yarn.lock merge=null
-pnpm-lock.yaml merge=null
-Cargo.lock merge=null
-Gemfile.lock merge=null
-poetry.lock merge=null
-composer.lock merge=null
-flake.lock merge=null
+*.lock -diff
+*.lock merge=null
 lazy-lock.json merge=null
+lazy-lock.json -diff
