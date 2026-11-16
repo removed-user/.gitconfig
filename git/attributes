@@ -1,4 +1,2 @@
-*.lock -diff
-*.lock merge=null
-lazy-lock.json merge=null
-lazy-lock.json -diff
+*.lock -diff merge=null
+lazy-lock.json -diff merge=null
