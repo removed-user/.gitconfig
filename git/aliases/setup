@@ -37,7 +37,11 @@ _run_setup_helper = "!f() { \
 
 [setup "helpers"]
     chkcmd = command -v
+
+    chkconn = ssh -T
+
     today = date +%Y-%m-%d
+
 #    set_ssh_application1 = git config core.sshCommand "bash -c 'exec ssh -o IdentitiesOnly=yes -i <(git _run_setup_helper get_app_key1 \"$1\") \"\$@\"' _"
 #    set_ssh_application2 = git config core.sshCommand "bash -c 'exec ssh -o IdentitiesOnly=yes -i <(git _run_setup_helper get_app_key2 \"$1\") \"\$@\"' _"
 
