@@ -1,7 +1,7 @@
 #!/bin/sh 
 THIS_FILES_PATH=$(readlink -f -- "$0")
 SCRIPT_DIR=$(dirname -- "$THIS_FILES_PATH")
-URL=$(git config get remote.origin.url)
+URL=$(git -C "$SCRIPT_DIR" config get remote.origin.url)
 PREV_DIR=$(pwd)
 
 clean_dir() {
