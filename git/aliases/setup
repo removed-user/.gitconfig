@@ -1,3 +1,4 @@
+# Many tests to run
 [alias]
 _run_setup_helper = "!f() { \
         cmd=$(git config --global --get \"setup.helpers.$1\") || exit 1; \
@@ -15,6 +16,23 @@ _run_setup_helper = "!f() { \
         done; \
     }; f"
 
+    # Accepts either an explicit app string ("ssh:github") or auto-detects from remote/host
+    find-key2 = "!f() { \
+        target=\"$1\"; \
+        if [ -z \"$target\" ]; then \
+            remote_url=$(git ls-remote --get-url 2>/dev/null); \
+            host=$(printf '%s' \"$remote_url\" | sed -E 's#^([^@]+@|https?://|ssh://)([^/:]+).*#\\2#'); \
+            target=$(git config --get \"setup.ssh-apps.$host\"); \
+        fi; \
+      [ -z "$target" ] && printf 'Missing Host-Target Mapping for %s\n' "$host" >&2 && exit 1;
+        ssh-add -L | while IFS=' ' read -r type blob comment; do \
+            if printf '%s' \"$blob\" | base64 -d 2>/dev/null | grep -aFq \"$target\"; then \
+                printf '%s %s %s\\n' \"$type\" \"$blob\" \"$comment\"; \
+                exit 0; \
+            fi; \
+        done; \
+        exit 1; \
+    }; f"
 
 
 [setup "helpers"]
