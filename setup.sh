@@ -26,7 +26,7 @@ fi
 }
 
 ensure_paths() {
-if [ "$SCRIPT_DIR" != ~/.config/git ];
+if [ "$SCRIPT_DIR" != "$HOME/.config/git" ];
 then
 [ -d "$HOME/.config/git" ] && rm -rf "$HOME/.config/git"
 cp -r "$SCRIPT_DIR" "$HOME/.config/git"
