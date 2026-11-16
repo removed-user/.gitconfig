@@ -1,10 +1,10 @@
 # Many tests to run
 [alias]
-    _run_setup_helper = "!f() { \
-        cmd=$(git config --global --get \"setup.helpers.$1\") || exit 1; \
-        shift; \
-        sh -c \"$cmd \\\"\\$@\\\"\" _ \"$@\"; \
-    }; f"
+_run_setup_helper = "!f() { \
+    cmd=$(git config --global --get \"setup.helpers.$1\") || exit 1; \
+    shift; \
+    sh -c \"$cmd \\\"\\$@\\\"\" _ \"$@\"; \
+}; f"
 
 
 
