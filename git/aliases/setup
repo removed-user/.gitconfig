@@ -59,8 +59,10 @@ _run_setup_helper = "!f() { \
     if_cmd = if command -v "$1" >/dev/null 2>&1; then eval "$2"; else eval "${3:-true}"; fi
 
 [setup "env"]
-
-    GIT_SSH_AUTH_SOCK = 'GIT_SSH_AUTH_SOCK=${GIT_SSH_AUTH_SOCK:-/run/user/$UID/git-ssh-agent.sock}'
+    GIT_CONFIG_GLOBAL = GIT_CONFIG_GLOBAL=~/.config/git/config
+    GIT_CONFIG_SYSTEM = GIT_CONFIG_SYSTEM="${GIT_CONFIG_GLOBAL:~/.config/git/config}"
+    GIT_CONFIG_NOSYSTEM = GIT_CONFIG_NOSYSTEM=1
+    GIT_SSH_AUTH_SOCK = 'GIT_SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-/run/user/$UID/git-ssh-agent.sock}"'
 
 [setup "require.pkg"]
     libfido2-tools = fido2-token, fido2-cred, fido2-assert
