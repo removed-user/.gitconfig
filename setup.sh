@@ -42,9 +42,11 @@ fi
 
 main() {
 cd "$SCRIPT_DIR"
+if [ "${RELOCATED:-0}" != "1" ]; then
 prevent_conflicts
 clean_dir
 relocate_self
+fi
 ensure_paths
 cd "$PREV_DIR"
 }
