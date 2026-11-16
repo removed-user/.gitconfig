@@ -1,4 +1,5 @@
 #!/bin/sh 
+set -e
 THIS_FILES_PATH=$(readlink -f -- "$0")
 SCRIPT_DIR=$(dirname -- "$THIS_FILES_PATH")
 URL=$(git -C "$SCRIPT_DIR" config get remote.origin.url)
@@ -11,7 +12,7 @@ git pull
 chmod +x setup.sh
 }
 
-set_env() {
+prevent_conflicts() {
 [ -e "$HOME/.gitconfig" ] && mv "$HOME/.gitconfig" "$HOME/.gitconfig.bak"
 }
 
@@ -35,10 +36,11 @@ cp -r "$SCRIPT_DIR" "$HOME/.config/git"
 fi
 }
 
-
+main() {
 cd "$SCRIPT_DIR"
-set_env
+prevent_conflicts
 clean_dir
 relocate_self
 ensure_paths
 cd "$PREV_DIR"
+}
