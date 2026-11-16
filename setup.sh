@@ -12,25 +12,25 @@ chmod +x setup.sh
 }
 
 set_env() {
-[ -e ~/.gitconfig ] && mv ~/.gitconfig ~/.gitconfig.bak
+[ -e "$HOME/.gitconfig" ] && mv "$HOME/.gitconfig" "$HOME/.gitconfig.bak"
 }
 
 relocate_self() {
-if [ "$SCRIPT_DIR" != "~/gitconfig" ];
+if [ "$SCRIPT_DIR" != "$HOME/gitconfig" ];
 then 
-[ -e ~/gitconfig ] && rm -rf ~/gitconfig
-git clone "$URL" ~/gitconfig
-chmod +x ~/gitconfig/setup.sh
-exec sh -c ~/gitconfig/setup.sh
+[ -e "$HOME/gitconfig" ] && rm -rf "$HOME/gitconfig"
+git clone "$URL" "$HOME/gitconfig"
+chmod +x "$HOME/gitconfig/setup.sh"
+exec sh -c "$HOME/gitconfig/setup.sh"
 fi 
 }
 
 ensure_paths() {
 if [ "$SCRIPT_DIR" != ~/.config/git ];
 then
-[ -d ~/.config/git ] && rm -rf ~/.config/git
-cp -r "$SCRIPT_DIR" ~/.config/git
-[ ! -d ~/.ssh ] && mkdir ~/.ssh
+[ -d "$HOME/.config/git" ] && rm -rf "$HOME/.config/git"
+cp -r "$SCRIPT_DIR" "$HOME/.config/git"
+[ ! -d "$HOME/.ssh" ] && mkdir "$HOME/.ssh"
 fi
 }
 
