@@ -8,6 +8,18 @@ _run_setup_helper = "!f() { \
 [setup "helpers"]
     cmdv = command -v
     today = date +%Y-%m-%d
+    set_ssh_application = git config core.sshCommand "bash -c 'exec ssh -o IdentitiesOnly=yes -i <(git _run_setup_helper get_app_key \"$1\") \"\$@\"' _"
+
+    # 1. Print the full OpenSSH public key line matching an app string (e.g., "ssh:github")
+    # Usage: git _run_setup_helper get_app_key <app_string>
+    get_app_key1 = ssh-add -L | while IFS=" " read -r t k c; do if printf "%s" "$k" | base64 -d 2>/dev/null | grep -Fq "$1"; then printf "%s %s %s\n" "$t" "$k" "$c"; break; fi; done
+
+    # Parallel lookup: decodes and greps all keys concurrently, returning the first match immediately
+    # Usage: git _run_setup_helper get_app_key <app_string>
+    get_app_key2 = ssh-add -L | xargs -P 0 -I {} sh -c 'set -- $1; printf "%s" "$2" | base64 -d 2>/dev/null | grep -Fq "$0" && printf "%s\n" "$1"' "$1" "{}" | head -n 1
+
+
+
 
 # Generic if/else helper:
     # Usage: git _run_setup_helper if_cmd <command_to_check> <command_if_true> [command_if_false]
