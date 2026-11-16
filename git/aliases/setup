@@ -6,9 +6,12 @@ _run_setup_helper = "!f() { \
     }; f"
 
 [setup "helpers"]
-    cmdv = command -v
+    chkcmd = command -v
     today = date +%Y-%m-%d
-    set_ssh_application = git config core.sshCommand "bash -c 'exec ssh -o IdentitiesOnly=yes -i <(git _run_setup_helper get_app_key \"$1\") \"\$@\"' _"
+    set_ssh_application1 = git config core.sshCommand "bash -c 'exec ssh -o IdentitiesOnly=yes -i <(git _run_setup_helper get_app_key1 \"$1\") \"\$@\"' _"
+    set_ssh_application2 = git config core.sshCommand "bash -c 'exec ssh -o IdentitiesOnly=yes -i <(git _run_setup_helper get_app_key2 \"$1\") \"\$@\"' _"
+
+
 
     # 1. Print the full OpenSSH public key line matching an app string (e.g., "ssh:github")
     # Usage: git _run_setup_helper get_app_key <app_string>
