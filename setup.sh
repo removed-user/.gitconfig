@@ -19,7 +19,7 @@ relocate_self() {
 if [ "$SCRIPT_DIR" != "~/gitconfig" ];
 then 
 [ -e ~/gitconfig ] && rm -rf ~/gitconfig
-mv "$SCRIPT_DIR" ~/gitconfig
+git clone "$URL" ~/gitconfig
 chmod +x ~/gitconfig/setup.sh
 exec sh -c ~/gitconfig/setup.sh
 fi 
