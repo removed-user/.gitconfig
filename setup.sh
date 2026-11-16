@@ -17,6 +17,7 @@ prevent_conflicts() {
 }
 
 relocate_self() {
+cd
     if [ "$SCRIPT_DIR" != "$HOME/gitconfig" ]; then
         [ -e "$HOME/gitconfig" ] && rm -rf "$HOME/gitconfig"
         
