@@ -26,9 +26,10 @@ fi
 }
 
 ensure_paths() {
+[ ! -d "$HOME/.config" ] && mkdir -p "$HOME/.config"
 if [ "$SCRIPT_DIR" != "$HOME/.config/git" ];
 then
-[ -d "$HOME/.config/git" ] && rm -rf "$HOME/.config/git"
+[ -e "$HOME/.config/git" ] && rm -rf "$HOME/.config/git"
 cp -r "$SCRIPT_DIR" "$HOME/.config/git"
 [ ! -d "$HOME/.ssh" ] && mkdir "$HOME/.ssh"
 fi
