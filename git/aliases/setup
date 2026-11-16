@@ -19,13 +19,13 @@ _run_setup_helper = "!f() { \
     }; f"
 
     # Accepts either an explicit app string ("ssh:github") or auto-detects from remote/host
-    find-key2 = "!f() { \
-        target=\"$1\"; \
-        if [ -z \"$target\" ]; then \
-            remote_url=$(git ls-remote --get-url 2>/dev/null); \
-            host=$(printf '%s' \"$remote_url\" | sed -E 's#^([^@]+@|https?://|ssh://)([^/:]+).*#\\2#'); \
-            target=$(git config --get \"setup.ssh-apps.$host\"); \
-        fi; \
+find-key2 = "!f() { \
+    target=\"$1\"; \
+    if [ -z \"$target\" ]; then \
+        remote_url=$(git ls-remote --get-url 2>/dev/null); \
+        host=$(printf '%s' \"$remote_url\" | sed -E 's#^([^@]+@|https?://|ssh://)([^/:]+).*#\\2#'); \
+        target=$(git config --get \"setup.ssh-apps.$host\"); \
+    fi; \
       [ -z "$target" ] && printf 'Missing Host-Target Mapping for %s\n' "$host" >&2 && exit 1;
         ssh-add -L | while IFS=' ' read -r type blob comment; do \
             if printf '%s' \"$blob\" | base64 -d 2>/dev/null | grep -aFq \"$target\"; then \
@@ -37,9 +37,9 @@ _run_setup_helper = "!f() { \
     }; f"
 
     # Accepts either an explicit app string ("ssh:github") or auto-detects from remote/host
-    find-key3 = "!f() { \
+find-key3 = "!f() { \
         sock=\"${GIT_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/run/user/$(id -u)/git-ssh-agent.sock}}\"; \
-        target=\"$1\"; \
+    target=\"$1\"; \
         if [ -z \"$target\" ]; then \
             remote_url=$(git ls-remote --get-url 2>/dev/null); \
             host=$(printf '%s' \"$remote_url\" | sed -E 's#^([^@]+@|https?://|ssh://)([^/:]+).*#\\2#'); \
@@ -56,14 +56,9 @@ _run_setup_helper = "!f() { \
         exit 1; \
     }; f"
 
-
-
-
 [helpers "setup"]
     chkcmd = command -v
-
     chkconn = ssh -T
-
     today = date +%Y-%m-%d
 
 #    set_ssh_application1 = git config core.sshCommand "bash -c 'exec ssh -o IdentitiesOnly=yes -i <(git _run_setup_helper get_app_key1 \"$1\") \"\$@\"' _"
