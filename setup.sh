@@ -7,13 +7,9 @@ URL=$(git config get remote.origin.url)
 
 ensure_paths() {
 [ -d ~/.config/git ] && rm -rf ~/.config/git
-mkdir -p ~/.config/git
+cp -r ${SCRIPT_DIR} ~/.config/git
 [ ! -d ~/.ssh ] && mkdir ~/.ssh
 }
 
-check_repo_url() {
-
-}
-#git remote -v
 ensure_paths
-check_repo_url
+
