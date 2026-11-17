@@ -5,15 +5,22 @@
 
     [-k]: kill agent with "${SSH_AGENT_PID}"
 
-    [-P]: Allowed Providers (pkcs#11 libraries)
-
     [-c]: print c-shell commands > stdout
 
     [-s]: print bourne-shell commands > stdout
 
-    [-O]: Set option; one of allow-remote-pkcs11, no-restrict-websafe, websafe-allow
+#### Allowed Providers
+
+    [-P]: Allowed Providers (pkcs#11 libraries)
+
+#### Misc
 
     [-l]: Lifespan of added key identities in the agent
+
+    [-O]: Set option; One of:
+        - allow-remote-pkcs11
+        - no-restrict-websafe
+        - websafe-allow
 
 ### ENV
     SSH_AGENT_PID
@@ -42,13 +49,20 @@
     [-x]: Lock agent
     
     [-x]: Unlock agent
+
+#### Allowed Providers
+
+    [-S]: Allowed Providers (fido Auth)
+    
+    [-s]: Allowed Providers (pkcs#11 libraries)
     
 #### Misc
+
     [-v]: verbose (up to 3x)
 
     [-t]: Lifespan of added key identities
 
-    [-S]: Allowed Providers (fido Auth)
-
     [-H]: Known Hosts 
         (1+ invocations:ex:`-H 1 -H 2`)
+        
+    [-q]: quiet
