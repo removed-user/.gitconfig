@@ -17,7 +17,7 @@
 
 #### Misc
 
-    [-l]: Lifespan of added key identities in the agent
+    [-t]: Lifespan of added key identities
 
     [-O]: Set option; One of:
         - allow-remote-pkcs11
@@ -69,9 +69,9 @@
 
 #### Misc
 
-    [-v]: verbose (up to 3x)
-
     [-t]: Lifespan of added key identities
+
+    [-v]: verbose (up to 3x)
 
     [-q]: quiet
 
