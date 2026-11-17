@@ -1,0 +1,9 @@
+On the cli... 
+`git@<host>/<path>`
+Is actually shorthand for
+`ssh://git@<host>/<path>`
+
+#### Example
+`git@github.com:user/repo.git`
+
+`ssh://git@github.com:user/repo.git`
