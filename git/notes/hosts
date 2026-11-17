@@ -1,4 +1,4 @@
-check connection 
-`ssh -T`
-git@github.com
-git@gitlab.com
+### check connections
+[checks]
+ssh.connection.github = ssh -T git@github.com
+ssh.connection.gitlab = ssh -T git@gitlab.com
