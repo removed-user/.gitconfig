@@ -6,14 +6,16 @@ URL=$(git -C "$SCRIPT_DIR" config get remote.origin.url)
 PREV_DIR=$(pwd)
 
 clean_dir() {
+if [ ! -f "$SCRIPT_DIR/.clean" ];
+then
 cd "$SCRIPT_DIR"
-if [ ! -f ".clean" ]
 git reset --hard 
 git clean -fd
 git pull 
 chmod +x setup.sh
 touch .clean
 cd -
+fi
 }
 
 prevent_conflicts() {
