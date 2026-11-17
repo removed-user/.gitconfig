@@ -1,6 +1,6 @@
 #!/bin/sh
 
-: "${GIT_SSH_AUTH_SOCK:=$HOME/.ssh/git-agent.sock}"
+: "${GIT_SSH_AUTH_SOCK:=/run/ssh/git_ssh_agent.sock}"
 export GIT_SSH_AUTH_SOCK
 
 git_agent_start() {
