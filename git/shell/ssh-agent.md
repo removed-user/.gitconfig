@@ -27,8 +27,10 @@
     SSH_AUTH_SOCK
     
 ## ssh-add
-    [-K]: Load resident keys into ssh-agent
 
+#### Load key
+
+    [-K]: Load resident keys into ssh-agent
 
 #### List Keys
 
@@ -73,6 +75,8 @@
 
     [-c]: Require ssh-askpass authentication 
          (for each use)
+
+    [-E]: Use Hash Alg for Fingerprint (md5, sha256)
 
 #### ENV
 
