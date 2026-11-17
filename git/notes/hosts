@@ -2,3 +2,7 @@
 [checks]
 ssh.connection.github = ssh -T git@github.com
 ssh.connection.gitlab = ssh -T git@gitlab.com
+
+# Other hosts
+## Codeberg
+## Forgejo
