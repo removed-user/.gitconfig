@@ -1,8 +1,6 @@
 ## ssh-agent
     [-a]: bind agent to Unix_Socket address
 
-    [-y]: Export pubkey in Openssh format
-
     [-k]: kill agent with "${SSH_AGENT_PID}"
 
 #### Print commands for eval by "${SHELL}" 
@@ -16,6 +14,8 @@
     [-P]: Allowed Providers (pkcs#11 libraries)
 
 #### Misc
+
+    [-y]: Export pubkey in Openssh format
 
     [-t]: Lifespan of added key identities
 
