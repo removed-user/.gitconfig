@@ -55,14 +55,34 @@
     [-S]: Allowed Providers (fido Auth)
     
     [-s]: Allowed Providers (pkcs#11 libraries)
-    
+
+#### Hosts
+
+    [-H]: Known Hosts Files
+        (1+ invocations:ex:`-H 1 -H 2`)
+
+    [-h]: Destination Constraint
+
 #### Misc
 
     [-v]: verbose (up to 3x)
 
     [-t]: Lifespan of added key identities
 
-    [-H]: Known Hosts 
-        (1+ invocations:ex:`-H 1 -H 2`)
-        
     [-q]: quiet
+
+    [-c]: Require ssh-askpass authentication 
+         (for each use)
+
+#### ENV
+
+    SSH_AUTH_SOCK
+    SSH_SK_PROVIDER
+    SSH_ASKPASS
+    SSH_ASKPASS_REQUIRE
+    DISPLAY
+    
+#### Exit codes
+0 success
+1 fail
+2 couldn't contact agent
