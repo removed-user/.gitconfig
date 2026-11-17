@@ -5,19 +5,6 @@ SCRIPT_DIR=$(dirname -- "$THIS_FILES_PATH")
 URL=$(git -C "$SCRIPT_DIR" config get remote.origin.url)
 PREV_DIR=$(pwd)
 
-clean_dir() {
-if [ ! -f "$SCRIPT_DIR/.clean" ];
-then
-cd "$SCRIPT_DIR"
-git reset --hard 
-git clean -fd
-git pull 
-chmod +x setup.sh
-touch .clean
-cd -
-fi
-}
-
 prevent_conflicts() {
 [ -e "$HOME/.gitconfig" ] && mv "$HOME/.gitconfig" "$HOME/.gitconfig.bak"
 }
@@ -48,6 +35,5 @@ fi
 
 
 prevent_conflicts
-clean_dir
 relocate_self
 ensure_paths
