@@ -7,10 +7,12 @@ PREV_DIR=$(pwd)
 
 clean_dir() {
 cd "$SCRIPT_DIR"
+if [ ! -f ".clean" ]
 git reset --hard 
 git clean -fd
 git pull 
 chmod +x setup.sh
+touch .clean
 cd -
 }
 
