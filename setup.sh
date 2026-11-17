@@ -4,34 +4,19 @@ THIS_FILES_PATH=$(readlink -f -- "$0")
 SCRIPT_DIR=$(dirname -- "$THIS_FILES_PATH")
 PREV_DIR=$(pwd)
 
-prevent_conflicts() {
 [ -e "$HOME/.gitconfig" ] && mv "$HOME/.gitconfig" "$HOME/.gitconfig.bak"
-}
 
-relocate_self() {
-    if [ "$SCRIPT_DIR" != "$HOME/gitconfig" ]; then
-        [ -e "$HOME/gitconfig" ] && rm -rf "$HOME/gitconfig"
-        
-        if cp -r "$SCRIPT_DIR" "$HOME/gitconfig"; then
-            chmod +x "$HOME/gitconfig/setup.sh"
-            sh -c "$HOME/gitconfig/setup.sh"
-        else
-            echo "Error: Failed to move $SCRIPT_DIR to $HOME/gitconfig" >&2
-            exit 1
-        fi
-    fi
-}
 
-ensure_paths() {
+[ ! -d "$HOME/.ssh" ] && mkdir "$HOME/.ssh"
 [ ! -d "$HOME/.config" ] && mkdir -p "$HOME/.config"
 if [ "$SCRIPT_DIR" != "$HOME/.config/git" ];
 then
-[ -e "$HOME/.config/git" ] && rm -rf "$HOME/.config/git"
-cp -r "$SCRIPT_DIR" "$HOME/.config/git"
-[ ! -d "$HOME/.ssh" ] && mkdir "$HOME/.ssh"
+rm -rf "$HOME/.config/git" || true
+mkdir -p "$HOME/.config/git"
 fi
-}
 
-prevent_conflicts
-relocate_self
-ensure_paths
+cd "$SCRIPT_DIR"
+git init --seperate-git-dir "$HOME/.config/git/.git"
+cd "$HOME/.config/git"
+git reset --hard HEAD
+git pull
