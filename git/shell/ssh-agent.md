@@ -22,6 +22,8 @@
 ### ssh-add
     [-K]: Load resident keys into ssh-agent
 
+    [-D]: Delete all identities from ssh-agent
+
     [-L]: List pubkey params of all identities represented by agent
 
     [-l]: List fingerprints of all identities represented by agent
