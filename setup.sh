@@ -16,7 +16,7 @@ mkdir -p "$HOME/.config/git"
 fi
 
 cd "$SCRIPT_DIR"
-git init --seperate-git-dir "$HOME/.config/git/.git"
+git init --separate-git-dir "$HOME/.config/git/.git"
 cd "$HOME/.config/git"
 git reset --hard HEAD
 git pull
