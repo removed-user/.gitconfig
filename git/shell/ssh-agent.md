@@ -3,8 +3,6 @@
 
     [-y]: Export pubkey in Openssh format
 
-    [-L]: List pubkey params of all identities represented by agent
-
     [-k]: kill agent with "${SSH_AGENT_PID}"
 
     [-P]: Allowed Providers (pkcs#11 libraries)
@@ -23,3 +21,20 @@
     
 ### ssh-add
     [-K]: Load resident keys into ssh-agent
+
+    [-L]: List pubkey params of all identities represented by agent
+
+    [-l]: List fingerprints of all identities represented by agent
+
+
+
+
+    [-t]: Lifespan of added key identities
+
+    [-S]: Allowed Providers (fido Auth)
+    
+    [-x]: Lock agent
+    
+    [-x]: Unlock agent
+
+    [-v]: verbose (up to 3x)
