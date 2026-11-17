@@ -24,7 +24,7 @@ relocate_self() {
         
         if cp -r "$SCRIPT_DIR" "$HOME/gitconfig"; then
             chmod +x "$HOME/gitconfig/setup.sh"
-            exec env RELOCATED=1 sh "$HOME/gitconfig/setup.sh"
+            sh -c "$HOME/gitconfig/setup.sh"
         else
             echo "Error: Failed to move $SCRIPT_DIR to $HOME/gitconfig" >&2
             exit 1
@@ -43,14 +43,10 @@ fi
 }
 
 main() {
-if [ "${RELOCATED:-0}" != "1" ]; then
 prevent_conflicts
 clean_dir
 cd "$HOME"
 relocate_self
-
-fi
 ensure_paths
-cd "$PREV_DIR"
 }
 main
