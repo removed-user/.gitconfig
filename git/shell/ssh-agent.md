@@ -5,9 +5,11 @@
 
     [-k]: kill agent with "${SSH_AGENT_PID}"
 
-    [-c]: print c-shell commands > stdout
+#### Print commands for eval by "${SHELL}" 
 
-    [-s]: print bourne-shell commands > stdout
+    [-c]: c-shell cmds > stdout
+
+    [-s]: bourne-shell cmds > stdout
 
 #### Allowed Providers
 
