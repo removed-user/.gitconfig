@@ -42,11 +42,8 @@ cp -r "$SCRIPT_DIR" "$HOME/.config/git"
 fi
 }
 
-main() {
+
 prevent_conflicts
 clean_dir
-cd "$HOME"
 relocate_self
 ensure_paths
-}
-main
