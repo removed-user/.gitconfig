@@ -8,8 +8,8 @@ git_agent_cleanup() {
         pkill -f "ssh-agent.*$GIT_SSH_AUTH_SOCK" >/dev/null 2>&1
     fi
 
-    rm -f "$GIT_SSH_AUTH_SOCK"
-    kill "$GIT_SSH_AGENT_PID"
+    rm -f "$GIT_SSH_AUTH_SOCK" || true
+    kill "$GIT_SSH_AGENT_PID" || true
     unset GIT_SSH_AGENT_PID GIT_SSH_AUTH_SOCK
 }
 
