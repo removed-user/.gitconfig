@@ -33,7 +33,6 @@ cp -r "$SCRIPT_DIR" "$HOME/.config/git"
 fi
 }
 
-
 prevent_conflicts
 relocate_self
 ensure_paths
