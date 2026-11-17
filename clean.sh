@@ -8,5 +8,5 @@ git reset --hard
 git clean -fd
 git pull 
 chmod +x setup.sh
-exec chmod +x clean.sh
+chmod +x clean.sh
 cd -
