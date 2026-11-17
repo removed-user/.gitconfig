@@ -1,6 +1,13 @@
 #!/bin/sh
-
 : "${GIT_SSH_AUTH_SOCK:=/run/user/$(id -u)/git_ssh_agent.sock}"
+
+
+: "${SSH_AUTH_SOCK:+${PREV_SSH_AUTH_SOCK:=$SSH_AUTH_SOCK}}"
+: "${SSH_AGENT_PID:+${PREV_SSH_AGENT_PID:=$SSH_AGENT_PID}}"
+
+[ -n "$PREV_SSH_AUTH_SOCK" ] && export PREV_SSH_AUTH_SOCK
+[ -n "$PREV_SSH_AGENT_PID" ] && export PREV_SSH_AGENT_PID
+
 export GIT_SSH_AUTH_SOCK
 
 git_agent_start() {
