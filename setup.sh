@@ -6,10 +6,12 @@ URL=$(git -C "$SCRIPT_DIR" config get remote.origin.url)
 PREV_DIR=$(pwd)
 
 clean_dir() {
+cd "$SCRIPT_DIR"
 git reset --hard 
 git clean -fd
 git pull 
 chmod +x setup.sh
+cd -
 }
 
 prevent_conflicts() {
@@ -17,11 +19,10 @@ prevent_conflicts() {
 }
 
 relocate_self() {
-cd
     if [ "$SCRIPT_DIR" != "$HOME/gitconfig" ]; then
         [ -e "$HOME/gitconfig" ] && rm -rf "$HOME/gitconfig"
         
-        if mv "$SCRIPT_DIR" "$HOME/gitconfig"; then
+        if cp -r "$SCRIPT_DIR" "$HOME/gitconfig"; then
             chmod +x "$HOME/gitconfig/setup.sh"
             exec env RELOCATED=1 sh "$HOME/gitconfig/setup.sh"
         else
@@ -42,11 +43,12 @@ fi
 }
 
 main() {
-cd "$SCRIPT_DIR"
 if [ "${RELOCATED:-0}" != "1" ]; then
 prevent_conflicts
 clean_dir
+cd "$HOME"
 relocate_self
+
 fi
 ensure_paths
 cd "$PREV_DIR"
