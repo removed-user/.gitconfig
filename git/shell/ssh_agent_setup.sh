@@ -1,6 +1,10 @@
 #!/bin/sh
-: "${GIT_SSH_AUTH_SOCK:=/run/user/$(id -u)/git_ssh_agent.sock}"
+# -O options: to check over
+# allow-remote-pkcs11
+# no-restrict-websafe
+# websafe-allow
 
+: "${GIT_SSH_AUTH_SOCK:=/run/user/$(id -u)/git_ssh_agent.sock}"
 
 : "${SSH_AUTH_SOCK:+${PREV_SSH_AUTH_SOCK:=$SSH_AUTH_SOCK}}"
 : "${SSH_AGENT_PID:+${PREV_SSH_AGENT_PID:=$SSH_AGENT_PID}}"
