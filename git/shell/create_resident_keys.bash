@@ -18,6 +18,8 @@ printf 'Skipping %s: missing %s\n' "${PERHOST_CONFIG}" user.username >&2
    return 1
 fi
 
+#ENTITY_CONTEXT
+
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 
 ssh-keygen \
