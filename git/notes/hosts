@@ -1,7 +1,8 @@
 ### check connections
-[checks]
-ssh.connection.github = ssh -T git@github.com
-ssh.connection.gitlab = ssh -T git@gitlab.com
+[connection]
+check.ssh.github = ssh -T ssh://git@github.com/
+check.ssh.gitlab = ssh -T ssh://git@gitlab.com/
+check.ssh.gitlab = ssh -T ssh://git@codeberg.org/
 
 # Other hosts
 ## Codeberg
