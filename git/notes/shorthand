@@ -6,4 +6,4 @@ Is actually shorthand for
 #### Example
 `git@github.com:user/repo.git`
 
-`ssh://git@github.com:user/repo.git`
+`ssh://git@github.com/user/repo.git`
