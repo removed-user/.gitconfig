@@ -22,5 +22,5 @@
 [url "ssh://git@gitlab.com:"]
    insteadOf = gl:
 
-[url "ssh://git@salsa.debian.org:"
+[url "ssh://git@salsa.debian.org:"]
 insteadOf = salsa:
