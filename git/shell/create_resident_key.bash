@@ -1,5 +1,5 @@
 function create_resident_key() {
-  local COMMENT="${COMMENT:-'Personal github account key'}"
+  local COMMENT="${COMMENT:-'Account Key for github'}"
   local KEY_TYPE="${KEY_TYPE:-ed25519-sk}"
   local APPLICATION="${APPLICATION:-github.com}"
   local GITHUB_USERNAME=removed-user
@@ -16,7 +16,7 @@ function create_resident_key() {
 create_resident_key2() {
   local KEY_TYPE="${KEY_TYPE:-ed25519-sk}"
   local APPLICATION="${APPLICATION:-github.com}"
-  local COMMENT="${COMMENT:-Personal ${APPLICATION} account key}"
+  local COMMENT="${COMMENT:-'Account Key for '${APPLICATION}}"
   
   local HOST_NAME="${APPLICATION%%.*}"
   local HOST_CONFIG="${HOME}/.config/git/host/perhost/${HOST_NAME}"
