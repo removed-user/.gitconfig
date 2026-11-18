@@ -1,13 +1,14 @@
 #### Generic
-[-q]:    Quiet
-[-v]:    Verbose (upto 3x)
-[-f]:     File (input/output depending on what its combined with)
-[-O]:    Specify Option=value (Combos: -M, -Y, -I)
-[-w]:    Allowed_Providers (fido auth)
+
+- `[-q]`:    Quiet
+- `[-v]`:    Verbose (upto 3x)
+- `[-f]`:     File (input/output depending on what its combined with)
+- `[-O]`:    Specify Option=value (Combos: -M, -Y, -I)
+- `[-w]`:    Allowed_Providers (fido auth)
 
 ### Key Creation Specific
 
-[-t]:  Type
+- `[-t]`:  Type
 
     - ecdsa
     - ecdsa-sk
@@ -16,27 +17,27 @@
     - mldsa44-ed25519
     - rsa
 
-[-E]:  fingerprint_hash 
+- `[-E]`:  fingerprint_hash 
     - md5
     - sha256
 
-[-K]:  Download resident Keys from FIDO Authenticator
-[-y]:  Read privkey file; print pubkey > stdout
+- `[-K]`:  Download resident Keys from FIDO Authenticator
+- `[-y]`:  Read privkey file; print pubkey > stdout
 
-[-b]:  bits (Only relevant for some Key types)
+- `[-b]`:  bits (Only relevant for some Key types)
 
 #### Comment
 
-[-C]:  comment
-[-c]:  change comment (on pubkey files only, not embedded keys)
+- `[-C]`:  comment
+- `[-c]`:  change comment (on pubkey files only, not embedded keys)
 
 #### Key Reformatting
 
-[-i]:   Import a pubkey or privkey (to RFC4716) from other formats
+- `[-i]`:   Import a pubkey or privkey (to RFC4716) from other formats
 
-[-e]:  Export a pubkey from a pubkey or privkey to other formats
+- `[-e]`:  Export a pubkey from a pubkey or privkey to other formats
 
-[-m]:  Key Format
+- `[-m]`:  Key Format
 Options:
     - RFC4716 (Default)
     - PEM
@@ -44,87 +45,89 @@ Options:
 
 #### KRL
 
-[-k]:  Generate KRL  (-f, -u, -s, -z))
+- `[-k]`:  Generate KRL  (-f, -u, -s, -z))
 
-[-u]:  Update KRL  (-k: adds )
+- `[-u]`:  Update KRL  (-k: adds )
 
-[-z]:  KRL (Version_Number)
+- `[-z]`:  KRL (Version_Number)
 
-[-Q]:  Query Revocation of a key 
+- `[-Q]`:  Query Revocation of a key 
      - (-l: print krl contents) 
 
 #### Signatures
 
-[-Y]: (Many sub-options Always Signature related)
+- `[-Y]`: (Many sub-options Always Signature related)
 
-    - [-U]:  Look to ssh-agent for CA-Key
+    - `[-U]`:  Look to ssh-agent for CA-Key
+
+    - `[-n]`:  Principles
 
         - find-principals 
-            - [-s] signature_file 
-            - [-f] allowed_signers_file
+            - `[-s]` signature_file 
+            - `[-f]` allowed_signers_file
 
         - match-principals 
-            - [-f] allowed_signers_file 
-            - [-I] signer_identity
+            - `[-f]` allowed_signers_file 
+            - `[-I]` signer_identity
 
         - check-novalidate 
-            - [-n] namespace 
-            - [-s] signature_file
+            - `[-n]` namespace 
+            - `[-s]` signature_file
 
         - sign 
-            - [-f] key_file 
-            - [-I] signer_identity 
-            - [-n] namespace
+            - `[-f]` key_file 
+            - `[-I]` signer_identity 
+            - `[-n]` namespace
 
         - verify 
-        - [-f]: allowed_signers_file
-        - [-I]: signer_identity
-        - [-n] namespace
-        - [-s] signature_file 
-            - [-V]: validity_interval
+        - `[-f]`: allowed_signers_file
+        - `[-I]`: signer_identity
+        - `[-n]` namespace
+        - `[-s]` signature_file 
+            - `[-V]`: validity_interval
                 - `-V 20261117:20261217`
                 - `-V -5m:+24h`
 
 
 ### Hosts
-[-H]: Hash a Known_Hosts file `-f known_hosts`
+- `[-H]`: Hash a Known_Hosts file `-f known_hosts`
 
-[-R]: Remove all keys belonging to `hostname` from a `-f Known_Hosts`
+- `[-R]`: Remove all keys belonging to `hostname` from a `-f Known_Hosts`
 
-[-r]:  Print SSH Fingerprint record hostname for a pubkey  (-g, -f) 
+- `[-r]`:  Print SSH Fingerprint record hostname for a pubkey  (-g, -f) 
 
-[-F]:  Search for  `Hostname` in `-f known_hosts`
+- `[-F]`:  Search for  `Hostname` in `-f known_hosts`
 
 ### CA-Key
 
-[-I]:  Certificate_Identity 
+- `[-I]`:  Certificate_Identity 
 
- `[-hU] [-D pkcs11_provider][-n principals]`
+ `- `[-hU]` - `[-D pkcs11_provider]`- `[-n principals]``
 
-[-z]: Certificate (Serial_Number) 
+- `[-z]`: Certificate (Serial_Number) 
 
-[-L]:  Print contents of certificates `-f cert`
+- `[-L]`:  Print contents of certificates `-f cert`
 
-[-s]:  Sign Pubkey Using CA-Key 
-    - [-U]:  Look to ssh-agent for CA-Key
+- `[-s]`:  Sign Pubkey Using CA-Key 
+    - `[-U]`:  Look to ssh-agent for CA-Key
 
 #### password
 
-[-p]:    Request change Password
-[-N]:    new_passphrase
-[-P]:    old_passphrase
-[-Z]:    cipher (for private key file)
-[-a]:  Encryption  (KDF) Rounds
+- `[-p]`:    Request change Password
+- `[-N]`:    new_passphrase
+- `[-P]`:    old_passphrase
+- `[-Z]`:    cipher (for private key file)
+- `[-a]`:  Encryption  (KDF) Rounds
 
 #### Misc 
 
-[-D]:  Download pubkeys provided by a PKCS#11.so 
+- `[-D]`:  Download pubkeys provided by a PKCS#11.so 
 
-[-A]:  Generate one of every host key
+- `[-A]`:  Generate one of every host key
 
-[-B]:  Show the bubblebabble
+- `[-B]`:  Show the bubblebabble
 
-[-M]: 
+- `[-M]`: 
  - generate 
     - MODULI GENERATION
         - generate diffie-hellman-group-exchange (DH-GEX) parameters
