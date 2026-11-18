@@ -3,6 +3,8 @@
 
     [-k]: kill agent with "${SSH_AGENT_PID}"
 
+    [-D]: Foreground mode (no-forking)
+
 #### Print commands for eval by "${SHELL}" 
 
     [-c]: c-shell cmds > stdout
