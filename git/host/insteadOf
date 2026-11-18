@@ -1,17 +1,21 @@
-[url "ssh://git@github.com/"]
-   insteadOf = https://github.com/
-   insteadOf = http://github.com/
-   insteadOf = git@github.com:
-   insteadOf = gh:
-
-[url "ssh://git@gitlab.com"]
-   insteadOf = https://gitlab.com/
+[url "https://gitlab.com/"]
    insteadOf = http://gitlab.com/
-   insteadOf = git@gitlab.com:
    insteadOf = gl:
 
-[url "ssh://git@salsa.debian.org/"]
-   insteadOf = https://debian.org/
+[url  "https://debian.org/"]
    insteadOf = http://debian.org/
-   insteadOf = git@salsa.debian.org:
    insteadOf = salsa:
+
+[url "https://github.com/"]
+   insteadOf = http://github.com/
+   insteadOf = gh:
+
+[url "ssh://git@github.com/"]
+   insteadOf = git@github.com:
+
+[url "ssh://git@gitlab.com"]
+   insteadOf = git@gitlab.com:
+
+[url "ssh://git@salsa.debian.org/"]
+   insteadOf = git@salsa.debian.org:
+   
