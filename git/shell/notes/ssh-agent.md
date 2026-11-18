@@ -1,4 +1,5 @@
 ## ssh-agent
+
     [-a]: bind agent to Unix_Socket address
 
     [-k]: kill agent with "${SSH_AGENT_PID}"
@@ -27,6 +28,16 @@
         - allow-remote-pkcs11
         - no-restrict-websafe
         - websafe-allow
+
+#### Command
+`command args`
+If a command and optional args are given
+That command is executed as a subprocess of the agent; where its environment variables are exported
+
+example:`ssh-agent xterm &`
+
+When the given command terminates, the agent exits automatically
+
 
 ### ENV
     SSH_AGENT_PID
