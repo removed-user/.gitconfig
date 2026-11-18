@@ -10,12 +10,22 @@
    insteadOf = http://github.com/
    insteadOf = gh:
 
-[url "ssh://git@github.com/"]
-   pushInsteadOf = git@github.com:
+### Standardize SSH URI syntax
+[url "ssh://git@github.com/removed-user"]
+   pushInsteadOf = git@github.com:removed-user
+   pushInsteadOf = gh:removed-user
+   pushInsteadOf = http://github.com/removed-user
+   pushInsteadOf = https://github.com/removed-user
 
-[url "ssh://git@gitlab.com"]
-   pushInsteadOf = git@gitlab.com:
+#[url "ssh://git@gitlab.com"]
+#   pushInsteadOf = git@gitlab.com:
+#   pushInsteadOf = gl:
+#   pushInsteadOf = http://gitlab.com/
+#   pushInsteadOf = https://gitlab.com/
 
-[url "ssh://git@salsa.debian.org/"]
-   pushInsteadOf = git@salsa.debian.org:
-   
+#[url "ssh://git@salsa.debian.org/"]
+#   pushInsteadOf = git@salsa.debian.org:
+#   pushInsteadOf = https://salsa.debian.org/
+#   pushInsteadOf = http://salsa.debian.org/
+#   pushInsteadOf = salsa:
+
