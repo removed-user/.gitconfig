@@ -31,7 +31,7 @@
    autocorrect = "50"
 
 [include]
-    path = host/perhost_switch
     path = host/insteadOf
+    path = host/perhost_switch
     path = aliases/core
     path = aliases/setup
