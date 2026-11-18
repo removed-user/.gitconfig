@@ -1,6 +1,6 @@
 #!/bin/sh
+git_agent_stop() {
 GIT_SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:=/run/user/$(id -u)/git_ssh_agent.sock}"
-git_agent_cleanup() {
     if [ -n "$GIT_SSH_AGENT_PID" ]; then
         SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent -k >/dev/null 2>&1
     elif [ -S "$GIT_SSH_AUTH_SOCK" ]; then
@@ -12,5 +12,4 @@ git_agent_cleanup() {
     kill "$GIT_SSH_AGENT_PID" || true
     unset GIT_SSH_AGENT_PID GIT_SSH_AUTH_SOCK
 }
-
-git_agent_cleanup
+git_agent_stop
