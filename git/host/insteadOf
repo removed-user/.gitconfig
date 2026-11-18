@@ -2,8 +2,8 @@
    insteadOf = http://gitlab.com/
    insteadOf = gl:
 
-[url  "https://debian.org/"]
-   insteadOf = http://debian.org/
+[url  "https://salsa.debian.org"]
+   insteadOf = http://salsa.debian.org
    insteadOf = salsa:
 
 [url "https://github.com/"]
