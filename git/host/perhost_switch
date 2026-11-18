@@ -1,12 +1,12 @@
 # GitLab (HTTPS and SSH)
 [includeIf "hasconfig:remote.*.url:https://gitlab.com/**"]
-    path = ~/.config/git/host/gitlab
+    path = host/gitlab
 [includeIf "hasconfig:remote.*.url:git@gitlab.com:*/**"]
-    path = ~/.config/git/host/gitlab
+    path = host/gitlab
 
 
 # GitHub (HTTPS and SSH)
 [includeIf "hasconfig:remote.*.url:https://github.com/**"]
-    path = ~/.config/git/host/github
+    path =  host/github
 [includeIf "hasconfig:remote.*.url:git@github.com:*/**"]
-    path = ~/.config/git/host/github
+    path =  host/github
