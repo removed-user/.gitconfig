@@ -1,26 +1,17 @@
-### https to ssh
 [url "ssh://git@github.com/"]
    insteadOf = https://github.com/
-
-[url "ssh://git@gitlab.com/"]
-   insteadOf = https://gitlab.com/
-
-### Non-SSL 
-
-[url "ssh://git@github.com/"]
    insteadOf = http://github.com/
-
-[url "ssh://git@gitlab.com/"]
-   insteadOf = http://gitlab.com/
-
-
-### Shortcuts
-
-[url "ssh://git@github.com/"]
+   insteadOf = git@github.com:
    insteadOf = gh:
 
-[url "ssh://git@gitlab.com/"]
+[url "ssh://git@gitlab.com"]
+   insteadOf = https://gitlab.com/
+   insteadOf = http://gitlab.com/
+   insteadOf = git@gitlab.com:
    insteadOf = gl:
 
 [url "ssh://git@salsa.debian.org/"]
-insteadOf = salsa:
+   insteadOf = https://debian.org/
+   insteadOf = http://debian.org/
+   insteadOf = git@salsa.debian.org:
+   insteadOf = salsa:
