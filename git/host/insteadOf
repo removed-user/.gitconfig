@@ -11,11 +11,11 @@
    insteadOf = gh:
 
 [url "ssh://git@github.com/"]
-   insteadOf = git@github.com:
+   pushInsteadOf = git@github.com:
 
 [url "ssh://git@gitlab.com"]
-   insteadOf = git@gitlab.com:
+   pushInsteadOf = git@gitlab.com:
 
 [url "ssh://git@salsa.debian.org/"]
-   insteadOf = git@salsa.debian.org:
+   pushInsteadOf = git@salsa.debian.org:
    
