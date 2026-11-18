@@ -1,5 +1,4 @@
 #### Generic
-
 [-q]:    Quiet
 [-v]:    Verbose (upto 3x)
 [-f]:     File (input/output depending on what its combined with)
