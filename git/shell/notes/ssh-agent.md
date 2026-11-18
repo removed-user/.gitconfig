@@ -5,6 +5,8 @@
 
     [-D]: Foreground mode (no-forking)
 
+    [-E]: Fingerprint hash (sha256,md5)
+
 #### Print commands for eval by "${SHELL}" 
 
     [-c]: c-shell cmds > stdout
