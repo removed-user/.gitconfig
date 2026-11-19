@@ -8,7 +8,7 @@ function del_key() {
     }
 
 function get_relying_party() {
-    fido2-token -L -r "${device}" | awk -F ' ' '{print $3}'
+    fido2-token -L -r "${AUTHENTICATOR_DEVICE}" | awk -F ' ' '{print $3}'
     # Outputs...
     # index[1] rp_id[key] rp_id[value]
     # 00: rp_id: ssh:
@@ -18,8 +18,7 @@ function get_relying_party() {
 
 
 function main() {
-
-  local cred_id=$(fido2-token -L -k "${RP}" "${device}" | awk -F ' ' '{print $2}')
+local CREDENTIAL_ID=$(fido2-token -L -k "${RELYING_PARTY}" "${AUTHENTICATOR_DEVICE}" | awk -F ' ' '{print $2}')
 
   # if [[ "${num_doms[@]}" -gt 1 ]]; then
   #   echo cant handle excess keys
