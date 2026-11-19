@@ -16,7 +16,7 @@ ssh-keygen \
     -O user="${ENTITY_CONTEXT}:${PERHOST_USERNAME}" \
     -O resident \
     -O application=ssh:"${APPLICATION}" \
-    -f "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
+    -f "${HOME}/.ssh/id_${KEY_TYPE}_${ENTITY_CONTEXT}_${APPLICATION}"
 }
 
 create_all_resident_keys() {
