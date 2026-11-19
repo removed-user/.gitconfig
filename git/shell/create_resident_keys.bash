@@ -21,6 +21,10 @@ local APPLICATION="$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
 local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.username)"
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 
+printf '%s\n\t' 'Key created: '"${PERHOST_CONFIG}" 'With values'
+printf '%s\n\t' KEY_TYPE="${KEY_TYPE}" COMMENT="${COMMENT}" user="${PERHOST_USERNAME}" "' -O resident'" "-O application='ssh:'${APPLICATION}" "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
+
+
 ssh-keygen \
     -N '' \
     -t "${KEY_TYPE}" \
