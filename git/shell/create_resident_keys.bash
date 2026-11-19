@@ -55,6 +55,7 @@ ssh-keygen \
 
 create_all_resident_keys() {
 local PERHOST_DIR="${HOME}/.config/git/host/perhost"
+[ ! -e "${PERHOST_DIR}" ] && echo 'missing '"${PERHOST_DIR}" && exit 1
 
 for cfg in "${PERHOST_DIR}"/*; do
     [ -f "${cfg}" ] || continue
