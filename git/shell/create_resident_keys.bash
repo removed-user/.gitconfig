@@ -13,7 +13,7 @@ ssh-keygen \
     -N '' \
     -t "${KEY_TYPE}" \
     -C "${COMMENT}" \
-    -O user="${PERHOST_USERNAME}" \
+    -O user="${ENTITY_CONTEXT}:${PERHOST_USERNAME}" \
     -O resident \
     -O application=ssh:"${APPLICATION}" \
     -f "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
