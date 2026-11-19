@@ -2,6 +2,18 @@
 create_resident_key() {
   local PERHOST_CONFIG="${1}"
   local KEY_TYPE="${KEY_TYPE:-ed25519-sk}"
+
+get_cfg() {
+        local key="${1}"
+        local val="$(git config --file "${PERHOST_CONFIG}" --get "${key}" || true)"
+        if [ -z "${val}" ]; then
+printf 'Config File: %s\n\tMissing Key: %s\n' "${PERHOST_CONFIG}" "${key}" >&2
+            return 1
+        fi
+    }
+
+
+
   
 
 local APPLICATION="$(git config --file "${PERHOST_CONFIG}" --get host.name)"
