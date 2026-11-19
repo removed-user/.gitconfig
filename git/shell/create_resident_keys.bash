@@ -39,8 +39,9 @@ local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.username)"
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 local DEVICE=$(fido2-token -L | awk -F ':' '{print $1}')
 
-printf '%s\n\t' KEY_TYPE="${KEY_TYPE}" COMMENT="${COMMENT}" user="${PERHOST_USERNAME}" "' -O resident'" "-O application='ssh:'${APPLICATION}" "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
 printf 'Creating Key on '"${DEVICE}"' for '"${PERHOST_CONFIG}"
+
+printf '%s\n\t' KEY_TYPE="${KEY_TYPE}" COMMENT="${COMMENT}" user="${PERHOST_USERNAME}" "' -O resident'" "-O application='ssh:'${APPLICATION}" "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
 _continue 
 ssh-keygen \
     -N '' \
