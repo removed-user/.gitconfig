@@ -3,20 +3,25 @@ function print_devices() {
     fido2-token -L | awk -F ':' '{print $1}'
     }
 
-function del_key() {
-    fido2-token -D -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
-    }
-
-function get_relying_party() {
+function get_relying_parties() {
     fido2-token -L -r "${AUTHENTICATOR_DEVICE}" | awk -F ' ' '{print $3}'
     # Outputs...
-    # index[1] rp_id[key] rp_id[value]
+    # <index[1]> <rp_id[key]> <rp_id[value]>
     # 00: rp_id: ssh:
-    # 01: rp_id: github.com
     }
+
 function get_credential_id() {
-fido2-token -L -k "${RELYING_PARTY}" "${AUTHENTICATOR_DEVICE}" | awk -F ' ' '{print $2}'
+    fido2-token -L -k "${RELYING_PARTY}" "${AUTHENTICATOR_DEVICE}" | awk -F ' ' '{print $2}'
     # 00: <CREDENTIAL_ID> <USER_INFO> <ALGORITHM>
+    }
+
+function get_relevant_pubkey() {
+    CREDENTIAL_ID="$(get_credential_id)"
+    fido2-token -I -k "${RELYING_PARTY}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
+    }
+
+function del_key() {
+    fido2-token -D -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
     }
 
 
