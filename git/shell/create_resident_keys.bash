@@ -9,6 +9,8 @@ get_cfg() {
         if [ -z "${val}" ]; then
 printf 'Config File: %s\n\tMissing Key: %s\n' "${PERHOST_CONFIG}" "${key}" >&2
             return 1
+        else
+        printf "${val}"
         fi
     }
 
