@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 function print_devices() {
-fido2-token -L | awk -F ':' '{print $1}'
-}
+    fido2-token -L | awk -F ':' '{print $1}'
+    }
+
+function del_key() {
+    fido2-token -D -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
+    }
 
 function main() {
   local RP=$(fido2-token -L -r "${device}" | awk -F ' ' '{print $3}')
