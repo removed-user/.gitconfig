@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
+function print_devices() {
+fido2-token -L | awk -F ':' '{print $1}'
+}
+
 function main() {
-  local device=$(fido2-token -L| awk -F ':' '{print $1}')
   local RP=$(fido2-token -L -r "${device}" | awk -F ' ' '{print $3}')
 
   local cred_id=$(fido2-token -L -k "${RP}" "${device}" | awk -F ' ' '{print $2}')
