@@ -3,6 +3,24 @@ create_resident_key() {
 get_authenticator() {
 fido2-token -L | awk -F ':' '{print $1}'
 }
+#!/bin/bash
+_coninue() {
+read -p "continue? (Y/N): " choice
+case "${choice}" in 
+  Y|[yY][eE][sS] ) 
+return 0
+    ;;
+  N|[nN][oO] ) 
+    echo "Exiting."
+    continue
+    ;;
+  * ) 
+    echo "Invalid input"
+    exit 1
+    ;;
+esac
+}
+
     get_perhost_value ()
    {
     local CONFIG="${1}";
@@ -25,8 +43,8 @@ local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 local DEVICE="${DEVICE:-$(get_authenticator)}"
 
 printf '%s\n\t' KEY_TYPE="${KEY_TYPE}" COMMENT="${COMMENT}" user="${PERHOST_USERNAME}" "' -O resident'" "-O application='ssh:'${APPLICATION}" "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
-
-
+printf 'Creating Key on '"${DEVICE}"' for '"${PERHOST_CONFIG}"
+_continue 
 ssh-keygen \
     -N '' \
     -t "${KEY_TYPE}" \
