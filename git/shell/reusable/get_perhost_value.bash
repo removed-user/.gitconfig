@@ -1,4 +1,4 @@
-#!/bin/dash 
+#!/bin/bash 
 get_perhost_value ()
 {
     local config_file="${1}";
