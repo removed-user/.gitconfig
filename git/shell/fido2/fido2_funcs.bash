@@ -14,16 +14,14 @@ function get_relying_party() {
     # 00: rp_id: ssh:
     # 01: rp_id: github.com
     }
+function get_credential_id() {
+fido2-token -L -k "${RELYING_PARTY}" "${AUTHENTICATOR_DEVICE}" | awk -F ' ' '{print $2}'
+    # 00: <CREDENTIAL_ID> <USER_INFO> <ALGORITHM>
+    }
 
-
-
-function main() {
-local CREDENTIAL_ID=$(fido2-token -L -k "${RELYING_PARTY}" "${AUTHENTICATOR_DEVICE}" | awk -F ' ' '{print $2}')
 
   # if [[ "${num_doms[@]}" -gt 1 ]]; then
   #   echo cant handle excess keys
   # fi
   # exit 1
   # get_cred_id
-}
-main $1
