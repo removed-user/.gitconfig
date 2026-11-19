@@ -33,7 +33,7 @@ printf 'Skipping %s: missing %s\n' "${PERHOST_CONFIG}" user.username >&2
 fi
 
 #ENTITY_CONTEXT
-
+# host.name
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 
 ssh-keygen \
