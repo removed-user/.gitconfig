@@ -14,8 +14,8 @@ create_resident_key() {
     printf '%s' "${value}"
    }
 
-  local PERHOST_CONFIG="${1}"
-  local KEY_TYPE="${KEY_TYPE:-ed25519-sk}"
+local PERHOST_CONFIG="${1}"
+local KEY_TYPE="${KEY_TYPE:-ed25519-sk}"
   
 local APPLICATION="$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
 local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.username)"
