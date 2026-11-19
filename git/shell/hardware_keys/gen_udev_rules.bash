@@ -1,15 +1,24 @@
+#!/bin/dash
 generate_udev_rule() {
-  # Parse vendor and product hex IDs from fido2-token -L (requires read access to hidraw)
-  fido2-token -L | while IFS=': ,' read -r dev _ vid _ pid desc; do
-    vid="${vid#vendor=0x}"
-    pid="${pid#product=0x}"
-    
-    # Optional: Look up clean strings from systemd hwdb if installed
-    # hwdb_info=$(systemd-hwdb query "usb:v${vid^^}p${pid^^}*")
+    for dev in /sys/class/hidraw/hidraw*; do
+        [ -r "$dev/device/uevent" ] || continue
 
-    cat <<EOF
-# ${desc}
-KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="${vid}", ATTRS{idProduct}=="${pid}", TAG+="uaccess"
+        # Check report descriptor for FIDO usage page (0x06 0xd0 0xf1)
+        if [ -r "$dev/device/report_descriptor" ]; then
+            od -An -tx1 "$dev/device/report_descriptor" | tr -d ' \n' | grep -q "06d0f1" || continue
+        else
+            continue
+        fi
+
+        # Extract HID_ID (e.g., 0003:00001050:00000407) and HID_NAME
+        hid_id=$(awk -F'=' '/^HID_ID=/{print $2}' "$dev/device/uevent")
+        hid_name=$(awk -F'=' '/^HID_NAME=/{print $2}' "$dev/device/uevent")
+        [ -n "$hid_id" ] || continue
+
+        cat <<EOF
+# ${hid_name:-FIDO2 Security Key}
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ENV{HID_ID}=="${hid_id}", TAG+="uaccess"
 EOF
-  done
+    done | awk '!seen[$0]++'
 }
+generate_udev_rule
