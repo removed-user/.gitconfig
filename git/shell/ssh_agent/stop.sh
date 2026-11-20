@@ -52,7 +52,6 @@ fi
     if [ -S "$GIT_SSH_AUTH_SOCK" ]; then
 
     rm -f "$GIT_SSH_AUTH_SOCK" || true
-    kill "$GIT_SSH_AGENT_PID" || true
     unset GIT_SSH_AUTH_SOCK
 }
 git_agent_stop
