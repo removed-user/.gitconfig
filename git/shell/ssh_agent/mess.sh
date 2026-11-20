@@ -2,6 +2,8 @@
 (
 GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
+EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
+EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
