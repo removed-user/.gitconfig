@@ -8,13 +8,12 @@ EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 
 socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
+get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE" }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
 
 ## Get/Set Environment + PID
-get_env() { pidfile_exists && . "$PIDFILE" || echo 'missing pidfile!' >&2; }
 set_env() {
-get_env
 SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
 git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
 export GIT_SSH_AGENT_PID SSH_AGENT_PID
@@ -29,6 +28,7 @@ SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
 SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
 ssh-agent -P '' "$@"
 )
+
     test_agent_process() {
     KEYS_LOADED=0
     STALE_SOCKET=0
@@ -42,7 +42,9 @@ ssh-agent -P '' "$@"
     esac
 }
 
+socket_exists && test_agent_process
 
+#ps -eo pid,args | awk '/[s]sh-agent/ {print $0}'
 
 git_agent_status() {
     case "$(ps -p "$GIT_SSH_AGENT_PID"  -o args= 2>/dev/null)" in
