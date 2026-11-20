@@ -41,7 +41,7 @@ local -a KEYGEN_OPTS=(
     -O device="${DEVICE}"
     -O resident 
     -O application="${WORKAROUND:-$APPLICATION}" 
-    -f "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
+    -f "${HOME}/.ssh/id_${KEY_TYPE}_${WORKAROUND:-$APPLICATION}"
     )
 
 printf 'Creating Key on '"${DEVICE}"' for '"${PERHOST_CONFIG}"'\n'
