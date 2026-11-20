@@ -1,0 +1,2 @@
+Host github.com
+  IdentityAgent /run/user/%i/git_ssh_agent.sock
