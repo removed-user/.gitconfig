@@ -39,15 +39,6 @@ test_agent_process() (
     esac
 )
 
-
-
-
-
-git_agent_start() (
-: "${PIDFILE:=/run/user/$(id -u)/git_ssh_agent.env}"
-
-)
-git_agent_start
 read_pid() {
     # 1. Require a readable PID file
     [ -r "$PIDFILE" ] || return 1
