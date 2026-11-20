@@ -22,19 +22,24 @@ kill_agent() (
     SSH_AGENT_PID="$GIT_SSH_AGENT_PID"
     export SSH_AUTH_SOCK SSH_AGENT_PID
     ssh-agent -k >/dev/null 2>&1
+    if kill -0 "$GIT_SSH_AGENT_PID" 2>/dev/null; then
+    printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$pid" >&2
+    else
+   printf -0 'unset GIT_SSH_AGENT_PID;'
+  fi
 ) 
 
 
     
  
     if [ -n "$GIT_SSH_AGENT_PID" ]; then
-kill_agent || true
+eval $(kill_agent || true)
     fi
     
     if [ -S "$GIT_SSH_AUTH_SOCK" ]; then
 
     rm -f "$GIT_SSH_AUTH_SOCK" || true
     kill "$GIT_SSH_AGENT_PID" || true
-    unset GIT_SSH_AGENT_PID GIT_SSH_AUTH_SOCK
+    unset GIT_SSH_AUTH_SOCK
 }
 git_agent_stop
