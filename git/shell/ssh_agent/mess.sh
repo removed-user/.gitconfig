@@ -113,8 +113,6 @@ kill_agent
 confirm_kill
 maybe_remove_socket
 }
-git_agent_stop
-)
 
     # "$@" from main "$@" is handled strictly here:
     case "${1:-}" in
