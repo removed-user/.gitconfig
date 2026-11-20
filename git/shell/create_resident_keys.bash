@@ -1,23 +1,5 @@
 #!/bin/bash
 create_resident_key() {
-#!/bin/bash
-_coninue() {
-read -p "continue? (Y/N): " choice
-case "${choice}" in 
-  Y|[yY][eE][sS] ) 
-return 0
-    ;;
-  N|[nN][oO] ) 
-    echo "Exiting."
-    continue
-    ;;
-  * ) 
-    echo "Invalid input"
-    exit 1
-    ;;
-esac
-}
-
     get_perhost_value ()
    {
     local CONFIG="${1}";
@@ -50,12 +32,12 @@ local DEVICE=$(fido2-token -L | awk -F ':' '{print $1}')
     )
 
 printf 'Creating Key on '"${DEVICE}"' for '"${PERHOST_CONFIG}"
-printf '%s\n' "${KEYGEN_OPTS[@]}"
+printf '%s %q\n' "${KEYGEN_OPTS[@]}"
 
 
 
 
-_continue 
+ 
 ssh-keygen "${KEYGEN_OPTS[@]}"
 }
 
