@@ -4,11 +4,9 @@ GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 
 agent_pre_checks() (
-if [ -n "${PIDFILE}" ]; 
 then 
    if [ -f "${PIDFILE}" ]
 echo "tmp ignore this"
-fi
 fi
 )
 
@@ -104,7 +102,7 @@ unset GIT_SSH_AGENT_PID;
 fi
 }
 maybe_remove_socket() { (
-    if [ -S "${GIT_SSH_AUTH_SOCK}" ]; then
+    if test_socket; then
     rm -f "${GIT_SSH_AUTH_SOCK}" || true
     ); unset GIT_SSH_AUTH_SOCK
 }    
