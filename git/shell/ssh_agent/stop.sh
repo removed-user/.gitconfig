@@ -6,16 +6,6 @@ PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 
 # Safety checks:
 
-    if [ -z "$GIT_SSH_AGENT_PID" ]; then
-       printf 'Missing pidfile!'
-        fi
-
-      if [ -z "$GIT_SSH_AGENT_PID" ]; then
-       printf 'Missing pidfile!'
-        fi
-        
-       $GIT_SSH_AGENT_PID
-
    # Safety check: Never remove the external SSH_AUTH_SOCK
     if [ -n "${SSH_AUTH_SOCK:-}" ] && [ "${GIT_SSH_AUTH_SOCK}" = "$SSH_AUTH_SOCK" ]; then
           printf '%s\n' "Refusing to stop agent: socket matches active SSH_AUTH_SOCK" >&2
