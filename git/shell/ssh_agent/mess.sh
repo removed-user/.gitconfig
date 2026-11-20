@@ -13,10 +13,10 @@ fi
 )
 
 start_agent() (
-SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
-ssh-agent -sa "$GIT_SSH_AUTH_SOCK" |\
-sed 's#SSH_#GIT_&#g' | head -n2 |\
-awk -F ';' '{print $1}' > "$PIDFILE"
+   SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
+   ssh-agent -sa "$GIT_SSH_AUTH_SOCK" |\
+   sed 's#SSH_#GIT_&#g' | head -n2 |\
+   awk -F ';' '{print $1}' > "$PIDFILE"
 )
 
 test_socket() (
@@ -72,12 +72,12 @@ git_agent_stop() {
             return 1
         fi
 
-kill_agent() {
+kill_agent() (
     SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"
     SSH_AGENT_PID="$GIT_SSH_AGENT_PID"
     export SSH_AUTH_SOCK SSH_AGENT_PID
     ssh-agent -k >/dev/null 2>&1
-}
+)
 confirm_kill() {
 if kill -0 "$GIT_SSH_AGENT_PID" 2>/dev/null; then
     printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$pid" >&2
@@ -85,12 +85,11 @@ else
 unset GIT_SSH_AGENT_PID;
 fi
 }
-maybe_remove_socket() {
-    if [ -S "$GIT_SSH_AUTH_SOCK" ]; then
-    rm -f "$GIT_SSH_AUTH_SOCK" || true
-    unset GIT_SSH_AUTH_SOCK
-    }
-    
+maybe_remove_socket() { (
+    if [ -S "${GIT_SSH_AUTH_SOCK}" ]; then
+    rm -f "${GIT_SSH_AUTH_SOCK}" || true
+    ); unset GIT_SSH_AUTH_SOCK
+}    
     kill_agent
     confirm_kill
     maybe_remove_socket
