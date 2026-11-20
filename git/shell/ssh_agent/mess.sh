@@ -94,7 +94,7 @@ if (stat ~ /^Z/ || cmd ~ /<defunct>/) {
 git_agent_start() (
 set_env
 git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
-awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, "") print $1}' > "$PIDFILE"
+awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
    #   sed -n 2p |\
 )
 
