@@ -21,7 +21,7 @@ local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.name)"
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 local DEVICE=$(fido2-token -L | awk -F ':' '{print $1}')
 
-if [[ ${APPLICATION} == "github" ]] || [[ ${APPLICATION} == "github.com" ]];
+if [[ ${APPLICATION} == "ssh:github" ]] || [[ ${APPLICATION} == "ssh:github.com" ]];
 then 
 local CLR='\033[0m'
 local ORANGE='"\033[38;2;255;165;0m'
