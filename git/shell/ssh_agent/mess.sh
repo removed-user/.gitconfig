@@ -9,22 +9,6 @@ pidfile_exists() { [ -r "$PIDFILE" ]; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 get_env() { pidfile_exists && . "$PIDFILE" || echo 'missing pidfile!' >&2; }
 
-set_env() {
-get_env
-SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
-git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
-export GIT_SSH_AGENT_PID SSH_AGENT_PID
-export SSH_AUTH_SOCK GIT_SSH_AUTH_SOCK
-export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
-}
-
-git_agent() (
-set_env
-SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
-SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
-ssh-agent -P '' "$@"
-)
-
 test_agent_process() (
 set_env
 ssh-add -l >/dev/null 2>&1
@@ -56,6 +40,34 @@ git_agent_status() {
 
 
 
+
+
+
+
+
+
+
+
+set_env() {
+get_env
+SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
+git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
+export GIT_SSH_AGENT_PID SSH_AGENT_PID
+export SSH_AUTH_SOCK GIT_SSH_AUTH_SOCK
+export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
+}
+
+git_agent() (
+set_env
+SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
+SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
+ssh-agent -P '' "$@"
+)
+
+
+
+
+
 start_agent() (
 set_env
 git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
@@ -65,18 +77,21 @@ git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
 
 git_agent_stop() {
 set_env
+
 # Safety checks:
-   # Safety check: Never remove the external SSH_AUTH_SOCK
-    if [ -n "${SSH_AUTH_SOCK:-}" ] && [ "${GIT_SSH_AUTH_SOCK}" = "$SSH_AUTH_SOCK" ]; then
-          printf '%s\n' "Refusing to stop agent: socket matches active SSH_AUTH_SOCK" >&2
-          return 1
-        fi
-       
-   # Safety check: Never kill the active external SSH_AGENT_PID
-        if [ -n "${SSH_AGENT_PID:-}" ] && [ "$GIT_SSH_AGENT_PID" = "$SSH_AGENT_PID" ]; then
-            printf '%s\n' "Refusing to stop agent: PID matches active SSH_AGENT_PID" >&2
-            return 1
-        fi
+assert_not_equal() {
+    if [ -n "$1" ] && [ "$2" = "$1" ]; then
+    printf 'Refusing to stop agent:'
+        printf '\t%s\n' "$3" >&2
+        return 1
+    fi
+}
+   # Never remove the external SSH_AUTH_SOCK
+
+assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
+
+   # Never kill the external SSH_AGENT_PID
+assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
 
 kill_agent() (
 set_env
