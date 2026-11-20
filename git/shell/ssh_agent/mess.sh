@@ -10,10 +10,10 @@ get_env() { pidfile_exists && . "$PIDFILE" || echo 'missing pidfile!' >&2; }
 set_env() {
 get_env
 SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
-export SSH_AUTH_SOCK
+export SSH_AUTH_SOCK GIT_SSH_AUTH_SOCK
 if git_agent_pid_set; then
 SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}"
-export GIT_SSH_AGENT_PID; fi
+export GIT_SSH_AGENT_PID SSH_AGENT_PID; fi
 }
 
 git_agent() (
