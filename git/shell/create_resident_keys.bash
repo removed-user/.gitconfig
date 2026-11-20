@@ -43,13 +43,10 @@ local -a KEYGEN_OPTS=(
     -f "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
     )
 
-printf 'Creating Key on '"${DEVICE}"' for '"${PERHOST_CONFIG}"
-printf '%s %q\n' "${KEYGEN_OPTS[@]}"
+printf 'Creating Key on '"${DEVICE}"' for '"${PERHOST_CONFIG}"'\n'
+printf KEYGEN_OPTS:
+printf '\t%s %q\n' "${KEYGEN_OPTS[@]}"
 
-
-
-
- 
 ssh-keygen "${KEYGEN_OPTS[@]}"
 }
 
