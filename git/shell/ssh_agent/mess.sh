@@ -32,7 +32,7 @@ ssh-agent -P '' "$@"
     test_agent_process() {
     KEYS_LOADED=0
     STALE_SOCKET=0
-  #  set_env || return 1
+    #  set_env || return 1
     ssh-add -l >/dev/null 2>&1
     case $? in
         0) KEYS_LOADED=1; return 0 ;;
@@ -54,7 +54,7 @@ git_agent_status() {
 }
 
 awk_snippet() (
-expected_args="ssh-agent -sa $GIT_SSH_AUTH_SOCK" \
+expected_args="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK" \
 zombies=""\
 matched=""\
 others="" \
