@@ -4,23 +4,26 @@ GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
+git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
+
 set_env() {
-SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"
-SSH_AGENT_PID="$GIT_SSH_AGENT_PID"
-export SSH_AUTH_SOCK SSH_AGENT_PID
+SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
+export SSH_AUTH_SOCK
+if git_agent_pid_set; then
+SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}"
+export GIT_SSH_AGENT_PID; fi
 }
-start_agent() (
-   SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
-   ssh-agent -sa "$GIT_SSH_AUTH_SOCK" |\
-   sed 's#SSH_#GIT_&#g' | head -n2 |\
-   awk -F ';' '{print $1}' > "$PIDFILE"
+
+git_agent() (
+set_env
+SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
+SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
+ssh-agent $@
 )
 
-
-
 test_agent_process() (
-    SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"\
-    ssh-add -l >/dev/null 2>&1
+set_env
+ssh-add -l >/dev/null 2>&1
     case $? in
         0|1)
             # 0: Agent running with key
@@ -39,26 +42,25 @@ test_agent_process() (
     esac
 )
 
+
 git_agent_status() {
     case "$(ps -p "$pid" -o args= 2>/dev/null)" in
         *ssh-agent*"-a $GIT_SSH_AUTH_SOCK"*|*ssh-agent*"-sa $GIT_SSH_AUTH_SOCK"*) ;;
         *) return 1 ;;
     esac
-
-    # 3. Confirm the socket itself is live and responsive
-    env -i SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" ssh-add -l >/dev/null 2>&1
-    [ $? -ne 2 ] || return 1
-    return 0
 }
 
 
 
-
-
-
+start_agent() (
+set_env
+git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
+   sed 's#SSH_#GIT_&#g' | head -n2 |\
+   awk -F ';' '{print $1}' > "$PIDFILE"
+)
 
 git_agent_stop() {
-
+set_env
 # Safety checks:
    # Safety check: Never remove the external SSH_AUTH_SOCK
     if [ -n "${SSH_AUTH_SOCK:-}" ] && [ "${GIT_SSH_AUTH_SOCK}" = "$SSH_AUTH_SOCK" ]; then
@@ -73,8 +75,8 @@ git_agent_stop() {
         fi
 
 kill_agent() (
-
-    ssh-agent -k >/dev/null 2>&1
+set_env
+git_agent -k >/dev/null 2>&1
 )
 
 confirm_kill() {
