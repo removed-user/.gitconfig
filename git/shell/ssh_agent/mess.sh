@@ -18,14 +18,32 @@ start_agent() (
    sed 's#SSH_#GIT_&#g' | head -n2 |\
    awk -F ';' '{print $1}' > "$PIDFILE"
 )
+test_socket() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 
-test_socket() (
-SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
-ssh-add -l >/dev/null 2>&1
-    if [ $? -eq 2 ]; then
-        rm -f "$GIT_SSH_AUTH_SOCK"
-    fi
+test_agent_process() (
+    SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"\
+    ssh-add -l >/dev/null 2>&1
+    case $? in
+        0|1)
+            # 0: Agent running with key
+            # 1: Agent running with no keys
+            return 0
+            ;;
+        2)
+            # 2: Unable to connect to agent (stale/dead socket)
+            if rm -f "$GIT_SSH_AUTH_SOCK"
+           then return 1; fi
+            ;;
+        *)
+            # Unexpected error
+            return 1
+            ;;
+    esac
 )
+
+
+
+
 
 git_agent_start() (
 : "${PIDFILE:=/run/user/$(id -u)/git_ssh_agent.env}"
