@@ -17,7 +17,7 @@ local PERHOST_CONFIG="${1}"
 local KEY_TYPE="${KEY_TYPE:-ed25519-sk}"
   
 local APPLICATION="$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
-local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.username)"
+local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.name)"
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 local DEVICE=$(fido2-token -L | awk -F ':' '{print $1}')
     local -a KEYGEN_OPTS=(
