@@ -5,6 +5,7 @@ GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
 EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
+
 socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
@@ -28,27 +29,19 @@ SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
 SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
 ssh-agent -P '' "$@"
 )
-
-test_agent_process() (
-set_env
-ssh-add -l >/dev/null 2>&1
+    test_agent_process() {
+    KEYS_LOADED=0
+    STALE_SOCKET=0
+  #  set_env || return 1
+    ssh-add -l >/dev/null 2>&1
     case $? in
-        0|1)
-            # 0: Agent running with key
-            # 1: Agent running with no keys
-            return 0
-            ;;
-        2)
-            # 2: Unable to connect to agent (stale/dead socket)
-            if rm -f "$GIT_SSH_AUTH_SOCK"
-           then return 1; fi
-            ;;
-        *)
-            # Unexpected error
-            return 1
-            ;;
+        0) KEYS_LOADED=1; return 0 ;;
+        1) KEYS_LOADED=0; return 0 ;;
+        2) STALE_SOCKET=1; return 0 ;;
+        *) return 1 ;;
     esac
-)
+}
+
 
 
 git_agent_status() {
