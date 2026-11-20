@@ -54,13 +54,9 @@ git_agent_status() {
 }
 
 awk_snippet() (
-expected_args="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK" \
-zombies="" \
-matched="" \
-others=""  \
-ps -eo pid,stat,args | awk '/[s]sh-agent/' |\
-awk -v target="$expected_args" '
-{
+expected_args="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK" 
+ps -eo pid,stat,args | awk -v target="$expected_args" '
+/[s]sh-agent/ {
 pid = $1
 stat = $2 
 # Rebuild the full command/args string from field 3 onward
