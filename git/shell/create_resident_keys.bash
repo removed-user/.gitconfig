@@ -20,7 +20,19 @@ local APPLICATION="$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
 local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.name)"
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 local DEVICE=$(fido2-token -L | awk -F ':' '{print $1}')
-    local -a KEYGEN_OPTS=(
+
+if [[ ${APPLICATION} == "github" ]]; 
+then 
+local CLR='\033[0m'
+local ORANGE='"\033[38;2;255;165;0m'
+local RED='\033[31m'
+printf "${ORANGE} Github fails to properly parse 'ssh:${namespace}' APPLICATION strings ${CLR}" 
+printf "${RED} Replacing 'ssh:${APPLICATION}' string with 'ssh:' ${CLR}" 
+printf 'Check Github Bug report ticket: #5031545 '
+unset APPLICATION
+   fi
+
+local -a KEYGEN_OPTS=(
     -N '' 
     -t "${KEY_TYPE}" 
     -C "${COMMENT}" 
