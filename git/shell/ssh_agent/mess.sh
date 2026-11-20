@@ -8,7 +8,7 @@ EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 
 socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
-get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE" }
+get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
 
