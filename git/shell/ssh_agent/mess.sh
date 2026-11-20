@@ -8,7 +8,26 @@ EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
+
+
+## Get/Set Environment + PID
 get_env() { pidfile_exists && . "$PIDFILE" || echo 'missing pidfile!' >&2; }
+set_env() {
+get_env
+SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
+git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
+export GIT_SSH_AGENT_PID SSH_AGENT_PID
+export SSH_AUTH_SOCK GIT_SSH_AUTH_SOCK
+export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
+}
+
+### Wrapper Inject env into ssh-agent on every call
+git_agent() (
+set_env
+SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
+SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
+ssh-agent -P '' "$@"
+)
 
 test_agent_process() (
 set_env
@@ -49,25 +68,13 @@ git_agent_status() {
 
 
 
-set_env() {
-get_env
-SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
-git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
-export GIT_SSH_AGENT_PID SSH_AGENT_PID
-export SSH_AUTH_SOCK GIT_SSH_AUTH_SOCK
-export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
-}
-### Wrapper 
-git_agent() (
-set_env
-SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
-SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
-ssh-agent -P '' "$@"
-)
 
 
 
 
+
+### Startup 
+#### Environment set and injected + Create clean PIDFILE
 
 start_agent() (
 set_env
@@ -87,10 +94,6 @@ set_env
         exit 1
     fi
    }
-      # Never remove the external SSH_AUTH_SOCK
-   assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
-      # Never kill the external SSH_AGENT_PID
-   assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
 
    kill_agent() (
       set_env
@@ -104,14 +107,23 @@ set_env
    unset GIT_SSH_AGENT_PID;
    fi
    }
-
-   maybe_remove_socket() { (
+   cleanup_socket() { (
        socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
        ); unset GIT_SSH_AUTH_SOCK
-   }    
+   }   
+   cleanup_pidfile() { (
+       pidfile_exists && rm -f "$PIDFILE"
+       ); unset PIDFILE
+   }   
+      # Never remove the external SSH_AUTH_SOCK
+assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
+      # Never kill the external SSH_AGENT_PID
+assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
+
 kill_agent
 confirm_kill
-maybe_remove_socket
+cleanup_socket
+cleanup_pidfile
 }
 
     # "$@" from main "$@" is handled strictly here:
