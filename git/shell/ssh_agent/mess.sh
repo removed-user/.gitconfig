@@ -4,9 +4,9 @@ GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 
 agent_pre_checks() (
-if [ -n "${GIT_SSH_AGENT_ENV}" ]; 
+if [ -n "${PIDFILE}" ]; 
 then 
-   if [ -f "${GIT_SSH_AGENT_ENV}" ]
+   if [ -f "${PIDFILE}" ]
 echo "tmp ignore this"
 fi
 fi
@@ -16,7 +16,7 @@ start_agent() (
 SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
 ssh-agent -sa "$GIT_SSH_AUTH_SOCK" |\
 sed 's#SSH_#GIT_&#g' | head -n2 |\
-awk -F ';' '{print $1}' > "$GIT_SSH_AGENT_ENV"
+awk -F ';' '{print $1}' > "$PIDFILE"
 )
 
 test_socket() (
@@ -28,14 +28,14 @@ ssh-add -l >/dev/null 2>&1
 )
 
 git_agent_start() (
-: "${GIT_SSH_AGENT_ENV:=/run/user/$(id -u)/git_ssh_agent.env}"
+: "${PIDFILE:=/run/user/$(id -u)/git_ssh_agent.env}"
 
 )
 git_agent_start
 read_pid() {
     # 1. Require a readable PID file
-    [ -r "$GIT_SSH_AGENT_ENV" ] || return 1
-    read -r pid < "$GIT_SSH_AGENT_ENV"
+    [ -r "$PIDFILE" ] || return 1
+    read -r pid < "$PIDFILE"
     [ -n "$pid" ] || return 1
 }
 git_agent_status() {
