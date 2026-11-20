@@ -2,21 +2,21 @@
 (
 GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
-
-agent_pre_checks() (
-then 
-   if [ -f "${PIDFILE}" ]
-echo "tmp ignore this"
-fi
-)
-
+socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
+pidfile_exists() { [ -r "$PIDFILE" ]; }
+set_env() {
+SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"
+SSH_AGENT_PID="$GIT_SSH_AGENT_PID"
+export SSH_AUTH_SOCK SSH_AGENT_PID
+}
 start_agent() (
    SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
    ssh-agent -sa "$GIT_SSH_AUTH_SOCK" |\
    sed 's#SSH_#GIT_&#g' | head -n2 |\
    awk -F ';' '{print $1}' > "$PIDFILE"
 )
-test_socket() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
+
+
 
 test_agent_process() (
     SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"\
@@ -39,12 +39,6 @@ test_agent_process() (
     esac
 )
 
-read_pid() {
-    # 1. Require a readable PID file
-    [ -r "$PIDFILE" ] || return 1
-    read -r pid < "$PIDFILE"
-    [ -n "$pid" ] || return 1
-}
 git_agent_status() {
     case "$(ps -p "$pid" -o args= 2>/dev/null)" in
         *ssh-agent*"-a $GIT_SSH_AUTH_SOCK"*|*ssh-agent*"-sa $GIT_SSH_AUTH_SOCK"*) ;;
@@ -63,7 +57,6 @@ git_agent_status() {
 
 
 
-#!/bin/sh
 git_agent_stop() {
 
 # Safety checks:
@@ -80,11 +73,10 @@ git_agent_stop() {
         fi
 
 kill_agent() (
-    SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"
-    SSH_AGENT_PID="$GIT_SSH_AGENT_PID"
-    export SSH_AUTH_SOCK SSH_AGENT_PID
+
     ssh-agent -k >/dev/null 2>&1
 )
+
 confirm_kill() {
 if kill -0 "$GIT_SSH_AGENT_PID" 2>/dev/null; then
     printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$pid" >&2
@@ -92,8 +84,9 @@ else
 unset GIT_SSH_AGENT_PID;
 fi
 }
+
 maybe_remove_socket() { (
-    if test_socket; then
+    if socket_exists; then
     rm -f "${GIT_SSH_AUTH_SOCK}" || true
     ); unset GIT_SSH_AUTH_SOCK
 }    
