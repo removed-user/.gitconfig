@@ -54,15 +54,12 @@ git_agent_status() {
 }
 
 awk_snippet() (
-ps -eo pid,stat,args | awk -v target="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK" '
+ps -eo pid,args | awk -v target="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK" '
 /[s]sh-agent/ {
 pid = $1
-stat = $2 
-# Rebuild the full command/args string from field 3 onward
-cmd = substr($0, index($0, $3))
-if (stat ~ /^Z/ || cmd ~ /<defunct>/) {
-    print "ZOMBIE:" pid " " cmd
-} else if (index(cmd, target) > 0) {
+# Rebuild the full command/args string from field 2 onward
+cmd = substr($0, index($0, $2))
+ if (index(cmd, target) > 0) {
     print "MATCH:" pid " " cmd
 } else {
     print "OTHER:" pid " " cmd
