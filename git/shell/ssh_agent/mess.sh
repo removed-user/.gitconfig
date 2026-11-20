@@ -5,7 +5,7 @@ PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
-get_env() { pidfile_exists && . "$PIDFILE" || echo 'missing pidfile!' >&2 }
+get_env() { pidfile_exists && . "$PIDFILE" || echo 'missing pidfile!' >&2; }
 
 set_env() {
 get_env
