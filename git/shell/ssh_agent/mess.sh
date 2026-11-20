@@ -71,8 +71,8 @@ git_agent_status() {
 git_agent_start() (
 set_env
 git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
-   sed 's#SSH_#GIT_&#g' | head -n2 |\
-   awk -F ';' '{print $1}' > "$PIDFILE"
+   sed -n 2p |\
+   awk -F 'gsub(/SSH_AGENT_PID=|;, "")  {print $1}' > "$PIDFILE"
 )
 
 ### Shutdown/Cleanup
