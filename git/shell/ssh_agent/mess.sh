@@ -81,8 +81,7 @@ set_env
 # Safety checks:
 assert_not_equal() {
     if [ -n "$1" ] && [ "$2" = "$1" ]; then
-    printf 'Refusing to stop agent:'
-        printf '\t%s\n' "$3" >&2
+        printf '%s\n\t%s\n' 'Refusing to stop agent:'  "$3" >&2
         return 1
     fi
 }
