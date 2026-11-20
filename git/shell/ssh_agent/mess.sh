@@ -46,7 +46,7 @@ ssh-add -l >/dev/null 2>&1
 
 
 git_agent_status() {
-    case "$(ps -p "$pid" -o args= 2>/dev/null)" in
+    case "$(ps -p "$GIT_SSH_AGENT_PID"  -o args= 2>/dev/null)" in
         *ssh-agent*"-a $GIT_SSH_AUTH_SOCK"*|*ssh-agent*"-sa $GIT_SSH_AUTH_SOCK"*) ;;
         *) return 1 ;;
     esac
@@ -83,7 +83,7 @@ git_agent -k >/dev/null 2>&1
 
 confirm_kill() {
 if kill -0 "$GIT_SSH_AGENT_PID" 2>/dev/null; then
-    printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$pid" >&2
+    printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$GIT_SSH_AGENT_PID" >&2
 else
 unset GIT_SSH_AGENT_PID;
 fi
