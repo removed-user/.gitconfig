@@ -13,7 +13,10 @@ fi
 )
 
 start_agent() (
-SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" ssh-agent -sa "$GIT_SSH_AUTH_SOCK" | sed 's#SSH_#GIT_&#g' > "$GIT_SSH_AGENT_ENV"
+SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
+ssh-agent -sa "$GIT_SSH_AUTH_SOCK" |\
+sed 's#SSH_#GIT_&#g' | head -n2 |\
+awk -F ';' '{print $1}' > "$GIT_SSH_AGENT_ENV"
 )
 
 test_socket() (
@@ -29,16 +32,13 @@ git_agent_start() (
 
 )
 git_agent_start
-
-git_agent_status() {
-    [ -r "$GIT_SSH_AGENT_ENV" ] && . "$GIT_SSH_AGENT_ENV"
-
+read_pid() {
     # 1. Require a readable PID file
     [ -r "$GIT_SSH_AGENT_ENV" ] || return 1
     read -r pid < "$GIT_SSH_AGENT_ENV"
     [ -n "$pid" ] || return 1
-
-    # 2. Verify the PID is alive and is specifically an ssh-agent bound to our socket path
+}
+git_agent_status() {
     case "$(ps -p "$pid" -o args= 2>/dev/null)" in
         *ssh-agent*"-a $GIT_SSH_AUTH_SOCK"*|*ssh-agent*"-sa $GIT_SSH_AUTH_SOCK"*) ;;
         *) return 1 ;;
@@ -47,8 +47,6 @@ git_agent_status() {
     # 3. Confirm the socket itself is live and responsive
     env -i SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" ssh-add -l >/dev/null 2>&1
     [ $? -ne 2 ] || return 1
-
-    export GIT_SSH_AGENT_PID="$pid"
     return 0
 }
 
@@ -62,7 +60,6 @@ git_agent_status() {
 git_agent_stop() {
 
 # Safety checks:
-
    # Safety check: Never remove the external SSH_AUTH_SOCK
     if [ -n "${SSH_AUTH_SOCK:-}" ] && [ "${GIT_SSH_AUTH_SOCK}" = "$SSH_AUTH_SOCK" ]; then
           printf '%s\n' "Refusing to stop agent: socket matches active SSH_AUTH_SOCK" >&2
