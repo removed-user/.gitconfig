@@ -1,4 +1,8 @@
 #!/bin/dash
+(
+GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
+PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
+
 agent_pre_checks() (
 if [ -n "${GIT_SSH_AGENT_ENV}" ]; 
 then 
@@ -9,7 +13,6 @@ fi
 )
 
 start_agent() (
-GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" ssh-agent -sa "$GIT_SSH_AUTH_SOCK" | sed 's#SSH_#GIT_&#g' > "$GIT_SSH_AGENT_ENV"
 )
 
@@ -57,8 +60,7 @@ git_agent_status() {
 
 #!/bin/sh
 git_agent_stop() {
-GIT_SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:=/run/user/$(id -u)/git_ssh_agent.sock}"
-PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
+
 # Safety checks:
 
    # Safety check: Never remove the external SSH_AUTH_SOCK
@@ -97,5 +99,4 @@ maybe_remove_socket() {
     maybe_remove_socket
 }
 git_agent_stop
-
-
+)
