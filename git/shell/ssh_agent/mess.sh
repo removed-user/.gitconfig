@@ -68,8 +68,7 @@ git_agent_status() {
 
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
-
-start_agent() (
+git_agent_start() (
 set_env
 git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
    sed 's#SSH_#GIT_&#g' | head -n2 |\
@@ -121,7 +120,7 @@ cleanup_pidfile
 
     # "$@" from main "$@" is handled strictly here:
     case "${1:-}" in
-        start)  start_agent ;;
+        start)  git_agent_start ;;
         stop)   git_agent_stop ;;
         status) git_agent_status ;;
         *)      printf 'Usage: %s {start|stop|status}\n' "$0" >&2; exit 1 ;;
