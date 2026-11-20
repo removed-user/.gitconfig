@@ -16,14 +16,22 @@ GIT_SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:=/run/user/$(id -u)/git_ssh_agent.sock}"
             return 1
         fi
 
+
+kill_agent() (
+    SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK"
+    SSH_AGENT_PID="$GIT_SSH_AGENT_PID"
+    export SSH_AUTH_SOCK SSH_AGENT_PID
+    ssh-agent -k >/dev/null 2>&1
+) 
+
+
     
  
     if [ -n "$GIT_SSH_AGENT_PID" ]; then
-        SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent -k >/dev/null 2>&1
-    elif [ -S "$GIT_SSH_AUTH_SOCK" ]; then
-        # Fallback if GIT_SSH_AGENT_PID was lost in another subshell
-        pkill -f "ssh-agent.*$GIT_SSH_AUTH_SOCK" >/dev/null 2>&1
+kill_agent || true
     fi
+    
+    if [ -S "$GIT_SSH_AUTH_SOCK" ]; then
 
     rm -f "$GIT_SSH_AUTH_SOCK" || true
     kill "$GIT_SSH_AGENT_PID" || true
