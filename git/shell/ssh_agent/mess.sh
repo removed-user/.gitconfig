@@ -90,8 +90,7 @@ fi
 }
 
 maybe_remove_socket() { (
-    if socket_exists; then
-    rm -f "${GIT_SSH_AUTH_SOCK}" || true
+    socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
     ); unset GIT_SSH_AUTH_SOCK
 }    
     kill_agent
