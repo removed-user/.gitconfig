@@ -65,12 +65,13 @@ pid = $1
 stat = $2 
 # Rebuild the full command/args string from field 3 onward
 cmd = substr($0, index($0, $3))
+
 if (stat ~ /^Z/ || cmd ~ /<defunct>/) {
-print "ZOMBIE:" pid " " cmd
+    print "ZOMBIE:" pid " " cmd
 } else if (index(cmd, target) > 0) {
-print "MATCH:" pid " " cmd
-} else { " cmd
-print "OTHER:" pid " " cmd
+    print "MATCH:" pid " " cmd
+} else {
+    print "OTHER:" pid " " cmd
 }
 }'
 )
