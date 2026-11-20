@@ -26,7 +26,7 @@ then
 local CLR='\033[0m'
 local ORANGE='"\033[38;2;255;165;0m'
 local RED='\033[31m'
-printf "${ORANGE}Github fails to properly parse 'ssh:\${namespace}' APPLICATION strings${CLR} \n" 
+printf "${ORANGE}Github fails to properly parse 'ssh:\${namespace}' APPLICATION strings${CLR}"'\n' 
 printf "${RED}Replacing 'ssh:${APPLICATION}' string with 'ssh:' ${CLR}\n" 
 printf 'Check Github Bug report ticket: #5031545\n'
 unset APPLICATION
