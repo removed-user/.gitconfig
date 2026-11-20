@@ -16,7 +16,7 @@ create_resident_key() {
 local PERHOST_CONFIG="${1}"
 local KEY_TYPE="${KEY_TYPE:-ed25519-sk}"
   
-local APPLICATION="$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
+local APPLICATION='ssh:'"$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
 local PERHOST_USERNAME="$(get_perhost_value "${PERHOST_CONFIG}"  user.name)"
 local COMMENT="${COMMENT:-Account Key for ${APPLICATION}}"
 local DEVICE=$(fido2-token -L | awk -F ':' '{print $1}')
@@ -27,9 +27,9 @@ local CLR='\033[0m'
 local ORANGE='"\033[38;2;255;165;0m'
 local RED='\033[31m'
 printf "${ORANGE}Github fails to properly parse 'ssh:\${namespace}' APPLICATION strings${CLR}"'\n' 
-printf "${RED}Replacing 'ssh:${APPLICATION}' string with 'ssh:' ${CLR}\n" 
+printf "${RED}Replacing '${APPLICATION}' string with 'ssh:' ${CLR}\n" 
 printf 'Check Github Bug report ticket: #5031545\n'
-unset APPLICATION
+local WORKAROUND='ssh:'
    fi
 
 local -a KEYGEN_OPTS=(
@@ -39,7 +39,7 @@ local -a KEYGEN_OPTS=(
     -O user="${PERHOST_USERNAME}" 
     -O device="${DEVICE}"
     -O resident 
-    -O application=ssh:"${APPLICATION}" 
+    -O application="${WORKAROUND:-$APPLICATION}" 
     -f "${HOME}/.ssh/id_${KEY_TYPE}_${APPLICATION}"
     )
 
