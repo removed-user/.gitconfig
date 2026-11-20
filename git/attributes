@@ -1,2 +1,4 @@
 *.lock -diff merge=null
 lazy-lock.json -diff merge=null
+*.html      text diff=html
+*.css       text diff=css
