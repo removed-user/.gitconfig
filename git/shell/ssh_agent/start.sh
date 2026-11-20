@@ -1,8 +1,4 @@
 #!/bin/sh
-# -O options: to check over
-# allow-remote-pkcs11
-# no-restrict-websafe
-# websafe-allow
 
 : "${GIT_SSH_AUTH_SOCK:=/run/user/$(id -u)/git_ssh_agent.sock}"
 
