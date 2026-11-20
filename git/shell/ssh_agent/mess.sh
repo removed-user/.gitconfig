@@ -75,43 +75,42 @@ git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
    awk -F ';' '{print $1}' > "$PIDFILE"
 )
 
+### Shutdown/Cleanup
+
 git_agent_stop() {
 set_env
-
-# Safety checks:
-assert_not_equal() {
+   # Safety checks:
+   assert_not_equal() {
     if [ -n "$1" ] && [ "$2" = "$1" ]; then
         printf '%s\n\t%s\n' 'Refusing to stop agent:'  "$3" >&2
-        return 1
+        exit 1
     fi
-}
-   # Never remove the external SSH_AUTH_SOCK
+   }
+      # Never remove the external SSH_AUTH_SOCK
+   assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
+      # Never kill the external SSH_AGENT_PID
+   assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
 
-assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
+   kill_agent() (
+      set_env
+      git_agent -k >/dev/null 2>&1
+   )
 
-   # Never kill the external SSH_AGENT_PID
-assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
+   confirm_kill() {
+   if kill -0 "$GIT_SSH_AGENT_PID" 2>/dev/null; then
+       printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$GIT_SSH_AGENT_PID" >&2
+   else
+   unset GIT_SSH_AGENT_PID;
+   fi
+   }
 
-kill_agent() (
-set_env
-git_agent -k >/dev/null 2>&1
-)
-
-confirm_kill() {
-if kill -0 "$GIT_SSH_AGENT_PID" 2>/dev/null; then
-    printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$GIT_SSH_AGENT_PID" >&2
-else
-unset GIT_SSH_AGENT_PID;
-fi
-}
-
-maybe_remove_socket() { (
-    socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
-    ); unset GIT_SSH_AUTH_SOCK
-}    
-    kill_agent
-    confirm_kill
-    maybe_remove_socket
+   maybe_remove_socket() { (
+       socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
+       ); unset GIT_SSH_AUTH_SOCK
+   }    
+kill_agent
+confirm_kill
+maybe_remove_socket
 }
 git_agent_stop
 )
