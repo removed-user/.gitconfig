@@ -55,11 +55,11 @@ git_agent_status() {
 
 awk_snippet() (
 expected_args="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK" \
-zombies=""\
-matched=""\
-others="" \
+zombies="" \
+matched="" \
+others=""  \
+ps -eo pid,stat,args | awk '/[s]sh-agent/' |\
 awk -v target="$expected_args" '
-ps -eo pid,stat,args | awk '/[s]sh-agent/'
 {
 pid = $1
 stat = $2 
@@ -76,19 +76,6 @@ if (stat ~ /^Z/ || cmd ~ /<defunct>/) {
 }'
 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
 git_agent_start() (
@@ -99,7 +86,6 @@ awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
 )
 
 ### Shutdown/Cleanup
-
 git_agent_stop() {
 set_env
    # Safety checks:
