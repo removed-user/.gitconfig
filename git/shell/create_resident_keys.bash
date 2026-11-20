@@ -1,4 +1,5 @@
 #!/bin/bash
+unset create_all_resident_keys create_resident_key
 create_resident_key() {
     get_perhost_value ()
    {
