@@ -20,7 +20,7 @@ git_agent() (
 set_env
 SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
 SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
-ssh-agent $@
+ssh-agent -P '' $@
 )
 
 test_agent_process() (
