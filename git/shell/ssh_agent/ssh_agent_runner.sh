@@ -65,17 +65,6 @@ awk_snippet() (
     }'
 )
 
-awk_snippet() (
-target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
-ps -eo pid,args | awk -v target_cmd="${target_cmd}" '
-/[s]sh-agent/ {
-pid = $1
-cmd = substr($0, index($0, $2))
- if (index(cmd, target_cmd) > 0) {
-    print "MATCH:" pid " " cmd }
-}'
-)
-
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
 git_agent_start() (
