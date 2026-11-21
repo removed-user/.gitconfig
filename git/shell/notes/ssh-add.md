@@ -18,12 +18,6 @@
     [-d]: Delete listed identities from ssh-agent
          (Use `-` for `stdin`)
 
-#### Agent Locking
-
-    [-x]: Lock agent
-    
-    [-x]: Unlock agent
-
 #### Allowed Providers
 
     [-S]: Allowed Providers (fido Auth)
@@ -36,6 +30,12 @@
         (1+ invocations:ex:`-H 1 -H 2`)
 
     [-h]: Destination Constraint
+
+#### Agent Locking
+
+    [-x]: Lock agent
+    
+    [-x]: Unlock agent
 
 #### Misc
 
