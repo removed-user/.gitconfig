@@ -44,7 +44,7 @@ select() (
     status pidfile_exists "Found: $PIDFILE"
     status socket_exists  "Found: "$GIT_SSH_AUTH_SOCK""
     get_pid 
-    status (find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
+    #status (find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
      }
       # Check Status of the/any present agent
     test_agent_process() {
