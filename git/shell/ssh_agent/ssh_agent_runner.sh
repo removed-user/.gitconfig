@@ -90,14 +90,8 @@ git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'N
 
 ### Shutdown/Cleanup
 
-          cleanup_socket() { (
-             socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
-            ); export HAS_SOCKET=0;
-         }   
-          cleanup_pidfile() { (
-             pidfile_exists && rm -f "$PIDFILE"
-            ); export HAS_PIDFILE=0;
-         }
+          cleanup_socket() { ( socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}" || return 0; ); export HAS_SOCKET=0; }   
+          cleanup_pidfile() { ( pidfile_exists && rm -f "$PIDFILE" || return 0; ); export HAS_PIDFILE=0; }
 
 
 git_agent_stop() { set_env; 
