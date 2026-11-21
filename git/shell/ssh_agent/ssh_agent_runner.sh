@@ -71,7 +71,7 @@ dispatch() (
           pid = $1
           sub(/^[ \t]*[0-9]+[ \t]+/, "")
 
-            pid_match = (expected_pid != "" && pid == expectpidpid)
+            pid_match = (expected_pid != "" && pid == expected_pid)
             cmd_match = ($0 == target_cmd)
         
        if (mode == "pid" && pid_match) { print "PID:" pid }
@@ -103,7 +103,7 @@ git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'N
 git_agent_stop() { set_env; 
    # Safety checks:
 run_checks() (
-   assert_not_equal() { if [ -n "$1" ] && [ "$2" = "$1" ]; then; printf '%s\n\t%s\n' 'Refusing to stop agent:' "$3" >&2; exit 1; fi; }
+   assert_not_equal() { if [ -n "$1" ] && [ "$2" = "$1" ]; then printf '%s\n\t%s\n' 'Refusing to stop agent:' "$3" >&2; exit 1; fi; }
       # Never remove the external SSH_AUTH_SOCK
     assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
       # Never kill the external SSH_AGENT_PID
