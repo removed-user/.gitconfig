@@ -43,7 +43,7 @@ dispatch() (
 # find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
 #     }
 
-      # Check Status of the/any present agent
+      # Check Status of a "git_agent" 
     test_agent_process() {
     RUNNING=0; KEYS_LOADED=0; set_env || return 1
     git_add -l >/dev/null 2>&1
@@ -54,7 +54,8 @@ dispatch() (
         *) return 1 ;;
     esac
    }
-    socket_exists && test_agent_process
+   
+#     socket_exists && test_agent_process
  
    find_git_agent_pid() (
     # Usage:
@@ -80,13 +81,17 @@ dispatch() (
        }'
      )
 
-  ### Wrappers Inject env into ssh-* on every call
-   git_agent() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; ); }
-   git_add() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-add "$@"; ); }
-   git_add_key() { ( git_add -H "${HOME}/.ssh/known_hosts/known_hosts-github" -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
-### Startup 
-#### Environment set and injected + Create clean PIDFILE
-git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"; ); }
+
+## Startup and Wrappers
+  ## Generic: Inject env into ssh-* on every call; for testing/checking states
+     git_agent() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; ); }
+     git_add() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-add "$@"; ); }
+   ### Execution: for "actual usage"
+    #### Adds to the env set by git_add; Sets options for command, and adds the key recieved on stdin
+     git_add_key() { ( git_add -H "${HOME}/.ssh/known_hosts/known_hosts-github" -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
+    #### Adds to the env set by git_agent; Sets options for command, starts agent, and creates "${PIDFILE}"
+     git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"; ); }
+
 
 ### Shutdown/Cleanup
 
