@@ -1,6 +1,6 @@
 #!/bin/dash
-
 main() (
+
 GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
@@ -10,6 +10,19 @@ socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ]; }
 pidfile_exists() { [ -r "$PIDFILE" ]; }
 get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
+
+select() (
+    cmd="${1:-status}"
+    [ $# -gt 0 ] && shift
+    case "$cmd" in
+        start)  git_agent_start "$@" ;;
+        stop)   git_agent_stop "$@" ;;
+        status) git_agent_status "$@" ;;
+        *)      printf 'Usage: %s {start|stop|status} [args...]\n' "${0##*/}" >&2; exit 1 ;;
+    esac
+)
+select "$@"
+
 
 
  ## Get/Set Environment + PID
@@ -45,11 +58,12 @@ git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
 socket_exists && test_agent_process
 
-# Usage:
-#   find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
-#   find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
-#   find_git_agent_pid any "$PID"           -> Strict check: require both PID and exact command
 find_git_agent_pid() (
+
+    # Usage:
+      # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
+      # find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
+      # find_git_agent_pid any "$PID"            -> Strict check: require both PID and exact command
     mode="${1:-pid}"
     expected_pid="${2:-}"
     target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
@@ -122,14 +136,6 @@ run_checks() (
    confirm_kill
    cleanup 
 }
-
-    # "$@" from main "$@" is handled strictly here:
-    case "${1:-}" in "$@"
-        start)  git_agent_start ;;
-        stop)   git_agent_stop ;;
-        status) git_agent_status ;;
-        *)      printf 'Usage: %s {start|stop|status}\n' "${0##*/}" >&2; exit 1 ;;
-    esac
 )
 
 main "$@"
