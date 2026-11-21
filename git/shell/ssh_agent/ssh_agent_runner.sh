@@ -90,22 +90,16 @@ dispatch() (
      git_add_key() { ( git_add -H "${HOME}/.ssh/known_hosts/known_hosts-github" -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
     #### Adds to the env set by git_agent; Sets options for command, starts agent, and creates "${PIDFILE}"
      git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"; ); }
-
-
-### Shutdown/Cleanup
-
-          cleanup_socket() { ( socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}" || return 0; ); export HAS_SOCKET=0; }   
-          cleanup_pidfile() { ( pidfile_exists && rm -f "$PIDFILE" || return 0; ); export HAS_PIDFILE=0; }
+   ### Shutdown/Cleanup
+     cleanup_socket() { ( socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}" || return 0; ); export HAS_SOCKET=0; }   
+     cleanup_pidfile() { ( pidfile_exists && rm -f "$PIDFILE" || return 0; ); export HAS_PIDFILE=0; }
 
 
 git_agent_stop() { set_env; 
    # Safety checks:
+         # Never affect External ssh-agent(s) Socket ot Process
 run_checks() (
-   assert_not_equal() { if [ -n "$1" ] && [ "$2" = "$1" ]; then printf '%s\n\t%s\n' 'Refusing to stop agent:' "$3" >&2; exit 1; fi; }
-      # Never remove the external SSH_AUTH_SOCK
-    assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
-      # Never kill the external SSH_AGENT_PID
-    assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
+   assert_not_equal() { if [ -n "$1" ] && [ "$2" = "$1" ]; then printf '%s\n\t%s\n' 'Refusing to stop agent:' "$3" >&2; exit 1; fi; }; assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK' ; assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
 )
 
    kill_agent() { (  set_env; git_agent -k >/dev/null 2>&1; ); }
