@@ -108,29 +108,28 @@ run_checks() (
     assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
 )
 
-   kill_agent() (
-      set_env
-      git_agent -k >/dev/null 2>&1
-   )
+   kill_agent() (  set_env; git_agent -k >/dev/null 2>&1; )
 
    confirm_kill() {
-   find_git_agent_pid pid "${GIT_SSH_AGENT_PID}" 2>/dev/null 2>&1
-   if [ "$?" = "1" ] ; then
+    if [ -n "$(find_git_agent_pid pid "${GIT_SSH_AGENT_PID}")" ]; then
        printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$GIT_SSH_AGENT_PID" >&2
-   else
-   unset GIT_SSH_AGENT_PID;
-   fi
-   }
+         else
+           unset GIT_SSH_AGENT_PID;
+       fi
+     }
+   
    cleanup() (
-   cleanup_socket() { (
+     cleanup_socket() { (
        socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
        ); unset GIT_SSH_AUTH_SOCK
-   }   
-   cleanup_pidfile() { (
-       pidfile_exists && rm -f "$PIDFILE"
-       ); unset PIDFILE
-   }   
+         }   
+          cleanup_pidfile() { (
+          pidfile_exists && rm -f "$PIDFILE"
+         ); unset PIDFILE
+       }
+      cleanup_socket && cleanup_pidfile
    )
+   
    run_checks
    kill_agent
    confirm_kill
