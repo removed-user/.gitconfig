@@ -46,12 +46,38 @@ socket_exists && test_agent_process
 
 #ps -eo pid,args | awk '/[s]sh-agent/ {print $0}'
 
-git_agent_status() {
-    case "$(ps -p "$GIT_SSH_AGENT_PID"  -o args= 2>/dev/null)" in
-        *ssh-agent*"-a $GIT_SSH_AUTH_SOCK"*|*ssh-agent*"-sa $GIT_SSH_AUTH_SOCK"*) ;;
-        *) return 1 ;;
-    esac
-}
+# Usage:
+#   find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
+#   find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
+#   find_git_agent_pid both "$PID"           -> Strict check: require both PID and exact command
+find_git_agent_pid() (
+    mode="${1:-both}"
+    expected_pid="${2:-}"
+    target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
+
+    ps -eo pid=,args= | awk -v mode="$mode" -v expected_pid="$expected_pid" -v target_cmd="$target_cmd" '
+    /[s]sh-agent/ {
+        pid = $1
+        sub(/^[ \t]*[0-9]+[ \t]+/, "")
+
+        pid_match = (expected_pid != "" && pid == expected_pid)
+        cmd_match = ($0 == target_cmd)
+
+    if (mode == "pid" && pid_match) {
+                print "PID:" pid
+     } else if (mode == "cmd" && cmd_match) {
+                print "CMD:" pid
+       } else if (mode == "any" && (pid_match || cmd_match)) {
+            if (pid_match && cmd_match) {
+                print "ANY:" pid
+            } else if (pid_match) {
+                print "ANY:" pid
+            } else {
+                print "ANY:" pid
+            }
+        }
+    }'
+)
 
 find_git_agent_pid() (
     target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
