@@ -26,7 +26,7 @@ git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
      set_env
      SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
      SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
-     ssh-agent -P '' "$@"
+     ssh-agent "$@"
     )
     
 # Check Status of the/any present agent
@@ -72,7 +72,7 @@ find_git_agent_pid() (
 #### Environment set and injected + Create clean PIDFILE
 git_agent_start() (
 set_env
-git_agent -sa "$GIT_SSH_AUTH_SOCK" |\
+git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" |\
 awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
    #   sed -n 2p |\
 )
@@ -81,12 +81,18 @@ awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
 git_agent_stop() {
 set_env
    # Safety checks:
+run_checks() (
    assert_not_equal() {
     if [ -n "$1" ] && [ "$2" = "$1" ]; then
         printf '%s\n\t%s\n' 'Refusing to stop agent:'  "$3" >&2
         exit 1
     fi
    }
+      # Never remove the external SSH_AUTH_SOCK
+    assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
+      # Never kill the external SSH_AGENT_PID
+    assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
+)
 
    kill_agent() (
       set_env
@@ -94,12 +100,14 @@ set_env
    )
 
    confirm_kill() {
-   if kill -0 "$GIT_SSH_AGENT_PID" 2>/dev/null; then
+   find_git_agent_pid pid "${GIT_SSH_AGENT_PID}" 2>/dev/null 2>&1
+   if [ "$?" = "1" ] ; then
        printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$GIT_SSH_AGENT_PID" >&2
    else
    unset GIT_SSH_AGENT_PID;
    fi
    }
+   cleanup() (
    cleanup_socket() { (
        socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
        ); unset GIT_SSH_AUTH_SOCK
@@ -108,15 +116,11 @@ set_env
        pidfile_exists && rm -f "$PIDFILE"
        ); unset PIDFILE
    }   
-      # Never remove the external SSH_AUTH_SOCK
-assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
-      # Never kill the external SSH_AGENT_PID
-assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
-
-kill_agent
-confirm_kill
-cleanup_socket
-cleanup_pidfile
+   )
+   run_checks
+   kill_agent
+   confirm_kill
+   cleanup 
 }
 
     # "$@" from main "$@" is handled strictly here:
