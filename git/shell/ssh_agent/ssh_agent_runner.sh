@@ -89,14 +89,21 @@ dispatch() (
 git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"; ); }
 
 ### Shutdown/Cleanup
+
+          cleanup_socket() { (
+             socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
+            ); export HAS_SOCKET=0;
+         }   
+          cleanup_pidfile() { (
+             pidfile_exists && rm -f "$PIDFILE"
+            ); export HAS_PIDFILE=0;
+         }
+
+
 git_agent_stop() { set_env; 
    # Safety checks:
 run_checks() (
-   assert_not_equal() {
-    if [ -n "$1" ] && [ "$2" = "$1" ]; then
-        printf '%s\n\t%s\n' 'Refusing to stop agent:'  "$3" >&2
-        exit 1; fi; 
-    }
+   assert_not_equal() { if [ -n "$1" ] && [ "$2" = "$1" ]; then; printf '%s\n\t%s\n' 'Refusing to stop agent:' "$3" >&2; exit 1; fi; }
       # Never remove the external SSH_AUTH_SOCK
     assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
       # Never kill the external SSH_AGENT_PID
@@ -111,17 +118,7 @@ run_checks() (
          else unset GIT_SSH_AGENT_PID; fi
      }
    
-   cleanup() (
-     cleanup_socket() { (
-       socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}"
-       ); unset GIT_SSH_AUTH_SOCK
-         }   
-          cleanup_pidfile() { (
-          pidfile_exists && rm -f "$PIDFILE"
-         ); unset PIDFILE
-       }
-      cleanup_socket; cleanup_pidfile
-     )
+   cleanup() ( cleanup_socket && unset GIT_SSH_AUTH_SOCK; cleanup_pidfile && unset PIDFILE; )
     run_checks && kill_agent && confirm_kill && cleanup 
   }
   
