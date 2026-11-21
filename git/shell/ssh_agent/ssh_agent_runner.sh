@@ -21,7 +21,7 @@ select() (
         *)      printf 'Usage: %s {start|stop|status} [args...]\n' "${0##*/}" >&2; exit 1 ;;
     esac
 )
-select "$@"
+
 
 
 
@@ -59,7 +59,6 @@ select "$@"
 socket_exists && test_agent_process
 
 find_git_agent_pid() (
-
     # Usage:
       # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
       # find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
@@ -92,16 +91,14 @@ awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
 )
 
 ### Shutdown/Cleanup
-git_agent_stop() {
-set_env
+git_agent_stop() { set_env; 
    # Safety checks:
 run_checks() (
    assert_not_equal() {
     if [ -n "$1" ] && [ "$2" = "$1" ]; then
         printf '%s\n\t%s\n' 'Refusing to stop agent:'  "$3" >&2
-        exit 1
-    fi
-   }
+        exit 1; fi; 
+    }
       # Never remove the external SSH_AUTH_SOCK
     assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK'
       # Never kill the external SSH_AGENT_PID
@@ -128,13 +125,10 @@ run_checks() (
          ); unset PIDFILE
        }
       cleanup_socket && cleanup_pidfile
-   )
-   
-   run_checks
-   kill_agent
-   confirm_kill
-   cleanup 
-}
+     )
+    run_checks && kill_agent && confirm_kill && cleanup 
+  }
+select "$@"
 )
 
 main "$@"
