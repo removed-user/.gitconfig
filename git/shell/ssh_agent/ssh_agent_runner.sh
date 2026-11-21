@@ -65,6 +65,7 @@ dispatch() (
       # find_git_agent_pid any "$PID"            -> Either: Match any process with the exact command
       mode="${1:-pid}"
       expected_pid="${2:-}"
+      # intentional spaces below (because of argv formatting)
       target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
 
       ps -eo pid=,args= | awk -v mode="$mode" -v expected_pid="$expected_pid" -v target_cmd="$target_cmd" '
@@ -72,7 +73,7 @@ dispatch() (
           pid = $1
           sub(/^[ \t]*[0-9]+[ \t]+/, "")
 
-            pid_match = (expected_pid != "" && pid == expected_pid)
+            pid_match = (expected_pid != "" && pid == expectpidpid)
             cmd_match = ($0 == target_cmd)
         
        if (mode == "pid" && pid_match) { print "PID:" pid }
