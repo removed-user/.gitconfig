@@ -22,9 +22,6 @@ select() (
     esac
 )
 
-
-
-
  ## Get/Set Environment + PID
   set_env() {
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
@@ -41,8 +38,15 @@ select() (
      SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
      ssh-agent "$@"
     )
-    
-# Check Status of the/any present agent
+
+    git_agent_status() { set_env;
+    status() ( if $1; then printf '%s\n' $2; fi; )
+    status pidfile_exists "Found: $PIDFILE"
+    status socket_exists  "Found: "$GIT_SSH_AUTH_SOCK""
+    get_pid 
+    status (find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
+     }
+      # Check Status of the/any present agent
     test_agent_process() {
     KEYS_LOADED=0
     STALE_SOCKET=0
@@ -54,32 +58,32 @@ select() (
         2) STALE_SOCKET=1; return 0 ;;
         *) return 1 ;;
     esac
-}
 
 socket_exists && test_agent_process
-
-find_git_agent_pid() (
+ 
+   find_git_agent_pid() (
     # Usage:
       # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
       # find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
       # find_git_agent_pid any "$PID"            -> Strict check: require both PID and exact command
-    mode="${1:-pid}"
-    expected_pid="${2:-}"
-    target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
+      mode="${1:-pid}"
+      expected_pid="${2:-}"
+      target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
 
-    ps -eo pid=,args= | awk -v mode="$mode" -v expected_pid="$expected_pid" -v target_cmd="$target_cmd" '
-    /[s]sh-agent/ {
-        pid = $1
-        sub(/^[ \t]*[0-9]+[ \t]+/, "")
+      ps -eo pid=,args= | awk -v mode="$mode" -v expected_pid="$expected_pid" -v target_cmd="$target_cmd" '
+         /[s]sh-agent/ {
+          pid = $1
+          sub(/^[ \t]*[0-9]+[ \t]+/, "")
 
-        pid_match = (expected_pid != "" && pid == expected_pid)
-        cmd_match = ($0 == target_cmd)
+            pid_match = (expected_pid != "" && pid == expected_pid)
+            cmd_match = ($0 == target_cmd)
         
-    if (mode == "pid" && pid_match) { print "PID:" pid }
-      else if (mode == "cmd" && cmd_match) { print "CMD:" pid }
-        else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
-    }'
-)
+       if (mode == "pid" && pid_match) { print "PID:" pid }
+         else if (mode == "cmd" && cmd_match) { print "CMD:" pid }
+           else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
+       }'
+     )
+}
 
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
