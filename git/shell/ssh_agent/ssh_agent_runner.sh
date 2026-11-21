@@ -124,7 +124,7 @@ run_checks() (
 }
 
     # "$@" from main "$@" is handled strictly here:
-    case "${1:-}" in
+    case "${1:-}" in "$@"
         start)  git_agent_start ;;
         stop)   git_agent_stop ;;
         status) git_agent_status ;;
