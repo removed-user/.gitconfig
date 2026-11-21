@@ -18,18 +18,18 @@
     [-d]: Delete listed identities from ssh-agent
          (Use `-` for `stdin`)
 
-#### Allowed Providers
-
-    [-S]: Allowed Providers (fido Auth)
-    
-    [-s]: Allowed Providers (pkcs#11 libraries)
-
 #### Hosts
 
     [-H]: Known Hosts Files
         (1+ invocations:ex:`-H 1 -H 2`)
 
     [-h]: Destination Constraint
+
+#### Allowed Providers
+
+    [-S]: Allowed Providers (fido Auth)
+    
+    [-s]: Allowed Providers (pkcs#11 libraries)
 
 #### Agent Locking
 
