@@ -54,6 +54,18 @@ git_agent_status() {
 }
 
 awk_snippet() (
+    target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
+    ps -eo pid=,args= | awk -v target_cmd="$target_cmd" '
+    /[s]sh-agent/ {
+        pid = $1
+        sub(/^[ \t]*[0-9]+[ \t]+/, "")
+        if ($0 == target_cmd) {
+            print "MATCH:" pid " " $0
+        }
+    }'
+)
+
+awk_snippet() (
 target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
 ps -eo pid,args | awk -v target_cmd="${target_cmd}" '
 /[s]sh-agent/ {
