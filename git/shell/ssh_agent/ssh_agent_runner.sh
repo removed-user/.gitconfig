@@ -12,7 +12,7 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
 select() (
-    cmd="${1:-status}"
+    cmd="${1:-}"
     [ $# -gt 0 ] && shift
     case "$cmd" in
         start)  git_agent_start "$@" ;;
