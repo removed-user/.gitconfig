@@ -117,7 +117,7 @@ run_checks() (
          else unset GIT_SSH_AGENT_PID; fi
      }
    
-   cleanup() ( cleanup_socket && unset GIT_SSH_AUTH_SOCK; cleanup_pidfile && unset PIDFILE; )
+   cleanup() { cleanup_socket && unset GIT_SSH_AUTH_SOCK; cleanup_pidfile && unset PIDFILE; }
     run_checks && kill_agent && confirm_kill && cleanup 
   }
   
