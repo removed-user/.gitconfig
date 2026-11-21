@@ -39,13 +39,14 @@ select() (
      ssh-agent "$@"
     )
 
-    git_agent_status() { set_env;
-    status() ( if $1; then printf '%s\n' $2; fi; )
-    status pidfile_exists "Found: $PIDFILE"
-    status socket_exists  "Found: "$GIT_SSH_AUTH_SOCK""
-    get_pid 
+#    git_agent_status() { set_env;
+#    status() ( if $1; then printf '%s\n' $2; fi; )
+#    status pidfile_exists "Found: $PIDFILE"
+#    status socket_exists  "Found: "$GIT_SSH_AUTH_SOCK""
+#    get_pid 
     #status (find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
-     }
+#     }
+
       # Check Status of the/any present agent
     test_agent_process() {
     KEYS_LOADED=0
@@ -88,10 +89,9 @@ socket_exists && test_agent_process
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
 git_agent_start() (
-set_env
-git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" |\
-awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
-   #   sed -n 2p |\
+   set_env
+    git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" |\
+   awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
 )
 
 ### Shutdown/Cleanup
@@ -132,6 +132,7 @@ run_checks() (
      )
     run_checks && kill_agent && confirm_kill && cleanup 
   }
+  
 select "$@"
 )
 
