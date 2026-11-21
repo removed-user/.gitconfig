@@ -45,13 +45,12 @@ dispatch() (
 
       # Check Status of the/any present agent
     test_agent_process() {
-    RUNNING=0; KEYS_LOADED=0; STALE_SOCKET=0
-    set_env || return 1
-    ssh-add -l >/dev/null 2>&1
+    RUNNING=0; KEYS_LOADED=0; set_env || return 1
+    git_add -l >/dev/null 2>&1
     case $? in
         0) RUNNING=1; KEYS_LOADED=1; return 0 ;;
         1) RUNNING=1; KEYS_LOADED=0; return 0 ;;
-        2) RUNNING=0; STALE_SOCKET=1; return 0 ;;
+        2) RUNNING=0; return 0 ;;
         *) return 1 ;;
     esac
    }
