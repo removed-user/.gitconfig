@@ -51,7 +51,7 @@ socket_exists && test_agent_process
 #   find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
 #   find_git_agent_pid both "$PID"           -> Strict check: require both PID and exact command
 find_git_agent_pid() (
-    mode="${1:-both}"
+    mode="${1:-pid}"
     expected_pid="${2:-}"
     target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
 
