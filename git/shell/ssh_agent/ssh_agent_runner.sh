@@ -69,19 +69,6 @@ find_git_agent_pid() (
     }'
 )
 
-#find_git_agent_pid() (
-#    target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
-#    ps -eo pid=,args= | awk -v target_cmd="$target_cmd" '
-#    /[s]sh-agent/ {
-#        pid = $1
-#        sub(/^[ \t]*[0-9]+[ \t]+/, "")
-        # " " $0
-#        if ($0 == target_cmd) {
-#            print pid
-#        }
-#    }'
-#)
-
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
 git_agent_start() (
