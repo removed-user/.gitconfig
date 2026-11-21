@@ -49,7 +49,7 @@ socket_exists && test_agent_process
 # Usage:
 #   find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
 #   find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
-#   find_git_agent_pid both "$PID"           -> Strict check: require both PID and exact command
+#   find_git_agent_pid any "$PID"           -> Strict check: require both PID and exact command
 find_git_agent_pid() (
     mode="${1:-pid}"
     expected_pid="${2:-}"
@@ -62,35 +62,25 @@ find_git_agent_pid() (
 
         pid_match = (expected_pid != "" && pid == expected_pid)
         cmd_match = ($0 == target_cmd)
-
-    if (mode == "pid" && pid_match) {
-                print "PID:" pid
-     } else if (mode == "cmd" && cmd_match) {
-                print "CMD:" pid
-       } else if (mode == "any" && (pid_match || cmd_match)) {
-            if (pid_match && cmd_match) {
-                print "ANY:" pid
-            } else if (pid_match) {
-                print "ANY:" pid
-            } else {
-                print "ANY:" pid
-            }
-        }
+        
+    if (mode == "pid" && pid_match) { print "PID:" pid }
+      else if (mode == "cmd" && cmd_match) { print "CMD:" pid }
+        else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
     }'
 )
 
-find_git_agent_pid() (
-    target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
-    ps -eo pid=,args= | awk -v target_cmd="$target_cmd" '
-    /[s]sh-agent/ {
-        pid = $1
-        sub(/^[ \t]*[0-9]+[ \t]+/, "")
+#find_git_agent_pid() (
+#    target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
+#    ps -eo pid=,args= | awk -v target_cmd="$target_cmd" '
+#    /[s]sh-agent/ {
+#        pid = $1
+#        sub(/^[ \t]*[0-9]+[ \t]+/, "")
         # " " $0
-        if ($0 == target_cmd) {
-            print pid
-        }
-    }'
-)
+#        if ($0 == target_cmd) {
+#            print pid
+#        }
+#    }'
+#)
 
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
