@@ -6,8 +6,9 @@ PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
 EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 
-socket_exists() { [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1; }
-pidfile_exists() { [ -r "$PIDFILE" ] && HAS_PIDFILE=1; }
+socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1; [ "$HAS_SOCKET" -eq 1 ]; }
+pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1; [ "$HAS_PIDFILE" -eq 1 ]; }
+
 get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
