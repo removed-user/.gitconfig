@@ -82,7 +82,7 @@ dispatch() (
 
   ### Wrapper Inject env into ssh-agent on every call
    git_agent() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; ); }
-   
+   git_add() { ( set_env; ssh-add -H "/home/user/.ssh/known_hosts/known_hosts-github" -H "/home/user/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
 git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"; ); }
