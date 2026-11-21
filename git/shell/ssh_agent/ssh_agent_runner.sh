@@ -26,8 +26,7 @@ dispatch() (
  ## Get/Set Environment + PID
   set_env() {
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
-    git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
-    export GIT_SSH_AGENT_PID SSH_AGENT_PID
+    git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
     export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
     export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
