@@ -79,7 +79,6 @@ dispatch() (
            else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
        }'
      )
-}
 
   ### Wrapper Inject env into ssh-agent on every call
    git_agent() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; ); }
