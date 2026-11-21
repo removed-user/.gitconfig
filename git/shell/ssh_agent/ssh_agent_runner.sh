@@ -31,8 +31,7 @@ dispatch() (
     export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
 
-  ### Wrapper Inject env into ssh-agent on every call
-   git_agent() ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; )
+
 
 #    git_agent_status() { set_env;
 #    status() ( if $1; then printf '%s\n' $2; fi; )
@@ -82,6 +81,9 @@ dispatch() (
      )
 }
 
+  ### Wrapper Inject env into ssh-agent on every call
+   git_agent() ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; )
+   
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
 git_agent_start() (
