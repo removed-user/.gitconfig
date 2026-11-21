@@ -11,7 +11,7 @@ pidfile_exists() { [ -r "$PIDFILE" ]; }
 get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
-select() (
+dispatch() (
     cmd="${1:-}"
     [ $# -gt 0 ] && shift
     case "$cmd" in
@@ -131,7 +131,7 @@ run_checks() (
     run_checks && kill_agent && confirm_kill && cleanup 
   }
   
-select "$@"
+dispatch "$@"
 )
 
 main "$@"
