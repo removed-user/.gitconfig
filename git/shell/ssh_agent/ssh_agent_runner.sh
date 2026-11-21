@@ -82,15 +82,11 @@ dispatch() (
 }
 
   ### Wrapper Inject env into ssh-agent on every call
-   git_agent() ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; )
+   git_agent() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; ); }
    
 ### Startup 
 #### Environment set and injected + Create clean PIDFILE
-git_agent_start() (
-   set_env
-    git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" |\
-   awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"
-)
+git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"; ); }
 
 ### Shutdown/Cleanup
 git_agent_stop() { set_env; 
@@ -107,7 +103,7 @@ run_checks() (
     assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'
 )
 
-   kill_agent() (  set_env; git_agent -k >/dev/null 2>&1; )
+   kill_agent() { (  set_env; git_agent -k >/dev/null 2>&1; ); }
 
    confirm_kill() {
     if [ -n "$(find_git_agent_pid pid "${GIT_SSH_AGENT_PID}")" ]; then
