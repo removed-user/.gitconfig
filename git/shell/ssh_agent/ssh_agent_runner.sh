@@ -32,19 +32,15 @@ dispatch() (
    }
 
   ### Wrapper Inject env into ssh-agent on every call
-   git_agent() (
-     set_env
-     SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
-     SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
-     ssh-agent "$@"
-    )
+   git_agent() ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-agent "$@"; )
 
 #    git_agent_status() { set_env;
 #    status() ( if $1; then printf '%s\n' $2; fi; )
 #    status pidfile_exists "Found: $PIDFILE"
 #    status socket_exists  "Found: "$GIT_SSH_AUTH_SOCK""
 #    get_pid 
-    #status (find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
+
+#status (find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
 #     }
 
       # Check Status of the/any present agent
