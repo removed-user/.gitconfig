@@ -59,8 +59,8 @@ select() (
         2) STALE_SOCKET=1; return 0 ;;
         *) return 1 ;;
     esac
-
-socket_exists && test_agent_process
+   }
+    socket_exists && test_agent_process
  
    find_git_agent_pid() (
     # Usage:
