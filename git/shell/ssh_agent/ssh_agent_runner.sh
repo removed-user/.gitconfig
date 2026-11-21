@@ -12,23 +12,24 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
 
-## Get/Set Environment + PID
-set_env() {
-SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
-git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
-export GIT_SSH_AGENT_PID SSH_AGENT_PID
-export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
-export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
-}
+ ## Get/Set Environment + PID
+  set_env() {
+    SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
+    git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" \
+    export GIT_SSH_AGENT_PID SSH_AGENT_PID
+    export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
+    export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
+   }
 
-### Wrapper Inject env into ssh-agent on every call
-git_agent() (
-set_env
-SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
-SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
-ssh-agent -P '' "$@"
-)
-
+  ### Wrapper Inject env into ssh-agent on every call
+   git_agent() (
+     set_env
+     SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" \
+     SSH_AGENT_PID="$GIT_SSH_AGENT_PID" \
+     ssh-agent -P '' "$@"
+    )
+    
+# Check Status of the/any present agent
     test_agent_process() {
     KEYS_LOADED=0
     STALE_SOCKET=0
@@ -43,8 +44,6 @@ ssh-agent -P '' "$@"
 }
 
 socket_exists && test_agent_process
-
-#ps -eo pid,args | awk '/[s]sh-agent/ {print $0}'
 
 # Usage:
 #   find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
