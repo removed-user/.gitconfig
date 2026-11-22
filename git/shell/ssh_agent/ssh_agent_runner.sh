@@ -1,14 +1,13 @@
 #!/bin/dash
 main() (
-
-GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
-
-PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
-EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
-EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
-
  ## Get/Set Environment + PID
   set_env() {
+      set_once() { RAN_SET_ONCE=1;
+         GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
+         PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
+         EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
+         EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}";
+         }; [ -z "${RAN_SET_ONCE}" ] && set_once || true
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
     [ -n "${GIT_SSH_AGENT_PID}" ] && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
     export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
@@ -108,6 +107,8 @@ dispatch() { (
     esac
 ); }
 
+set_env
+status
 dispatch "$@"
 )
 
