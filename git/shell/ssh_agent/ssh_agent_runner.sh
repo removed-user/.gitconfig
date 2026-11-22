@@ -97,6 +97,13 @@ run_checks() (
        printf 'Warning: ssh-agent (PID %s) is still running after SIGTERM\n' "$GIT_SSH_AGENT_PID" >&2
          else unset GIT_SSH_AGENT_PID; fi
      }
+confirm_kill() {
+   [ -n "${GIT_SSH_AGENT_PID:-}" ] || return 0; i=0
+ while [ "$i" -lt 10 ]; do; if [ -z "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ]; then unset GIT_SSH_AGENT_PID SSH_AGENT_PID;  return 0;  fi; sleep 0.1; i=$((i + 1)); done; printf 'Error: ssh-agent (PID: %s) failed to terminate within 1s\n' "$GIT_SSH_AGENT_PID" >&2; return 1 }
+
+
+
+     
    
    cleanup() { cleanup_socket && unset GIT_SSH_AUTH_SOCK; cleanup_pidfile && unset PIDFILE; }
     run_checks && kill_agent && confirm_kill && cleanup 
