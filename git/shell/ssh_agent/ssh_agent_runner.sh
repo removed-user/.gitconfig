@@ -8,8 +8,8 @@ CLR='\033[0m'
 
 cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${@}"
    case $cmd in
-   msg) printf '%b%s%b: %s\n' "${GREEN}" 'STATUS' "${CLR}" "${MESSAGE}";;
-   err) printf '%b%s%b: %s\n' "${RED}" 'ERROR:' "${CLR}" "${MESSAGE}";;
+   msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}";;
+   err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}";;
 esac 
 )
 err() ( message err "$@"; )
