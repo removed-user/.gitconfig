@@ -103,7 +103,7 @@ dispatch() { (
     case "$cmd" in
         start)  git_agent_start "$@" ;;
         stop)   git_agent_stop "$@" ;;
-        *)      printf 'Usage: %s {start|stop|status} [args...]\n' "${0##*/}" >&2; exit 1 ;;
+        *)      printf 'Usage: %s {start|stop}\n' "${0##*/}" >&2; exit 1 ;;
     esac
 ); }
 
