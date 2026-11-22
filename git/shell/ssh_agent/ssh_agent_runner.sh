@@ -21,22 +21,6 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
     export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
 
-
-
-#    git_agent_status() { set_env;
-#    status() ( if $1; then printf '%s\n' $2; fi; )
-#    status pidfile_exists "Found: $PIDFILE"
-#    status socket_exists  "Found: "$GIT_SSH_AUTH_SOCK""
-#    get_pid 
-
-# find_git_agent_pid pid "$GIT_SSH_AGENT_PID") 
-#     }
-
-      # Check Status of a "git_agent" 
-
-   
-#     socket_exists && test_agent_process
- 
    find_git_agent_pid() (
     # Usage:
       # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
