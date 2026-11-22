@@ -32,9 +32,7 @@ get_pid() {
                 [0-9]*) VALID_PID=1 ;;
             esac
             ;;
-        *)
-            return 1
-            ;;
+        *) return 1 ;;
     esac
 }
 
