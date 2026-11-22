@@ -38,7 +38,7 @@ status() {
    
    pid_status() {
         [ "$PID_SET" -eq 1 ] || return 1
-         validate_pid() { VALID_PID=0 STALE_PID=0; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && VALID_PID=1 STALE_PID=0 || STALE_PID=1 VALID_PID=0; }
+         validate_pid() { export VALID_PID=0 STALE_PID=0; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && export VALID_PID=1 STALE_PID=0 || export STALE_PID=1 VALID_PID=0; }
          check_orphans() { ORPHAN=0; try_find; ORPHAN="${PID_SET}"; }
 
     case "${PID_SOURCE:-}" in
