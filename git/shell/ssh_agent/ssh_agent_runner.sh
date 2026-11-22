@@ -21,8 +21,9 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
     export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
 
+status {
    find_git_agent_pid() { (
-    # Usage:
+     # Usage:
       # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
       # find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
       # find_git_agent_pid any "$PID"            -> Either: Match any process with the exact command
@@ -31,20 +32,19 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
       # intentional spaces below (because of argv formatting)
       target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
 
-      ps -eo pid=,args= | awk -v mode="$mode" -v expected_pid="$expected_pid" -v target_cmd="$target_cmd" '
-         /[s]sh-agent/ {
-          pid = $1
-          sub(/^[ \t]*[0-9]+[ \t]+/, "")
+        ps -eo pid=,args= | awk -v mode="$mode" -v expected_pid="$expected_pid" -v target_cmd="$target_cmd" '
+           /[s]sh-agent/ {
+            pid = $1
+            sub(/^[ \t]*[0-9]+[ \t]+/, "")
 
             pid_match = (expected_pid != "" && pid == expected_pid)
             cmd_match = ($0 == target_cmd)
         
-       if (mode == "pid" && pid_match) { print "PID:" pid }
-         else if (mode == "cmd" && cmd_match) { print "CMD:" pid }
-           else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
+         if (mode == "pid" && pid_match) { print "PID:" pid }
+           else if (mode == "cmd" && cmd_match) { print "CMD:" pid }
+             else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
        }'
      ); }
-
      test_agent_process() {
        RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1
        case $? in
@@ -54,7 +54,7 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
            *) return 1 ;;
        esac
       }
-
+}
 
 ## Startup and Wrappers
   ## Generic: Inject env into ssh-* on every call; for testing/checking states
