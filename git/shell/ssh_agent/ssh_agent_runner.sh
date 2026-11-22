@@ -1,11 +1,19 @@
 #!/bin/dash
 main() (
-
+message() (
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-ORANGE='\033[0;33m' 
+#ORANGE='\033[0;33m' 
 CLR='\033[0m'
 
+cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${@}"
+   case $cmd in
+   msg) printf '%b%s%b: %s\n' "${GREEN}" 'STATUS' "${CLR}" "${MESSAGE}";;
+   err) printf '%b%s%b: %s\n' "${RED}" 'ERROR:' "${CLR}" "${MESSAGE}";;
+esac 
+)
+err() ( message err "$@"; )
+err() ( message msg "$@"; )
 
  ## Get/Set Environment + PID
   set_env() {
