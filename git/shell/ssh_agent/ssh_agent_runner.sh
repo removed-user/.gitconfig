@@ -17,19 +17,20 @@ EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 
 status() {
    socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
-   pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
 
    get_pid() {
+      pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
       pid_set() { case "${GIT_SSH_AGENT_PID:-}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID PID_SOURCE; PID_SET=0 ;; [1-9]*) PID_SET=1 PID_SOURCE="${1:-}";; esac; }
       try_read_pidfile() { GIT_SSH_AGENT_PID=""; case "$HAS_PIDFILE" in 0) PID_SET=0 ;; 1) read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true ;; *) return 1 ;; esac; pid_set "pidfile"; }
       try_find() {  GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set "found"; }
-      pidfile_exists
-      try_read_pidfile
-      [ "$PID_SET" -eq 1 ] || try_find || true
+    pidfile_exists
+    try_read_pidfile
+    [ "$PID_SET" -eq 1 ] || check_orphans || true
+    [ "$PID_SET" -eq 1 ] || RUNNING=0
    } 
    
    pid_status() {
-   [ "$PID_SET" -eq 1 ] || return 1
+        [ "$PID_SET" -eq 1 ] || return 1
          validate_pid() { VALID_PID=0 STALE_PID=0; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && VALID_PID=1 STALE_PID=0 || STALE_PID=1 VALID_PID=0; }
          check_orphans() { ORPHAN=0; try_find; ORPHAN="${PID_SET}"; }
 
