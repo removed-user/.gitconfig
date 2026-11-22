@@ -89,7 +89,7 @@ run_checks() (
     run_checks && kill_agent && confirm_kill && cleanup 
   }
 
-dispatch() (
+dispatch() { (
     cmd="${1:-}"
     [ $# -gt 0 ] && shift
     case "$cmd" in
@@ -100,6 +100,6 @@ dispatch() (
 )
 
 dispatch "$@"
-)
+); }
 
 main "$@"
