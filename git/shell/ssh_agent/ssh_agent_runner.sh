@@ -8,11 +8,6 @@ PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
 EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 
-socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
-pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
-
-get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
-
  ## Get/Set Environment + PID
   set_env() {
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
@@ -22,6 +17,10 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
    }
 
 status() {
+   socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
+   pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
+   get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
+
    find_git_agent_pid() { (
      # Usage:
       # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
