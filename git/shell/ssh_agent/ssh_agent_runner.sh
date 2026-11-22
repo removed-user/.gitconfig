@@ -20,16 +20,13 @@ status() {
    pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
 
    get_pid() {
-      read_pidfile() {
-       GIT_SSH_AGENT_PID=""; 
-            validate_pid() { case "${GIT_SSH_AGENT_PID}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID; VALID_PID=0 ;; [1-9]*) VALID_PID=1 ;; esac; }
-
+      validate_pid() { case "${GIT_SSH_AGENT_PID}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID; VALID_PID=0 ;; [1-9]*) VALID_PID=1 ;; esac; }
+      try_read_pidfile() { GIT_SSH_AGENT_PID=""; 
     case "$HAS_PIDFILE" in
         0) VALID_PID=0;;
-        1) read -r GIT_SSH_AGENT_PID < "$PIDFILE"; validate_pid
-        *) return 1 ;;
-    esac
-   }
+        1) read -r GIT_SSH_AGENT_PID < "$PIDFILE"
+        *) return 1 ;; esac; }
+   try_read_pidfile; validate_pid
 }
 
 
