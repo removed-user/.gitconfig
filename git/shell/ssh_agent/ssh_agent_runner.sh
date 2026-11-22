@@ -24,20 +24,30 @@ status() {
       #validate_pid() { case "${GIT_SSH_AGENT_PID}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID; VALID_PID=0 ;; [1-9]*) VALID_PID=1 ;; esac; }
       try_read_pidfile() { GIT_SSH_AGENT_PID=""; case "$HAS_PIDFILE" in 0) PID_SET=0 ;; 1) read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true ;; *) return 1 ;; esac; pid_set "pidfile"; }
       try_find() {  GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set "found"; }
-      
-      
 
-
-
-   try_read_pidfile
 pid_status() {
          validate_pid() { VALID_PID=0 STALE_PID=0; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && VALID_PID=1 STALE_PID=0 || STALE_PID=1 VALID_PID=0; }
          check_orphans() { ORPHAN=0; try_find; ORPHAN="${PID_SET}"; }
-   case "${PID_SET}" in
-         1) ORPHAN=0; validate_pid ;;
-        # No valid pidfile — check if an orphan is running anyway
-         0) VALID_PID=0; STALE_PID=0; check_orphans ;;
-      esac
+
+    case "${PID_SOURCE:-}" in
+        pidfile)
+            validate_pid
+            # If the pidfile was stale, fall back to searching for an orphan
+            if [ "$STALE_PID" -eq 1 ]; then
+                try_find
+                [ "$PID_SET" -eq 1 ] && ORPHAN=1
+            fi
+            ;;
+        found)
+            [ "$PID_SET" -eq 1 ] && ORPHAN=1
+            ;;
+        '')
+            # Nothing read from pidfile — search for an orphan
+            try_find
+            [ "$PID_SET" -eq 1 ] && ORPHAN=1
+            ;;
+    esac
+}
    }
                
 }
