@@ -11,17 +11,6 @@ pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1; [ "$HAS_PI
 
 get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 
-dispatch() (
-    cmd="${1:-}"
-    [ $# -gt 0 ] && shift
-    case "$cmd" in
-        start)  git_agent_start "$@" ;;
-        stop)   git_agent_stop "$@" ;;
-        status) git_agent_status "$@" ;;
-        *)      printf 'Usage: %s {start|stop|status} [args...]\n' "${0##*/}" >&2; exit 1 ;;
-    esac
-)
-
  ## Get/Set Environment + PID
   set_env() {
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
@@ -112,7 +101,18 @@ run_checks() (
    cleanup() { cleanup_socket && unset GIT_SSH_AUTH_SOCK; cleanup_pidfile && unset PIDFILE; }
     run_checks && kill_agent && confirm_kill && cleanup 
   }
-  
+
+dispatch() (
+    cmd="${1:-}"
+    [ $# -gt 0 ] && shift
+    case "$cmd" in
+        start)  git_agent_start "$@" ;;
+        stop)   git_agent_stop "$@" ;;
+        status) git_agent_status "$@" ;;
+        *)      printf 'Usage: %s {start|stop|status} [args...]\n' "${0##*/}" >&2; exit 1 ;;
+    esac
+)
+
 dispatch "$@"
 )
 
