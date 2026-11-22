@@ -32,7 +32,7 @@ status() {
       try_find() {  GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set "found"; }
     pidfile_exists
     try_read_pidfile
-    [ "$PID_SET" -eq 1 ] || check_orphans || true
+    [ "$PID_SET" -eq 1 ] || try_find || true
     [ "$PID_SET" -eq 1 ] || RUNNING=0
    } 
    
