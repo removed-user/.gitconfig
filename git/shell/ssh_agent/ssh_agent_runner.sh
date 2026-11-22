@@ -25,10 +25,11 @@ status() {
 get_pid() {
     GIT_SSH_AGENT_PID=""; pidfile_exists
     case "$HAS_PIDFILE" in
-        1)
-            read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true
+        0) VALID_PID=0;;
+        1) read -r GIT_SSH_AGENT_PID < "$PIDFILE"
             case "$GIT_SSH_AGENT_PID" in
-                ''|*[!0-9]*) GIT_SSH_AGENT_PID=""; return 1 ;;
+                ''|*[!0-9]*) unset GIT_SSH_AGENT_PID; VALID_PID=0 ;;
+                [0-9]) VALID_PID=1 ;;
             esac
             ;;
         *)
