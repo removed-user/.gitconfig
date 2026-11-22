@@ -2,6 +2,8 @@
 main() (
 
 GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
+GIT_SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}"
+
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
 EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
