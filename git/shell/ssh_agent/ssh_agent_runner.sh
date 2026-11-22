@@ -33,16 +33,7 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
 #     }
 
       # Check Status of a "git_agent" 
-    test_agent_process() {
-    RUNNING=0; KEYS_LOADED=0; set_env || return 1
-    git_add -l >/dev/null 2>&1
-    case $? in
-        0) RUNNING=1; KEYS_LOADED=1; return 0 ;;
-        1) RUNNING=1; KEYS_LOADED=0; return 0 ;;
-        2) RUNNING=0; return 0 ;;
-        *) return 1 ;;
-    esac
-   }
+
    
 #     socket_exists && test_agent_process
  
@@ -69,6 +60,16 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
            else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
        }'
      )
+
+     test_agent_process() {
+       RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1
+       case $? in
+           0) RUNNING=1; KEYS_LOADED=1; return 0 ;;
+           1) RUNNING=1; KEYS_LOADED=0; return 0 ;;
+           2) RUNNING=0; return 0 ;;
+           *) return 1 ;;
+       esac
+      }
 
 
 ## Startup and Wrappers
