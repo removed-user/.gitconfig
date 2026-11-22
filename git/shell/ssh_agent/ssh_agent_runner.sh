@@ -10,7 +10,6 @@ socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1; [ "
 pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1; [ "$HAS_PIDFILE" -eq 1 ]; }
 
 get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
-git_agent_pid_set() { [ -n "${GIT_SSH_AGENT_PID}" ]; }
 
 dispatch() (
     cmd="${1:-}"
@@ -26,7 +25,7 @@ dispatch() (
  ## Get/Set Environment + PID
   set_env() {
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
-    git_agent_pid_set && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
+    [ -n "${GIT_SSH_AGENT_PID}" ] && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
     export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
     export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
