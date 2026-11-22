@@ -29,7 +29,7 @@ get_pid() {
         1) read -r GIT_SSH_AGENT_PID < "$PIDFILE"
             case "$GIT_SSH_AGENT_PID" in
                 ''|*[!0-9]*) unset GIT_SSH_AGENT_PID; VALID_PID=0 ;;
-                [0-9]) VALID_PID=1 ;;
+                [0-9]*) VALID_PID=1 ;;
             esac
             ;;
         *)
