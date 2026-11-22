@@ -26,7 +26,7 @@ status() {
       try_find() { GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set; }
       
       
-      validate_pid() { VALID_PID=0; STALE_PID=0; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && VALID_PID=1; STALE_PID=0; || STALE_PID=1; VALID_PID=0; }
+      validate_pid() { VALID_PID=0 STALE_PID=0; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && VALID_PID=1 STALE_PID=0 || STALE_PID=1 VALID_PID=0; }
       check_orphans() { ORPHAN=0; try_find;  case "${PID_SET}" in 1) ORPHAN=1 ;; 0) ORPHAN=0; continue ;; esac; }
 
 
