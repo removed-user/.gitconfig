@@ -2,7 +2,6 @@
 main() (
 
 GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
-GIT_SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}"
 
 PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
 EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
@@ -19,7 +18,30 @@ EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}"
 status() {
    socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
    pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
-   get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
+
+   get_pid() {
+   pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE";    
+   }
+get_pid() {
+    GIT_SSH_AGENT_PID=""; pidfile_exists
+    case "$HAS_PIDFILE" in
+        1)
+            read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true
+            case "$GIT_SSH_AGENT_PID" in
+                ''|*[!0-9]*) GIT_SSH_AGENT_PID=""; return 1 ;;
+            esac
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+
+
+
+
+
 
    find_git_agent_pid() { (
      # Usage:
