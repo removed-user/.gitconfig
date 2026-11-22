@@ -46,7 +46,6 @@ status() {
            found) VALID_PID=0 STALE_PID=0 ORPHAN=1 ;;
               '') check_orphans ;;
     esac
-
 test_agent_process() {
        RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1
        case $? in
@@ -120,6 +119,11 @@ dispatch() { (
 set_env
 status
 dispatch "$@"
+# exec_ssh() ( 
+# unset PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE RUNNING
+#exec /usr/bin/ssh "$@" 
+# )
 )
 
 main "$@"
+GIT_SSH_COMMAND
