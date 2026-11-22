@@ -26,8 +26,7 @@ status() {
       # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
       # find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
       # find_git_agent_pid any "$PID"            -> Either: Match any process with the exact command
-      mode="${1:-pid}"
-      expected_pid="${2:-}"
+      mode="${1:-pid}"; expected_pid="${2:-}"
       # intentional spaces below (because of argv formatting)
       target_cmd="ssh-agent -P  -sa $GIT_SSH_AUTH_SOCK"
 
