@@ -22,8 +22,8 @@ status() {
    get_pid() {
       pid_set() { case "${GIT_SSH_AGENT_PID}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID; PID_SET=0 ;; [1-9]*) PID_SET=1 ;; esac; }
       #validate_pid() { case "${GIT_SSH_AGENT_PID}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID; VALID_PID=0 ;; [1-9]*) VALID_PID=1 ;; esac; }
-      try_read_pidfile() { GIT_SSH_AGENT_PID=""; case "$HAS_PIDFILE" in 0) PID_SET=0 ;; 1) read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true ;; *) return 1 ;; esac; pid_set; }
-      try_find() { GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set; }
+      try_read_pidfile() { GIT_SSH_AGENT_PID=""; PID_SOURCE=""; case "$HAS_PIDFILE" in 0) PID_SET=0 ;; 1) read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true && PID_SOURCE="pidfile" ;; *) return 1 ;; esac; pid_set; }
+      try_find() { PID_SOURCE=""; GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); PID_SOURCE="found"; pid_set; }
       
       
 
