@@ -1,5 +1,12 @@
 #!/bin/dash
 main() (
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m' 
+CLR='\033[0m'
+
+
  ## Get/Set Environment + PID
   set_env() {
       set_once() { RAN_SET_ONCE=1;
@@ -13,6 +20,7 @@ main() (
     export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
     export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
+
 
 status() {
    socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
