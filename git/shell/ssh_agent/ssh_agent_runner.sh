@@ -65,9 +65,9 @@ status() {
             pid_match = (expected_pid != "" && pid == expected_pid)
             cmd_match = ($0 == target_cmd)
         
-         if (mode == "pid" && pid_match) { print "PID:" pid }
-           else if (mode == "cmd" && cmd_match) { print "CMD:" pid }
-             else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
+         if (mode == "pid" && pid_match) { print "PID:" pid; exit }
+           else if (mode == "cmd" && cmd_match) { print "CMD:" pid; exit }
+             else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid; exit }
        }'
      ); }
      test_agent_process() {
