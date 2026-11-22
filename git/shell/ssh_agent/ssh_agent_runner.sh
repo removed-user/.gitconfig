@@ -21,7 +21,7 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
     export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
 
-   find_git_agent_pid() (
+   find_git_agent_pid() { (
     # Usage:
       # find_git_agent_pid cmd                   -> Goal B: find rogue/orphaned processes by exact command
       # find_git_agent_pid pid "$PID"            -> Goal A & C: verify pidfile PID or confirm kill
@@ -43,7 +43,7 @@ get_pid() { pidfile_exists && read -r GIT_SSH_AGENT_PID < "$PIDFILE"; }
          else if (mode == "cmd" && cmd_match) { print "CMD:" pid }
            else if (mode == "any" && (pid_match || cmd_match)) { print "ANY:" pid }
        }'
-     )
+     ); }
 
      test_agent_process() {
        RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1
