@@ -144,11 +144,6 @@ status
             start)
                 [ "$VALID_PID" = y ] && agent_status || true;
 
-                if [ "$HAS_SOCKET" = y ] && [ "$RUNNING" = n ]; then
-                    fx "Removing stale socket ($GIT_SSH_AUTH_SOCK)"
-                    cleanup_socket
-                fi
-
                 if [ "$RUNNING" = y ] && [ "$VALID_PID" = y ]; then
                     msg "ssh-agent already running (PID: $GIT_SSH_AGENT_PID, keys loaded: $KEYS_LOADED)"
                     return 0
@@ -172,12 +167,7 @@ status
                     msg "ssh-agent is already stopped"
                     return 0
                 fi
-
-                if [ "$ORPHAN" = y ]; then
-                    fx "Stopping orphaned ssh-agent (PID: $GIT_SSH_AGENT_PID)"
-                else
                     msg "Stopping ssh-agent (PID: $GIT_SSH_AGENT_PID)"
-                fi
 
                 git_agent_stop
                 status
@@ -187,10 +177,6 @@ status
                     err "Cleanup incomplete (RUNNING=$RUNNING, HAS_SOCKET=$HAS_SOCKET, HAS_PIDFILE=$HAS_PIDFILE)"
                     return 1
                 fi
-                ;;
-            *)
-                err "Invalid GOAL: '${GOAL:-}'"
-                return 1
                 ;;
         esac
     }
