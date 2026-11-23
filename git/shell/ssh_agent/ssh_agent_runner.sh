@@ -181,10 +181,6 @@ status
         esac
     }
 
-
-
-
-
 dispatch() { (
   cmd="${1:-}"; case "$cmd" in
   start|stop) GOAL="$cmd"; [ $# -gt 0 ] && shift; handle_state ;;
