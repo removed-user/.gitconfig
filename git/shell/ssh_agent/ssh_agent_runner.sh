@@ -143,9 +143,8 @@ git_agent_stop() { set_env;
 
         case "${GOAL}" in
             start)
-                [ "$VALID_PID" = y ] && agent_status || true;
-
-                if [ "$RUNNING" = y ] && [ "$VALID_PID" = y ]; then
+                if [ "$VALID_PID" = y ]; then 
+                agent_status || true;
                     msg "ssh-agent already running (PID: $GIT_SSH_AGENT_PID, keys loaded: $KEYS_LOADED)"
                     GOAL_REACHED=y
                     return 0
