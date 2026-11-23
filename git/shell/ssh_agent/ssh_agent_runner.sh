@@ -132,9 +132,10 @@ git_agent_stop() { set_env;
   }
 
     handle_state() {
-[ "$ORPHAN" = y ] && { err 'Found Orphan: '"${GIT_SSH_AGENT_PID}"; kill_agent && confirm_kill; fx "Killed it"; } || true; status
-[ "$STALE_SOCKET" = y ] && { err "Stale Socket"; cleanup_socket; fx "Deleted"; } || true; status
-[ "$STALE_PID" = y ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true; status
+[ "$ORPHAN" = y ]       && { err 'Found Orphan:   '"${GIT_SSH_AGENT_PID}"; run_checks && kill_agent && confirm_kill && fx "Killed it"; } && status || true
+[ "$STALE_SOCKET" = y ] && { err "Stale Socket";  cleanup_socket    && fx "Deleted"; } && status || true
+[ "$STALE_PID" = y ]    && { err "Stale Pidfile"; cleanup_pidfile   && fx "Deleted"; } && status || true
+
 
 
         case "${GOAL}" in
