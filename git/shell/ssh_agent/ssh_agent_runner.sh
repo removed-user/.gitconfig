@@ -178,28 +178,24 @@ git_agent_stop() { set_env;
         esac
     }
 
-dispatch() { ( case "${1:-}" in stop) GOAL=stop; shift ;; *) GOAL=start ;; esac; GOAL_REACHED=n handle_state; ); }
-
-dispatch2() { (
+dispatch() { (
   case "${1:-}" in
     stop) GOAL=stop; shift ;;
        *) GOAL=start ;;
   esac
 
-  GOAL_REACHED=n
-  attempts=0
-  until [ "$GOAL_REACHED" = y ]; do
-      attempts=$((attempts + 1))
-      if [ "$attempts" -gt 4 ]; then
-          err "Failed to reach goal '$GOAL' after 4 attempts"
-          exit 1
-      fi
+  GOAL_REACHED=n; attempts=0
+  until [ "$GOAL_REACHED" = y ]; do attempts=$((attempts + 1))
+      if [ "$attempts" -gt 4 ]; then err "Failed to '"${GOAL}"' after 4 attempts"; exit 1; fi
+      set_env
+      status
       handle_state || exit 1
   done
 
-  if [ "$GOAL" = start ]; then
-      [ "$KEYS_LOADED" = n ] && git_add_key
-      [ $# -gt 0 ] && exec_ssh "$@"
+  if [ "${GOAL}" = start ] && [ "${GOAL_REACHED}" = y ]; then
+    #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
+    #  [ $# -gt 0 ] && exec_ssh "$@"
+   msg 'Reached '"${GOAL}"' state'
   fi
 ); }
 
@@ -207,7 +203,7 @@ dispatch2() { (
 
 
 
-set_env; status; dispatch "$@"
+dispatch "$@"
 # exec_ssh() ( 
 # unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE#exec /usr/bin/ssh "$@" 
 # )
