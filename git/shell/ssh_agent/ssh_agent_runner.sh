@@ -34,6 +34,7 @@ fx() ( message fx "$@"; )
 
 
 status() {
+HAS_PIDFILE=n; HAS_SOCKET=n; PID_SET=n; VALID_PID=n; STALE_PID=n; ORPHAN=n;  RUNNING=n; KEYS_LOADED=n; STALE_SOCKET=n
       pidfile_exists() { HAS_PIDFILE=n; [ -r "$PIDFILE" ] && HAS_PIDFILE=y || HAS_PIDFILE=n; }
       socket_exists() { HAS_SOCKET=n; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=y || HAS_SOCKET=n ; }
 
