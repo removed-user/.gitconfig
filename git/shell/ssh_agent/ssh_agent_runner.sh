@@ -193,20 +193,18 @@ GOAL_REACHED=n; attempts=0
   done
 
   if [ "${GOAL}" = start ] && [ "${GOAL_REACHED}" = y ]; then
+#  git_add_key
+# exec_ssh() ( unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE
+# exec /usr/bin/ssh "$@" 
+)
     #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
     #  [ $# -gt 0 ] && exec_ssh "$@"
    msg 'Reached '"${GOAL}"' state'
   fi
 ); }
 
-
-
-
 RUN_SET_ONCE=y
 dispatch "$@"
-# exec_ssh() ( 
-# unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE#exec /usr/bin/ssh "$@" 
-# )
 )
 
 main "$@"
