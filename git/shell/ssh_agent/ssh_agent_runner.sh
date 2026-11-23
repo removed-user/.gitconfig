@@ -126,7 +126,7 @@ git_agent_stop() { set_env;
          # Never affect External ssh-agent(s) Socket ot Process
       run_checks() ( assert_not_equal() { if [ -n "$1" ] && [ "$2" = "$1" ]; then printf '%s\n\t%s\n' 'Refusing to stop agent:' "$3" >&2; exit 1; fi; }; assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK' ; assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'; )
       kill_agent() { (  set_env;git_add -D >/dev/null 2>&1 || true && git_agent -k >/dev/null 2>&1; ); }
-      confirm_kill() { [ -n "${GIT_SSH_AGENT_PID:-}" ] || PID_SET=n && return 0; i=0; while [ "$i" -lt 10 ]; do if [ -z "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ]; then unset GIT_SSH_AGENT_PID SSH_AGENT_PID; return 0;  fi; sleep 0.1; i=$((i + 1)); done; err 'ssh-agent (PID: '"${GIT_SSH_AGENT_PID}"') failed to terminate within 1s\n' ; return 1; }
+      confirm_kill() { [ -n "${GIT_SSH_AGENT_PID:-}" ] || { PID_SET=n && return 0 }; i=0; while [ "$i" -lt 10 ]; do if [ -z "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ]; then unset GIT_SSH_AGENT_PID SSH_AGENT_PID; return 0;  fi; sleep 0.1; i=$((i + 1)); done; err 'ssh-agent (PID: '"${GIT_SSH_AGENT_PID}"') failed to terminate within 1s\n' ; return 1; }
       cleanup() { cleanup_socket; cleanup_pidfile; }
    run_checks && kill_agent && confirm_kill && cleanup 
   }
