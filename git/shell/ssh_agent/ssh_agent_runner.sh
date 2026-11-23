@@ -126,26 +126,24 @@ git_agent_stop() { set_env;
          # Never affect External ssh-agent(s) Socket ot Process
       run_checks() ( assert_not_equal() { if [ -n "$1" ] && [ "$2" = "$1" ]; then printf '%s\n\t%s\n' 'Refusing to stop agent:' "$3" >&2; exit 1; fi; }; assert_not_equal "${EXTERNAL_AUTH_SOCK:-}" "${GIT_SSH_AUTH_SOCK}" 'Socket matches External SSH_AUTH_SOCK' ; assert_not_equal "${EXTERNAL_AGENT_PID:-}" "${GIT_SSH_AGENT_PID}" 'PID matches External SSH_AGENT_PID'; )
       kill_agent() { (  set_env;git_add -D >/dev/null 2>&1 || true && git_agent -k >/dev/null 2>&1; ); }
-      confirm_kill() { [ -n "${GIT_SSH_AGENT_PID:-}" ] || return 0; i=0; while [ "$i" -lt 10 ]; do if [ -z "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ]; then unset GIT_SSH_AGENT_PID SSH_AGENT_PID;  return 0;  fi; sleep 0.1; i=$((i + 1)); done; printf 'Error: ssh-agent (PID: %s) failed to terminate within 1s\n' "$GIT_SSH_AGENT_PID" >&2; return 1; }
-      cleanup() { cleanup_socket && unset GIT_SSH_AUTH_SOCK; cleanup_pidfile && unset PIDFILE; }
+      confirm_kill() { [ -n "${GIT_SSH_AGENT_PID:-}" ] || return 0; i=0; while [ "$i" -lt 10 ]; do if [ -z "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ]; then unset GIT_SSH_AGENT_PID SSH_AGENT_PID; return 0;  fi; sleep 0.1; i=$((i + 1)); done; err 'ssh-agent (PID: '"${GIT_SSH_AGENT_PID}"') failed to terminate within 1s\n' ; return 1; }
+      cleanup() { cleanup_socket; cleanup_pidfile && unset PIDFILE; }
    run_checks && kill_agent && confirm_kill && cleanup 
   }
 
     handle_state() {
-[ "$STALE_SOCKET" = y ]  && { err "Stale Socket"; cleanup_socket; fx "Deleted"; } || true
+[ "$STALE_SOCKET" = y ] && { err "Stale Socket"; cleanup_socket; fx "Deleted"; } || true
 [ "$STALE_PID" = y ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true
 [ "$ORPHAN" = y ] && { err 'Found Orphan: '"${GIT_SSH_AGENT_PID}"; kill_agent && confirm_kill; fx "Killed it"; } || true
-
-
-
-
 status
+
         case "${GOAL}" in
             start)
                 [ "$VALID_PID" = y ] && agent_status || true;
 
                 if [ "$RUNNING" = y ] && [ "$VALID_PID" = y ]; then
                     msg "ssh-agent already running (PID: $GIT_SSH_AGENT_PID, keys loaded: $KEYS_LOADED)"
+                    GOAL_REACHED=y
                     return 0
                 fi
 
@@ -161,21 +159,20 @@ status
                 ;;
 
             stop)
-                if [ "$RUNNING" = n ] && [ "$PID_SET" = n ]; then
-                    [ "$HAS_PIDFILE" = y ] && { fx "Cleaning leftover pidfile"; cleanup_pidfile; }
-                    [ "$HAS_SOCKET" = y ]  && { fx "Cleaning leftover socket"; cleanup_socket; }
-                    msg "ssh-agent is already stopped"
-                    return 0
-                fi
+                if [ -z "${GIT_SSH_AGENT_PID}" ] && [ "$PID_SET" = n ]; then msg "ssh-agent is already stopped"; return 0; fi
                     msg "Stopping ssh-agent (PID: $GIT_SSH_AGENT_PID)"
 
                 git_agent_stop
                 status
+                    [ "$HAS_PIDFILE" = y ] && { msg "Removing Pidfile"; cleanup_pidfile && msg "Success" || err "Failed"; }
+                    [ "$HAS_SOCKET" = y ]  && { msg "Removing Socket"; cleanup_socket && msg "Success" || err "Failed"; }
+                    
                 if [ "$RUNNING" = n ] && [ "$HAS_SOCKET" = n ] && [ "$HAS_PIDFILE" = n ]; then
                     msg "ssh-agent stopped and cleaned up"
+                    GOAL_REACHED=y
                 else
                     err "Cleanup incomplete (RUNNING=$RUNNING, HAS_SOCKET=$HAS_SOCKET, HAS_PIDFILE=$HAS_PIDFILE)"
-                    return 1
+                    status
                 fi
                 ;;
         esac
@@ -183,7 +180,7 @@ status
 
 dispatch() { (
   cmd="${1:-}"; case "$cmd" in
-  start|stop) GOAL="$cmd"; [ $# -gt 0 ] && shift; handle_state ;;
+  start|stop) GOAL="$cmd"; GOAL_REACHED=n; [ $# -gt 0 ] && shift; handle_state ;;
            *) printf 'Usage: %s {start|stop}\n' "${0##*/}" >&2; exit 1;; esac
 ); }
 
