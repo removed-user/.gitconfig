@@ -105,6 +105,7 @@ else
 case $1 in
 pid) get_pid && pid_status ;;
 sock) socket_status ;;
+all)  get_pid && pid_status; socket_status; agent_status ;;
 esac
 fi
 }
