@@ -139,7 +139,7 @@ git_agent_stop() { set_env;
         case "${GOAL}" in
             start)
                 [ "$VALID_PID" -eq 1 ] && test_agent_process || true;
-                [ "$STALE_PID" -eq 1 ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted" } || true
+                [ "$STALE_PID" -eq 1 ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true
 
                 if [ "$ORPHAN" -eq 1 ] && [ "$RUNNING" -eq 1 ]; then
                     fx "Adopting orphaned ssh-agent (PID: $GIT_SSH_AGENT_PID)"
