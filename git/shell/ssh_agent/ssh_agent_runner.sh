@@ -34,7 +34,6 @@ fx() ( message fx "$@"; )
 
 
 status() {
-   socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
 
    get_pid() {
       pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
@@ -58,6 +57,31 @@ status() {
               '') check_orphans ;;
     esac
 test_agent_process() { RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=1; KEYS_LOADED=1; return 0 ;; 1) RUNNING=1; KEYS_LOADED=0; return 0 ;; 2) RUNNING=0; return 0 ;; *) return 1 ;; esac;  }
+}
+
+
+socket_status() {
+   socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
+    STALE_SOCKET=0
+    
+    # 1. Get the socket inode from /proc/net/unix
+    inode=$(awk -v sock="$GIT_SSH_AUTH_SOCK" 'NR > 1 && $8 == sock { print $7; exit }' /proc/net/unix)
+    if [ -z "$inode" ]; then
+        STALE_SOCKET=1; return 0
+    fi
+
+    # 2. Check if our already-found GIT_SSH_AGENT_PID actually holds that socket inode open
+    if [ "$PID_SET" -eq 1 ] && [ -d "/proc/$GIT_SSH_AGENT_PID/fd" ]; then
+        for fd in /proc/"$GIT_SSH_AGENT_PID"/fd/*; do
+            [ -L "$fd" ] || continue
+            case "$(readlink "$fd" 2>/dev/null)" in
+                "socket:[$inode]") return 0 ;;
+            esac
+        done
+    fi
+
+    # Socket exists on disk, but is either unbound or owned by the wrong PID
+    STALE_SOCKET=1
 }
 
 
