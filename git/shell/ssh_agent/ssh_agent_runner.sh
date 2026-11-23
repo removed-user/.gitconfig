@@ -179,6 +179,34 @@ git_agent_stop() { set_env;
     }
 
 dispatch() { ( case "${1:-}" in stop) GOAL=stop; shift ;; *) GOAL=start ;; esac; GOAL_REACHED=n handle_state; ); }
+
+dispatch2() { (
+  case "${1:-}" in
+    stop) GOAL=stop; shift ;;
+       *) GOAL=start ;;
+  esac
+
+  GOAL_REACHED=n
+  attempts=0
+  until [ "$GOAL_REACHED" = y ]; do
+      attempts=$((attempts + 1))
+      if [ "$attempts" -gt 4 ]; then
+          err "Failed to reach goal '$GOAL' after 4 attempts"
+          exit 1
+      fi
+      handle_state || exit 1
+  done
+
+  if [ "$GOAL" = start ]; then
+      [ "$KEYS_LOADED" = n ] && git_add_key
+      [ $# -gt 0 ] && exec_ssh "$@"
+  fi
+); }
+
+
+
+
+
 set_env; status; dispatch "$@"
 # exec_ssh() ( 
 # unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE#exec /usr/bin/ssh "$@" 
