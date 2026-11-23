@@ -215,7 +215,7 @@ GOAL_REACHED=n; attempts=0
 #  fi
 ); }
 
-RUN_SET_ONCE=y
+RUN_SET_ONCE=y; STATUS_FIRST_RUN=y
 dispatch "$@"
 )
 
