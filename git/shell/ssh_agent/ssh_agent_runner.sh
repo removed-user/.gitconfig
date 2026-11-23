@@ -66,7 +66,7 @@ socket_status() {
     STALE_SOCKET=y
     [ "$HAS_SOCKET" = y ] && [ "$PID_SET" = y ] && [ -d "/proc/$GIT_SSH_AGENT_PID/fd" ] || return 0
 
-    ls -l "/proc/$GIT_SSH_AGENT_PID/fd" 2>/dev/null | awk -v sock="$GIT_SSH_AUTH_SOCK" '
+    ls -l "/proc/"${GIT_SSH_AGENT_PID}"/fd" 2>/dev/null | awk -v sock="$GIT_SSH_AUTH_SOCK" '
         NR == FNR { if ($NF ~ /^socket:\[[0-9]+\]$/) { sub(/^socket:\[/, "", $NF); sub(/\]$/, "", $NF); inodes[$NF] = 1 }; next }
         FNR > 1 && $8 == sock && ($7 in inodes) { found = 1; exit }
         END { exit !found }
@@ -160,19 +160,16 @@ git_agent_stop() { set_env;
 
             stop)
                 if [ -z "${GIT_SSH_AGENT_PID}" ] && [ "$PID_SET" = n ]; then msg "ssh-agent is already stopped"; return 0; fi
-                    msg "Stopping ssh-agent (PID: $GIT_SSH_AGENT_PID)"
 
-                git_agent_stop
-                status
+                # msg "Stopping ssh-agent (PID: $GIT_SSH_AGENT_PID)"
+
+                #git_agent_stop
                     [ "$HAS_PIDFILE" = y ] && { msg "Removing Pidfile"; cleanup_pidfile && msg "Success" || err "Failed"; }
                     [ "$HAS_SOCKET" = y ]  && { msg "Removing Socket"; cleanup_socket && msg "Success" || err "Failed"; }
                     
-                if [ "$RUNNING" = n ] && [ "$HAS_SOCKET" = n ] && [ "$HAS_PIDFILE" = n ]; then
+                if [ "${PID_SET}" = n ] && [ "$HAS_SOCKET" = n ] && [ "$HAS_PIDFILE" = n ]; then
                     msg "ssh-agent stopped and cleaned up"
-                    GOAL_REACHED=y
-                else
-                    err "Cleanup incomplete (RUNNING=$RUNNING, HAS_SOCKET=$HAS_SOCKET, HAS_PIDFILE=$HAS_PIDFILE)"
-                    status
+                    GOAL_REACHED=y; return 0
                 fi
                 ;;
         esac
