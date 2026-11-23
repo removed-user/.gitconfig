@@ -111,14 +111,11 @@ git_agent_stop() { set_env;
   }
 
 dispatch() { (
-    cmd="${1:-}"
-    [ $# -gt 0 ] && shift
-    case "$cmd" in
-        start)  git_agent_start "$@" ;;
-        stop)   git_agent_stop "$@" ;;
-        *)      printf 'Usage: %s {start|stop}\n' "${0##*/}" >&2; exit 1 ;;
-    esac
+  cmd="${1:-}"; case "$cmd" in
+  start|stop) GOAL="$cmd"; [ $# -gt 0 ] && shift; handle_state ;;
+           *) printf 'Usage: %s {start|stop}\n' "${0##*/}" >&2; exit 1;; esac
 ); }
+
 
 set_env
 status
@@ -130,8 +127,5 @@ dispatch "$@"
 )
 
 main "$@"
-
-
-
-    }
+}
 
