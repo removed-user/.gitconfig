@@ -44,7 +44,13 @@ HAS_PIDFILE=n; HAS_SOCKET=n; PID_SET=n; VALID_PID=n; STALE_PID=n; ORPHAN=n;  RUN
 
    get_pid() {
       try_read_pidfile() { GIT_SSH_AGENT_PID=""; case "$HAS_PIDFILE" in n) PID_SET=n ;; y) read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true ;; *) return 1 ;; esac; pid_set "pidfile"; }
-      try_find() {  GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set "found"; }
+try_find() {
+    IFS=: read -r _ GIT_SSH_AGENT_PID NUM_PIDS <<EOF
+$(find_git_agent_pid cmd)
+EOF
+    : "${NUM_PIDS:=0}"; pid_set "found"; }
+
+    #  try_find() {  GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set "found"; }
     pidfile_exists
     try_read_pidfile
     [ "$PID_SET" = y ] || try_find || true
