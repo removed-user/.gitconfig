@@ -104,8 +104,17 @@ socket_status() {
          if (mode == "pid" && pid_match) { print "PID:" pid; exit }
            else if (mode == "cmd" && cmd_match) { print "CMD:" pid; exit } }'
      ); }
-get_pid; pid_status 
-socket_status; agent_status
+if [ -z "$STATUS_FIRST_RUN" ]; then
+get_pid && pid_status
+socket_status
+agent_status
+export STATUS_FIRST_RUN=n
+else
+case $1 in
+pid) get_pid && pid_status ;;
+sock) socket_status ;;
+esac
+fi
 }
 
 ## Startup and Wrappers
@@ -133,9 +142,9 @@ git_agent_stop() { set_env;
   }
 
     handle_state() {
-[ "$ORPHAN" = y ]       && { err 'Found Orphan:   '"${GIT_SSH_AGENT_PID}"; run_checks && kill_agent && confirm_kill && fx "Killed it"; } && status || true
-[ "$STALE_SOCKET" = y ] && { err "Stale Socket";  cleanup_socket    && fx "Deleted"; } && status || true
-[ "$STALE_PID" = y ]    && { err "Stale Pidfile"; cleanup_pidfile   && fx "Deleted"; } && status || true
+[ "$ORPHAN" = y ]       && { err 'Found Orphan:   '"${GIT_SSH_AGENT_PID}"; run_checks && kill_agent && confirm_kill && fx "Killed it"; } && status pid || true
+[ "$STALE_SOCKET" = y ] && { err "Stale Socket";  cleanup_socket    && fx "Deleted"; } && status sock || true
+[ "$STALE_PID" = y ]    && { err "Stale Pidfile"; cleanup_pidfile   && fx "Deleted"; } && status pid || true
 
 
 
@@ -195,10 +204,10 @@ GOAL_REACHED=n; attempts=0
 #  git_add_key
 # exec_ssh() ( unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE
 # exec /usr/bin/ssh "$@" 
-)
+#)
+   msg 'Reached '"${GOAL}"' state'
     #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
     #  [ $# -gt 0 ] && exec_ssh "$@"
-   msg 'Reached '"${GOAL}"' state'
   fi
 ); }
 
