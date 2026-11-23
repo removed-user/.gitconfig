@@ -169,18 +169,6 @@ git_agent_stop() { set_env;
                     return 1
                 fi
                 ;;
-
-            ssh)
-                if [ "$RUNNING" -eq 0 ]; then
-                    err "Isolated ssh-agent is not running. Run '${0##*/} start' first."
-                    return 1
-                fi
-                if [ "$KEYS_LOADED" -eq 0 ]; then
-                    err "Isolated ssh-agent (PID: $GIT_SSH_AGENT_PID) has no keys loaded."
-                    return 1
-                fi
-                ;;
-
             *)
                 err "Invalid GOAL: '${GOAL:-}'"
                 return 1
