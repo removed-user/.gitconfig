@@ -1,6 +1,6 @@
 #!/bin/dash
 main() (
-message() (
+message() { (
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 ORANGE='\033[0;33m' 
@@ -12,7 +12,7 @@ cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${@}"
    err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;;
    fx) printf '%b%s%b: %s\n' "${ORANGE}" '[FIXING]' "${CLR}" "${MESSAGE}" >&2;;
 esac 
-)
+); }
 err() ( message err "$@"; )
 err() ( message msg "$@"; )
 fx() ( message fx "$@"; )
