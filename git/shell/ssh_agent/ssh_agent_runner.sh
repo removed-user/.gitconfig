@@ -104,7 +104,7 @@ socket_status() {
          if (mode == "pid" && pid_match) { print "PID:" pid; exit }
            else if (mode == "cmd" && cmd_match) { print "CMD:" pid; exit } }'
      ); }
-     
+get_pid; pid_status     
 }
 
 ## Startup and Wrappers
