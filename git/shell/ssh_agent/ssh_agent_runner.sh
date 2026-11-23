@@ -36,8 +36,8 @@ fx() ( message fx "$@"; )
 
 status() {
 HAS_PIDFILE=n; HAS_SOCKET=n; PID_SET=n; VALID_PID=n; STALE_PID=n; ORPHAN=n;  RUNNING=n; KEYS_LOADED=n; STALE_SOCKET=n
-      pidfile_exists() { HAS_PIDFILE=n; [ -r "$PIDFILE" ] && HAS_PIDFILE=y || HAS_PIDFILE=n; }
-      socket_exists() { HAS_SOCKET=n; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=y || HAS_SOCKET=n ; }
+      pidfile_exists() { HAS_PIDFILE=n; [ -r "$PIDFILE" ] && HAS_PIDFILE=y || HAS_PIDFILE=n; [ "$HAS_PIDFILE" = y ]; }
+      socket_exists() { HAS_SOCKET=n; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=y || HAS_SOCKET=n; [ "$HAS_SOCKET" = y ]; }
       pid_set() { case "${GIT_SSH_AGENT_PID:-}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID PID_SOURCE; PID_SET=n ;; [1-9]*) PID_SET=y PID_SOURCE="${1:-}";; esac; }
 
    get_pid() {
@@ -63,9 +63,9 @@ HAS_PIDFILE=n; HAS_SOCKET=n; PID_SET=n; VALID_PID=n; STALE_PID=n; ORPHAN=n;  RUN
 agent_status() { RUNNING=n; KEYS_LOADED=n; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=y; KEYS_LOADED=y; return 0 ;; 1) RUNNING=y; KEYS_LOADED=n; return 0 ;; 2) RUNNING=n; return 0 ;; *) return 1 ;; esac;  }
 
 socket_status() {
-    socket_exists
-    STALE_SOCKET=y
-    [ "$HAS_SOCKET" = y ] || return 0
+   STALE_SOCKET=n
+   socket_exists
+   STALE_SOCKET=y
 
     awk -v sock="${GIT_SSH_AUTH_SOCK}" '
         NR > 1 {
