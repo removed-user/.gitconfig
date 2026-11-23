@@ -136,17 +136,17 @@ git_agent_stop() { set_env;
   }
 
     handle_state() {
+
+[ "$STALE_PID" = y ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true
+if [ "$ORPHAN" = y    ]; then err 'Found Orphan: '"${GIT_SSH_AGENT_PID}"; kill_agent && confirm_kill; fx "Killed it"; return 0; fi
+
+
+
+
+status
         case "${GOAL}" in
             start)
                 [ "$VALID_PID" = y ] && agent_status || true;
-                [ "$STALE_PID" = y ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true
-
-                if [ "$ORPHAN" = y ] && [ "$RUNNING" = y ]; then
-                    fx "Adopting orphaned ssh-agent (PID: $GIT_SSH_AGENT_PID)"
-                    printf '%s\n' "$GIT_SSH_AGENT_PID" > "$PIDFILE"
-                    status
-                    return 0
-                fi
 
                 if [ "$HAS_SOCKET" = y ] && [ "$RUNNING" = n ]; then
                     fx "Removing stale socket ($GIT_SSH_AUTH_SOCK)"
