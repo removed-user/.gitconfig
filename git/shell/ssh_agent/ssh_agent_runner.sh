@@ -69,8 +69,7 @@ socket_status() {
    socket_exists || return 0
    STALE_SOCKET=y
 
-    awk -v sock="${GIT_SSH_AUTH_SOCK}" '
-        NR > 1 { flags = $4; st = $6; path = $8
+    awk -v sock="${GIT_SSH_AUTH_SOCK}" 'NR > 1 { flags = $4; st = $6; path = $8
             if (path == sock && flags == "00010000" && st == "01") { found = 1; exit; } }
         END { exit !found }' /proc/net/unix && STALE_SOCKET=n
 }
