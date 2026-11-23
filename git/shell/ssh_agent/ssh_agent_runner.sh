@@ -20,12 +20,12 @@ fx() ( message fx "$@"; )
 
  ## Get/Set Environment + PID
   set_env() {
-      set_once() { RAN_SET_ONCE=y;
+      set_once() { unset RUN_SET_ONCE;
          GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
          PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
          EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
          EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}";
-         }; [ -z "${RAN_SET_ONCE}" ] && set_once || true
+         }; [ -n "${RUN_SET_ONCE}" ] && set_once || true
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
     [ -n "${GIT_SSH_AGENT_PID}" ] && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
     export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
@@ -184,7 +184,7 @@ dispatch() { (
        *) GOAL=start ;;
   esac
 
-  GOAL_REACHED=n; attempts=0
+GOAL_REACHED=n; attempts=0
   until [ "$GOAL_REACHED" = y ]; do attempts=$((attempts + 1))
       if [ "$attempts" -gt 4 ]; then err "Failed to '"${GOAL}"' after 4 attempts"; exit 1; fi
       set_env
@@ -202,7 +202,7 @@ dispatch() { (
 
 
 
-
+RUN_SET_ONCE=y
 dispatch "$@"
 # exec_ssh() ( 
 # unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE#exec /usr/bin/ssh "$@" 
