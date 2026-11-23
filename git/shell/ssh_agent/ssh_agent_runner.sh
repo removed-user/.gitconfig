@@ -111,7 +111,7 @@ git_agent_stop() { set_env;
   }
 
     handle_state() {
-        case "${GOAL:-}" in
+        case "${GOAL}" in
             start)
                 if [ "$STALE_PID" -eq 1 ]; then
                     fx "Removing stale pidfile ($PIDFILE)"
