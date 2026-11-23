@@ -57,8 +57,8 @@ status() {
            found) VALID_PID=0 STALE_PID=0 ORPHAN=1 ;;
               '') check_orphans ;;
     esac
-test_agent_process() { RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=1; KEYS_LOADED=1; return 0 ;; 1) RUNNING=1; KEYS_LOADED=0; return 0 ;; 2) RUNNING=0; return 0 ;; *) return 1 ;; esac;  }; }
-if [ "$VALID_PID" = 1 ]; then test_agent_process; fi
+test_agent_process() { RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=1; KEYS_LOADED=1; return 0 ;; 1) RUNNING=1; KEYS_LOADED=0; return 0 ;; 2) RUNNING=0; return 0 ;; *) return 1 ;; esac;  }
+}
 
 
    find_git_agent_pid() { (
@@ -113,6 +113,7 @@ git_agent_stop() { set_env;
     handle_state() {
         case "${GOAL}" in
             start)
+                [ "$VALID_PID" -eq 1 ] && test_agent_process || true;
                 [ "$STALE_PID" -eq 1 ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted" } || true
 
                 if [ "$ORPHAN" -eq 1 ] && [ "$RUNNING" -eq 1 ]; then
