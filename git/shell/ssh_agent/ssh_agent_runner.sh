@@ -57,8 +57,8 @@ status() {
            found) VALID_PID=n STALE_PID=n ORPHAN=y ;;
               '') check_orphans ;;
     esac
-test_agent_process() { RUNNING=n; KEYS_LOADED=n; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=y; KEYS_LOADED=y; return 0 ;; 1) RUNNING=y; KEYS_LOADED=n; return 0 ;; 2) RUNNING=n; return 0 ;; *) return 1 ;; esac;  }
 }
+agent_status() { RUNNING=n; KEYS_LOADED=n; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=y; KEYS_LOADED=y; return 0 ;; 1) RUNNING=y; KEYS_LOADED=n; return 0 ;; 2) RUNNING=n; return 0 ;; *) return 1 ;; esac;  }
 
 
 socket_status() {
