@@ -178,16 +178,8 @@ git_agent_stop() { set_env;
         esac
     }
 
-dispatch() { (
-  cmd="${1:-}"; case "$cmd" in
-  start|stop) GOAL="$cmd"; GOAL_REACHED=n; [ $# -gt 0 ] && shift; handle_state ;;
-           *) printf 'Usage: %s {start|stop}\n' "${0##*/}" >&2; exit 1;; esac
-); }
-
-
-set_env
-status
-dispatch "$@"
+dispatch() { ( case "${1:-}" in stop) GOAL=stop; shift ;; *) GOAL=start ;; esac; GOAL_REACHED=n handle_state; ); }
+set_env; status; dispatch "$@"
 # exec_ssh() ( 
 # unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE#exec /usr/bin/ssh "$@" 
 # )
