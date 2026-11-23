@@ -97,19 +97,11 @@ socket_status() {
         END { if (count > 0) print toupper(mode) ":" first_pid ":" count }'
         ); }
 
-
-
-
-     
-if [ -n "$STATUS_FIRST_RUN" ]; then
-unset STATUS_FIRST_RUN; get_pid && pid_status; socket_status; agent_status
-else
 case $1 in
 pid) get_pid && pid_status ;;
 sock) socket_status ;;
 all)  get_pid && pid_status; socket_status; agent_status ;;
 esac
-fi
 }
 
 ## Startup and Wrappers
@@ -204,7 +196,7 @@ GOAL_REACHED=n; attempts=0
     #  [ $# -gt 0 ] && exec_ssh "$@"
 #  fi
 ); }
-RUN_SET_ONCE=y; STATUS_FIRST_RUN=y
+RUN_SET_ONCE=y
 dispatch "$@"
 )
 
