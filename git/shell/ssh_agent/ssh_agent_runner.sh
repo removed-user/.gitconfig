@@ -20,7 +20,7 @@ fx() ( message fx "$@"; )
 
  ## Get/Set Environment + PID
   set_env() {
-      set_once() { RAN_SET_ONCE=1;
+      set_once() { RAN_SET_ONCE=y;
          GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
          PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
          EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
@@ -34,45 +34,45 @@ fx() ( message fx "$@"; )
 
 
 status() {
-      pidfile_exists() { HAS_PIDFILE=0; [ -r "$PIDFILE" ] && HAS_PIDFILE=1 || HAS_PIDFILE=0; }
-      socket_exists() { HAS_SOCKET=0; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=1 || HAS_SOCKET=0 ; }
+      pidfile_exists() { HAS_PIDFILE=n; [ -r "$PIDFILE" ] && HAS_PIDFILE=y || HAS_PIDFILE=n; }
+      socket_exists() { HAS_SOCKET=n; [ -S "$GIT_SSH_AUTH_SOCK" ] && HAS_SOCKET=y || HAS_SOCKET=n ; }
 
    get_pid() {
-      pid_set() { case "${GIT_SSH_AGENT_PID:-}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID PID_SOURCE; PID_SET=0 ;; [1-9]*) PID_SET=1 PID_SOURCE="${1:-}";; esac; }
-      try_read_pidfile() { GIT_SSH_AGENT_PID=""; case "$HAS_PIDFILE" in 0) PID_SET=0 ;; 1) read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true ;; *) return 1 ;; esac; pid_set "pidfile"; }
+      pid_set() { case "${GIT_SSH_AGENT_PID:-}" in ''|0*|*[!0-9]*) unset GIT_SSH_AGENT_PID PID_SOURCE; PID_SET=n ;; [1-9]*) PID_SET=y PID_SOURCE="${1:-}";; esac; }
+      try_read_pidfile() { GIT_SSH_AGENT_PID=""; case "$HAS_PIDFILE" in n) PID_SET=n ;; y) read -r GIT_SSH_AGENT_PID < "$PIDFILE" || true ;; *) return 1 ;; esac; pid_set "pidfile"; }
       try_find() {  GIT_SSH_AGENT_PID=$(find_git_agent_pid cmd | awk -F ':' '{print $2}'); pid_set "found"; }
     pidfile_exists
     try_read_pidfile
-    [ "$PID_SET" -eq 1 ] || try_find || true
-    [ "$PID_SET" -eq 1 ] || RUNNING=0
+    [ "$PID_SET" = y ] || try_find || true
+    [ "$PID_SET" = y ] || RUNNING=n
    } 
    
    pid_status() {
-        [ "$PID_SET" -eq 1 ] || return 1
-         validate_pid() { export VALID_PID=0 STALE_PID=0; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && export VALID_PID=1 STALE_PID=0 || export STALE_PID=1 VALID_PID=0; }
-         check_orphans() { ORPHAN=0; try_find; ORPHAN="${PID_SET}"; }
+        [ "$PID_SET" = y ] || return 1
+         validate_pid() { export VALID_PID=n STALE_PID=n; [ -n "$(find_git_agent_pid pid "$GIT_SSH_AGENT_PID")" ] && export VALID_PID=y STALE_PID=n || export STALE_PID=y VALID_PID=n; }
+         check_orphans() { ORPHAN=n; try_find; ORPHAN="${PID_SET}"; }
 
     case "${PID_SOURCE:-}" in
-           pidfile) validate_pid; if [ "$STALE_PID" -eq 1 ]; then check_orphans; fi ;;
-           found) VALID_PID=0 STALE_PID=0 ORPHAN=1 ;;
+           pidfile) validate_pid; if [ "$STALE_PID" = y ]; then check_orphans; fi ;;
+           found) VALID_PID=n STALE_PID=n ORPHAN=y ;;
               '') check_orphans ;;
     esac
-test_agent_process() { RUNNING=0; KEYS_LOADED=0; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=1; KEYS_LOADED=1; return 0 ;; 1) RUNNING=1; KEYS_LOADED=0; return 0 ;; 2) RUNNING=0; return 0 ;; *) return 1 ;; esac;  }
+test_agent_process() { RUNNING=n; KEYS_LOADED=n; set_env || return 1; git_add -l >/dev/null 2>&1; case $? in 0) RUNNING=y; KEYS_LOADED=y; return 0 ;; 1) RUNNING=y; KEYS_LOADED=n; return 0 ;; 2) RUNNING=n; return 0 ;; *) return 1 ;; esac;  }
 }
 
 
 socket_status() {
     socket_exists
-    STALE_SOCKET=0
+    STALE_SOCKET=n
     
     # 1. Get the socket inode from /proc/net/unix
     inode=$(awk -v sock="$GIT_SSH_AUTH_SOCK" 'NR > 1 && $8 == sock { print $7; exit }' /proc/net/unix)
     if [ -z "$inode" ]; then
-        STALE_SOCKET=1; return 0
+        STALE_SOCKET=y; return 0
     fi
 
     # 2. Check if our already-found GIT_SSH_AGENT_PID actually holds that socket inode open
-    if [ "$PID_SET" -eq 1 ] && [ -d "/proc/$GIT_SSH_AGENT_PID/fd" ]; then
+    if [ "$PID_SET" = y ] && [ -d "/proc/$GIT_SSH_AGENT_PID/fd" ]; then
         for fd in /proc/"$GIT_SSH_AGENT_PID"/fd/*; do
             [ -L "$fd" ] || continue
             case "$(readlink "$fd" 2>/dev/null)" in
@@ -82,7 +82,7 @@ socket_status() {
     fi
 
     # Socket exists on disk, but is either unbound or owned by the wrong PID
-    STALE_SOCKET=1
+    STALE_SOCKET=y
 }
 
 
@@ -121,8 +121,8 @@ socket_status() {
     #### Adds to the env set by git_agent; Sets options for command, starts agent, and creates "${PIDFILE}"
      git_agent_start() { ( set_env; git_agent -P '' -sa "$GIT_SSH_AUTH_SOCK" | awk 'NR == 2{gsub(/SSH_AGENT_PID=|;/, ""); print $1}' > "$PIDFILE"; ); }
    ### Shutdown/Cleanup
-     cleanup_socket() { ( socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}" || return 0; ); export HAS_SOCKET=0; }   
-     cleanup_pidfile() { ( pidfile_exists && rm -f "$PIDFILE" || return 0; ); export HAS_PIDFILE=0; }
+     cleanup_socket() { ( socket_exists && rm -f "${GIT_SSH_AUTH_SOCK}" || return 0; ); export HAS_SOCKET=n; }   
+     cleanup_pidfile() { ( pidfile_exists && rm -f "$PIDFILE" || return 0; ); export HAS_PIDFILE=n; }
 
 
 git_agent_stop() { set_env; 
@@ -138,22 +138,22 @@ git_agent_stop() { set_env;
     handle_state() {
         case "${GOAL}" in
             start)
-                [ "$VALID_PID" -eq 1 ] && test_agent_process || true;
-                [ "$STALE_PID" -eq 1 ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true
+                [ "$VALID_PID" = y ] && test_agent_process || true;
+                [ "$STALE_PID" = y ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true
 
-                if [ "$ORPHAN" -eq 1 ] && [ "$RUNNING" -eq 1 ]; then
+                if [ "$ORPHAN" = y ] && [ "$RUNNING" = y ]; then
                     fx "Adopting orphaned ssh-agent (PID: $GIT_SSH_AGENT_PID)"
                     printf '%s\n' "$GIT_SSH_AGENT_PID" > "$PIDFILE"
                     status
                     return 0
                 fi
 
-                if [ "$HAS_SOCKET" -eq 1 ] && [ "$RUNNING" -eq 0 ]; then
+                if [ "$HAS_SOCKET" = y ] && [ "$RUNNING" = n ]; then
                     fx "Removing stale socket ($GIT_SSH_AUTH_SOCK)"
                     cleanup_socket
                 fi
 
-                if [ "$RUNNING" -eq 1 ] && [ "$VALID_PID" -eq 1 ]; then
+                if [ "$RUNNING" = y ] && [ "$VALID_PID" = y ]; then
                     msg "ssh-agent already running (PID: $GIT_SSH_AGENT_PID, keys loaded: $KEYS_LOADED)"
                     return 0
                 fi
@@ -161,7 +161,7 @@ git_agent_stop() { set_env;
                 msg "Starting isolated ssh-agent..."
                 git_agent_start
                 status
-                if [ "$RUNNING" -eq 1 ]; then
+                if [ "$RUNNING" = y ]; then
                     msg "ssh-agent started (PID: $GIT_SSH_AGENT_PID)"
                 else
                     err "Failed to start ssh-agent"
@@ -170,14 +170,14 @@ git_agent_stop() { set_env;
                 ;;
 
             stop)
-                if [ "$RUNNING" -eq 0 ] && [ "$PID_SET" -eq 0 ]; then
-                    [ "$HAS_PIDFILE" -eq 1 ] && { fx "Cleaning leftover pidfile"; cleanup_pidfile; }
-                    [ "$HAS_SOCKET" -eq 1 ]  && { fx "Cleaning leftover socket"; cleanup_socket; }
+                if [ "$RUNNING" = n ] && [ "$PID_SET" = n ]; then
+                    [ "$HAS_PIDFILE" = y ] && { fx "Cleaning leftover pidfile"; cleanup_pidfile; }
+                    [ "$HAS_SOCKET" = y ]  && { fx "Cleaning leftover socket"; cleanup_socket; }
                     msg "ssh-agent is already stopped"
                     return 0
                 fi
 
-                if [ "$ORPHAN" -eq 1 ]; then
+                if [ "$ORPHAN" = y ]; then
                     fx "Stopping orphaned ssh-agent (PID: $GIT_SSH_AGENT_PID)"
                 else
                     msg "Stopping ssh-agent (PID: $GIT_SSH_AGENT_PID)"
@@ -185,7 +185,7 @@ git_agent_stop() { set_env;
 
                 git_agent_stop
                 status
-                if [ "$RUNNING" -eq 0 ] && [ "$HAS_SOCKET" -eq 0 ] && [ "$HAS_PIDFILE" -eq 0 ]; then
+                if [ "$RUNNING" = n ] && [ "$HAS_SOCKET= n 0 ] && [ "$HAS_PIDFILE" = n ]; then
                     msg "ssh-agent stopped and cleaned up"
                 else
                     err "Cleanup incomplete (RUNNING=$RUNNING, HAS_SOCKET=$HAS_SOCKET, HAS_PIDFILE=$HAS_PIDFILE)"
@@ -220,4 +220,3 @@ dispatch "$@"
 
 main "$@"
 }
-
