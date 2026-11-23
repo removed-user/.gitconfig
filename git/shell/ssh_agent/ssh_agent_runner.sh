@@ -70,8 +70,7 @@ socket_status() {
     ls -l "/proc/"${GIT_SSH_AGENT_PID}"/fd" 2>/dev/null | awk -v sock="$GIT_SSH_AUTH_SOCK" '
         NR == FNR { if ($NF ~ /^socket:\[[0-9]+\]$/) { sub(/^socket:\[/, "", $NF); sub(/\]$/, "", $NF); inodes[$NF] = 1 }; next }
         FNR > 1 && $8 == sock && ($7 in inodes) { found = 1; exit }
-        END { exit !found }
-    ' - /proc/net/unix && STALE_SOCKET=n
+        END { exit !found }' - /proc/net/unix && STALE_SOCKET=n
 }
 
 
