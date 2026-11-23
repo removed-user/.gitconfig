@@ -189,7 +189,7 @@ GOAL_REACHED=n; attempts=0
   until [ "$GOAL_REACHED" = y ]; do attempts=$((attempts + 1))
       if [ "$attempts" -gt 4 ]; then err "Failed to '"${GOAL}"' after 4 attempts"; exit 1; fi
       set_env
-      status
+      status all
       handle_state || exit 1
   done
 
