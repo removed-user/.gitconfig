@@ -14,7 +14,7 @@ cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${@}"
 esac 
 ); }
 err() ( message err "$@"; )
-err() ( message msg "$@"; )
+msg() ( message msg "$@"; )
 fx() ( message fx "$@"; )
 
 
