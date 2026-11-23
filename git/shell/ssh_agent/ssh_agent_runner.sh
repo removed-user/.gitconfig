@@ -208,7 +208,7 @@ GOAL_REACHED=n; attempts=0
    msg 'Reached '"${GOAL}"' state'
     #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
     #  [ $# -gt 0 ] && exec_ssh "$@"
-  fi
+#  fi
 ); }
 
 RUN_SET_ONCE=y
