@@ -185,7 +185,7 @@ git_agent_stop() { set_env;
 
                 git_agent_stop
                 status
-                if [ "$RUNNING" = n ] && [ "$HAS_SOCKET= n ] && [ "$HAS_PIDFILE" = n ]; then
+                if [ "$RUNNING" = n ] && [ "$HAS_SOCKET" = n ] && [ "$HAS_PIDFILE" = n ]; then
                     msg "ssh-agent stopped and cleaned up"
                 else
                     err "Cleanup incomplete (RUNNING=$RUNNING, HAS_SOCKET=$HAS_SOCKET, HAS_PIDFILE=$HAS_PIDFILE)"
