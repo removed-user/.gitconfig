@@ -21,8 +21,10 @@ fx() ( message fx "$@"; )
  ## Get/Set Environment + PID
   set_env() {
          [ -n "${RUN_SET_ONCE}" ] && { unset RUN_SET_ONCE;
-         GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
-         PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
+         [ ! -d '/run/user/'"$(id -u)"'/git_agent' ] && mkdir -p '/run/user/'"$(id -u)"'/git_agent'
+         
+         GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_agent/git_ssh_agent.sock
+         PIDFILE=/run/user/"$(id -u)"/git_agent/git_ssh_agent.pid
          EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
          EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}";
          };
@@ -202,7 +204,6 @@ GOAL_REACHED=n; attempts=0
     #  [ $# -gt 0 ] && exec_ssh "$@"
 #  fi
 ); }
-
 RUN_SET_ONCE=y; STATUS_FIRST_RUN=y
 dispatch "$@"
 )
