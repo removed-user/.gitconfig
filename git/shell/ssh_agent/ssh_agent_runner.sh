@@ -64,19 +64,13 @@ agent_status() { RUNNING=n; KEYS_LOADED=n; set_env || return 1; git_add -l >/dev
 
 socket_status() {
    STALE_SOCKET=n
-   socket_exists
+   socket_exists || return 0
    STALE_SOCKET=y
 
     awk -v sock="${GIT_SSH_AUTH_SOCK}" '
-        NR > 1 {
-            flags = $4; st = $6; path = $8
-            if (path == sock && flags == "00010000" && st == "01") {
-                found = 1
-                exit
-            }
-        }
-        END { exit !found }
-    ' /proc/net/unix && STALE_SOCKET=n
+        NR > 1 { flags = $4; st = $6; path = $8
+            if (path == sock && flags == "00010000" && st == "01") { found = 1; exit; } }
+        END { exit !found }' /proc/net/unix && STALE_SOCKET=n
 }
 
    find_git_agent_pid() { (
