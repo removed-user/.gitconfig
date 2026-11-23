@@ -138,7 +138,7 @@ git_agent_stop() { set_env;
     handle_state() {
         case "${GOAL}" in
             start)
-                [ "$VALID_PID" = y ] && test_agent_process || true;
+                [ "$VALID_PID" = y ] && agent_status || true;
                 [ "$STALE_PID" = y ] && { err "Stale Pidfile"; cleanup_pidfile;  fx "Deleted"; } || true
 
                 if [ "$ORPHAN" = y ] && [ "$RUNNING" = y ]; then
