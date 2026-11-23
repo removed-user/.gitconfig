@@ -101,9 +101,15 @@ socket_status() {
             pid_match = (expected_pid != "" && pid == expected_pid)
             cmd_match = ($0 == target_cmd)
         
-         if (mode == "pid" && pid_match) { print "PID:" pid; exit }
-           else if (mode == "cmd" && cmd_match) { print "CMD:" pid; exit } }'
-     ); }
+           if ((mode == "pid" && pid_match) || (mode == "cmd" && cmd_match)) { if (!count++) first_pid = pid
+            }
+        }
+        END { if (count > 0) print toupper(mode) ":" first_pid ":" count }'
+        ); }
+
+
+
+
      
 if [ -n "$STATUS_FIRST_RUN" ]; then
 unset STATUS_FIRST_RUN; get_pid && pid_status; socket_status; agent_status
