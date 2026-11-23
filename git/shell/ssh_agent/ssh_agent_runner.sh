@@ -110,6 +110,88 @@ git_agent_stop() { set_env;
    run_checks && kill_agent && confirm_kill && cleanup 
   }
 
+    handle_state() {
+        case "${GOAL:-}" in
+            start)
+                if [ "$STALE_PID" -eq 1 ]; then
+                    fx "Removing stale pidfile ($PIDFILE)"
+                    cleanup_pidfile
+                fi
+
+                if [ "$ORPHAN" -eq 1 ] && [ "$RUNNING" -eq 1 ]; then
+                    fx "Adopting orphaned ssh-agent (PID: $GIT_SSH_AGENT_PID)"
+                    printf '%s\n' "$GIT_SSH_AGENT_PID" > "$PIDFILE"
+                    status
+                    return 0
+                fi
+
+                if [ "$HAS_SOCKET" -eq 1 ] && [ "$RUNNING" -eq 0 ]; then
+                    fx "Removing stale socket ($GIT_SSH_AUTH_SOCK)"
+                    cleanup_socket
+                fi
+
+                if [ "$RUNNING" -eq 1 ] && [ "$VALID_PID" -eq 1 ]; then
+                    msg "ssh-agent already running (PID: $GIT_SSH_AGENT_PID, keys loaded: $KEYS_LOADED)"
+                    return 0
+                fi
+
+                msg "Starting isolated ssh-agent..."
+                git_agent_start
+                status
+                if [ "$RUNNING" -eq 1 ]; then
+                    msg "ssh-agent started (PID: $GIT_SSH_AGENT_PID)"
+                else
+                    err "Failed to start ssh-agent"
+                    return 1
+                fi
+                ;;
+
+            stop)
+                if [ "$RUNNING" -eq 0 ] && [ "$PID_SET" -eq 0 ]; then
+                    [ "$HAS_PIDFILE" -eq 1 ] && { fx "Cleaning leftover pidfile"; cleanup_pidfile; }
+                    [ "$HAS_SOCKET" -eq 1 ]  && { fx "Cleaning leftover socket"; cleanup_socket; }
+                    msg "ssh-agent is already stopped"
+                    return 0
+                fi
+
+                if [ "$ORPHAN" -eq 1 ]; then
+                    fx "Stopping orphaned ssh-agent (PID: $GIT_SSH_AGENT_PID)"
+                else
+                    msg "Stopping ssh-agent (PID: $GIT_SSH_AGENT_PID)"
+                fi
+
+                git_agent_stop
+                status
+                if [ "$RUNNING" -eq 0 ] && [ "$HAS_SOCKET" -eq 0 ] && [ "$HAS_PIDFILE" -eq 0 ]; then
+                    msg "ssh-agent stopped and cleaned up"
+                else
+                    err "Cleanup incomplete (RUNNING=$RUNNING, HAS_SOCKET=$HAS_SOCKET, HAS_PIDFILE=$HAS_PIDFILE)"
+                    return 1
+                fi
+                ;;
+
+            ssh)
+                if [ "$RUNNING" -eq 0 ]; then
+                    err "Isolated ssh-agent is not running. Run '${0##*/} start' first."
+                    return 1
+                fi
+                if [ "$KEYS_LOADED" -eq 0 ]; then
+                    err "Isolated ssh-agent (PID: $GIT_SSH_AGENT_PID) has no keys loaded."
+                    return 1
+                fi
+                ;;
+
+            *)
+                err "Invalid GOAL: '${GOAL:-}'"
+                return 1
+                ;;
+        esac
+    }
+
+
+
+
+
 dispatch() { (
   cmd="${1:-}"; case "$cmd" in
   start|stop) GOAL="$cmd"; [ $# -gt 0 ] && shift; handle_state ;;
