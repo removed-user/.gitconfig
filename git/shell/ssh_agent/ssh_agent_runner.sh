@@ -20,12 +20,13 @@ fx() ( message fx "$@"; )
 
  ## Get/Set Environment + PID
   set_env() {
-      set_once() { unset RUN_SET_ONCE;
+         [ -n "${RUN_SET_ONCE}" ] && { unset RUN_SET_ONCE;
          GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_ssh_agent.sock
          PIDFILE=/run/user/"$(id -u)"/git_ssh_agent.pid
          EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
          EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}";
-         }; [ -n "${RUN_SET_ONCE}" ] && set_once || true
+         };
+         
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
     [ -n "${GIT_SSH_AGENT_PID}" ] && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
     export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
@@ -104,11 +105,9 @@ socket_status() {
          if (mode == "pid" && pid_match) { print "PID:" pid; exit }
            else if (mode == "cmd" && cmd_match) { print "CMD:" pid; exit } }'
      ); }
-if [ -z "$STATUS_FIRST_RUN" ]; then
-get_pid && pid_status
-socket_status
-agent_status
-export STATUS_FIRST_RUN=n
+     
+if [ -n "$STATUS_FIRST_RUN" ]; then
+unset STATUS_FIRST_RUN; get_pid && pid_status; socket_status; agent_status
 else
 case $1 in
 pid) get_pid && pid_status ;;
