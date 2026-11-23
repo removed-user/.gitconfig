@@ -10,6 +10,8 @@
    attributesfile = ~/.config/git/attributes
    excludesFile = ~/.config/git/ignore
    sshCommand = sh -c '. "$HOME/.config/git/shell/ssh_agent_setup.sh" && SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" exec ssh "$@"' _
+[ssh]
+variant = ssh
 
 [init]
    defaultBranch = main
