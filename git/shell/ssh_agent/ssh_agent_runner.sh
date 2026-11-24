@@ -159,7 +159,7 @@ git_agent_stop() { set_env;
                 ;;
 
             stop)
-                if [ -z "${GIT_SSH_AGENT_PID}" ] && [ "$PID_SET" = n ]; then msg "ssh-agent is already stopped"; return 0; fi
+                if [ -z "${GIT_SSH_AGENT_PID}" ] && [ "$PID_SET" = n ]; then GOAL_REACHED=y; msg "ssh-agent is already stopped"; return 0; fi
 
                 msg "Stopping ssh-agent (PID: $GIT_SSH_AGENT_PID)"
                 git_agent_stop
