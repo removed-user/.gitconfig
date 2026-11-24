@@ -9,3 +9,21 @@ exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@"; ); }
     #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
     #  [ $# -gt 0 ] && exec_ssh "$@"
 #  fi
+
+
+ ## Get/Set Environment + PID
+  set_env() {
+         [ -n "${RUN_SET_ONCE}" ] && { unset RUN_SET_ONCE;
+         [ ! -d '/run/user/'"$(id -u)"'/git_agent' ] && mkdir -p '/run/user/'"$(id -u)"'/git_agent'
+         
+         GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_agent/git_ssh_agent.sock
+         PIDFILE=/run/user/"$(id -u)"/git_agent/git_ssh_agent.pid
+         EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
+         EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}";
+         };
+         
+    SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
+    [ -n "${GIT_SSH_AGENT_PID}" ] && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
+    export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
+    export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
+   }
