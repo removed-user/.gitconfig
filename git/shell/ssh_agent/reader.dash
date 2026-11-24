@@ -38,7 +38,9 @@ awk \
     cmd = "printf \%s\" \"" $4 "\" | base64 -d "
     cmd | getline user
     close(cmd)
-    print $1, "\n" output
+if (user == USERNAME) {
+    print $1
+    }
 }' 
 
 
