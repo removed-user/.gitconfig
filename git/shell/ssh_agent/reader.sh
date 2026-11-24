@@ -32,7 +32,6 @@ fi
 fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
 awk \
 -v USERNAME="${USERNAME}" \
--v APPLICATION="${APPLICATION}" \
 '{         
     id = $2
     user = ""
