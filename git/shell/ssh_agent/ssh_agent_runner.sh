@@ -185,21 +185,10 @@ GOAL_REACHED=n; attempts=0
       handle_state || exit 1
   done
 
-#  if [ "${GOAL}" = start ] [ "${GOAL_REACHED}" = y ]; then
-#  git_add_key
-exec_ssh() { ( unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
-exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@"; ); }
-
 msg 'Reached '"${GOAL}"' state'
 
-   #### Adds to the env set by git_add; Sets options for command, and adds the key recieved on stdin
-git_add_key() { ( git_add -H "${HOME}/.ssh/known_hosts/known_hosts-github" -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
-    #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
-    #  [ $# -gt 0 ] && exec_ssh "$@"
-#  fi
 ); }
 RUN_SET_ONCE=y
 dispatch "$@"
 )
-
 main "$@"
