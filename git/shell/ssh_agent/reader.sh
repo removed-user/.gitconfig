@@ -36,17 +36,19 @@ awk \
 -v APPLICATION="${APPLICATION}" \
 '{
 ### AWK SNIPPETS
-END {
-    if ( $2 == "" || $4 == "") {
-      print "Error: matching credential not found" > "/dev/stderr"
-      exit 1
-    }
+         
     id = $2
     user = ""
     cmd = "printf \%s\" \"" $4 "\" | base64 -d "
     cmd | getline user; close(cmd)
     close(cmd)
-if ( user == USERNAME ) { print id } 
+if ( user == USERNAME ) { found = 1; print id } 
+         
+       END {
+            if (!found) {
+                print "Error: matching credential not found" > "/dev/stderr"
+                exit 1
+            }
 }' 
 
 fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
