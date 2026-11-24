@@ -1,3 +1,6 @@
 #!/bin/dash
    #### Adds to the env set by git_add; Sets options for command, and adds the key recieved on stdin
 git_add_key() { ( git_add -H "${HOME}/.ssh/known_hosts/known_hosts-github" -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
+
+exec_ssh() { ( unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
+exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@"; ); }
