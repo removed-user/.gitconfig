@@ -8,11 +8,12 @@ cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"
 esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
 main() { (
 AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
-case "${#AUTHENTICATOR_DEVICES[@]}" in
+DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"
+case "${DEVICE_COUNT}" in
               [0]) err 'No Authenticator present'
 ;; ''|0*|*[!0-9]*) err 'Invalid Input'
 ;;          [2-9]) err 'More than one Authenticator present; pass `AUTHENTICATOR_DEVICE=` explicitly'
-;;           [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset "${AUTHENTICATOR_DEVICES}"
+;;           [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset AUTHENTICATOR_DEVICES
 ;; esac; 
 
 
