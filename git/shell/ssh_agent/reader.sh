@@ -6,7 +6,7 @@ cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${@}"
    msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;;
    err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;;
 esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
-
+main() { (
 AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '${print $1}')
 case "${#AUTHENTICATOR_DEVICES[@]}" in
               [0]) err 'No Authenticator present'
@@ -17,7 +17,10 @@ case "${#AUTHENTICATOR_DEVICES[@]}" in
 
 
 PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOSTNAME}"
+[ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
+
 USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
+APPLICATION='ssh:'"$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
 
 
 
@@ -51,3 +54,6 @@ user = $2
 }'
 
 fido2-token -I -k "${RELYING_PARTY}" -i "${CREDENTIAL_ID}"
+
+); }
+main "$@"
