@@ -149,7 +149,7 @@ git_agent_stop() { set_env;
 
                 msg "Starting isolated ssh-agent..."
                 git_agent_start
-                status
+                status pid
                 if [ "$VALID_PID" = y ]; then
                     msg "ssh-agent started (PID: $GIT_SSH_AGENT_PID)"
                 else
