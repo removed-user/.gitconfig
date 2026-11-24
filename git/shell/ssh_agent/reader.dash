@@ -7,10 +7,7 @@ cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${@}"
    err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;;
 esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
 
-
-
 AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '${print $1}')
-
 case "${#AUTHENTICATOR_DEVICES}" in
               [0]) err 'No Authenticator present'
 ;; ''|0*|*[!0-9]*) err 'Invalid Input'
@@ -18,9 +15,15 @@ case "${#AUTHENTICATOR_DEVICES}" in
 ;;           [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES[0]}" && unset "${AUTHENTICATOR_DEVICES}"
 ;; esac; 
 
--v APPLICATION="${APPLICATION}"
+
+PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOSTNAME}"
+USERNAME=$(git config get --file="${PERHOST_FILE}" user.name)
 
 
+
+
+
+### AWK SNIPPETS
 END {
     if ( $2 == "" || $4 == "") {
       print "Error: matching credential not found" > "/dev/stderr"
@@ -36,6 +39,9 @@ awk '{
     close(cmd)
     print $1, "\n" output
 }' hex_list.txt
+
+
+-v APPLICATION="${APPLICATION}"
 
 
     cmd = "printf %s \"" var "\" | base64 -d | xxd -p -c 0"
