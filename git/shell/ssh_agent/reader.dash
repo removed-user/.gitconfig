@@ -8,3 +8,15 @@ END {
       print "Error: matching credential not found" > "/dev/stderr"
       exit 1
     }
+
+
+## example
+awk '{
+    cmd = "echo " $1 " | xxd -r -p | base64 -w 70"
+    full_output = ""
+    while ((cmd | getline line) > 0) {
+        full_output = full_output (full_output ? "\n" : "") line
+    }
+    close(cmd)
+    print $1, "->\n" full_output
+}' hex_list.txt
