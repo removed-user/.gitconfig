@@ -4,7 +4,7 @@ AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '${print $1}')
 case "${#AUTHENTICATOR_DEVICES}" in
            [0]) 'No Authenticator present'
 ''|0*|*[!0-9]*) 'Invalid Input'
-           [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset "${AUTHENTICATOR_DEVICES}"
+           [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES[0]}" && unset "${AUTHENTICATOR_DEVICES}"
          [2-9]) 'More than one Authenticator present; pass `AUTHENTICATOR_DEVICE=` explicitly'
 esac
 
