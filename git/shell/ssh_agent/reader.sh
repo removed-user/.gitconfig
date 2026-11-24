@@ -20,7 +20,7 @@ PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOSTNAME}"
 [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
 
 USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
-APPLICATION='ssh:'"$(get_perhost_value "${PERHOST_CONFIG}"  host.name)"
+APPLICATION='ssh:'"$(get_perhost_value "${PERHOST_FILE}"  host.name)"
 
 
 
@@ -34,26 +34,20 @@ END {
     }
 
 ## example
+fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
 awk \
 -v USERNAME="${USERNAME}" \
+-v APPLICATION="${APPLICATION}" \
 '{
+    id = $2
     user = ""
     cmd = "printf \%s\" \"" $4 "\" | base64 -d "
     cmd | getline user; close(cmd)
     close(cmd)
-if ( user == USERNAME ) { print $2 } 
-
+if ( user == USERNAME ) { print id } 
 }' 
 
-
--v APPLICATION="${APPLICATION}"
-    fido2-token -L -k "${RELYING_PARTY}" "${AUTHENTICATOR_DEVICE}" |\
-awk '{
-id =$2
-user = $2
-}'
-
-fido2-token -I -k "${RELYING_PARTY}" -i "${CREDENTIAL_ID}"
+fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}"
 
 ); }
 main "$@"
