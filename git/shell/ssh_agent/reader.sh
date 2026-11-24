@@ -23,20 +23,17 @@ PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOST}"
 USERNAME="$(git config get --file=${PERHOST_FILE} user.name)"
 APPLICATION='ssh:'"$(get_perhost_value ${PERHOST_FILE} host.name)"
 
-
-
-
-
-
+# Workaround githubs broken parser
+if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then
+APPLICATION="ssh:"
+fi
 
 ## example
 fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
 awk \
 -v USERNAME="${USERNAME}" \
 -v APPLICATION="${APPLICATION}" \
-'{
-### AWK SNIPPETS
-         
+'{         
     id = $2
     user = ""
     cmd = "printf \%s\" \"" $4 "\" | base64 -d "
