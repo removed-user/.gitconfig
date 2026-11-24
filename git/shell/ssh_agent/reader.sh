@@ -26,12 +26,7 @@ APPLICATION='ssh:'"$(get_perhost_value "${PERHOST_FILE}"  host.name)"
 
 
 
-### AWK SNIPPETS
-END {
-    if ( $2 == "" || $4 == "") {
-      print "Error: matching credential not found" > "/dev/stderr"
-      exit 1
-    }
+
 
 ## example
 fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
@@ -39,6 +34,12 @@ awk \
 -v USERNAME="${USERNAME}" \
 -v APPLICATION="${APPLICATION}" \
 '{
+### AWK SNIPPETS
+END {
+    if ( $2 == "" || $4 == "") {
+      print "Error: matching credential not found" > "/dev/stderr"
+      exit 1
+    }
     id = $2
     user = ""
     cmd = "printf \%s\" \"" $4 "\" | base64 -d "
