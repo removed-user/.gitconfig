@@ -188,7 +188,7 @@ GOAL_REACHED=n; attempts=0
 #  if [ "${GOAL}" = start ] [ "${GOAL_REACHED}" = y ]; then
 #  git_add_key
 exec_ssh() { ( unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
-exec /usr/bin/ssh "$@"; ); }
+exec /usr/bin/ssh -o BatchMode=yes "$@"; ); }
 
 msg 'Reached '"${GOAL}"' state'
 
