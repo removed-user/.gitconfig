@@ -169,11 +169,7 @@ git_agent_stop() { set_env;
                     [ "$HAS_PIDFILE" = y ] && { msg "Removing Pidfile"; cleanup_pidfile && msg "Success" || err "Failed"; }
                     [ "$HAS_SOCKET" = y ]  && { msg "Removing Socket"; cleanup_socket && msg "Success" || err "Failed"; }
                     
-                if [ "${PID_SET}" = n ] && [ "$HAS_SOCKET" = n ] && [ "$HAS_PIDFILE" = n ]; then
-                    msg "ssh-agent stopped and cleaned up"
-                    GOAL_REACHED=y; return 0
-                fi
-                ;;
+                 if [ "${PID_SET}" = n ] && [ "$HAS_SOCKET" = n ] && [ "$HAS_PIDFILE" = n ]; then GOAL_REACHED=y; return 0; fi ;;
         esac
     }
 
