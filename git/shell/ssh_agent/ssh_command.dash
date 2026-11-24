@@ -1,29 +1,43 @@
 #!/bin/dash
-   #### Adds to the env set by git_add; Sets options for command, and adds the key recieved on stdin
-git_add_key() { ( git_add -H "${HOME}/.ssh/known_hosts/known_hosts-github" -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
 
-exec_ssh() { ( unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
-exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@"; ); }
+ ## Get/Set Environment + PID
+  set_env() {         
+         PIDFILE=/run/user/"$(id -u)"/git_agent/git_ssh_agent.pid
+         export GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_agent/git_ssh_agent.sock
+         export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
+         };
+
+[ -z "$GIT_SSH_AGENT_PID" ] && if [ -r "$PIDFILE" ]; then
+read -r GIT_SSH_AGENT_PID < "$PIDFILE"; 
+else
+( sh -c ./git_agent_runner.sh )
+fi
 
 
-    #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
-    #  [ $# -gt 0 ] && exec_ssh "$@"
+#### Adds to the env set by git_add; Sets options for command, and adds the key recieved on stdin
+    git_add_key() { ( 
+       git_add \
+         -H "${HOME}/.ssh/known_hosts/known_hosts-github" \
+         -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" \
+           -h github.com \
+           -h gitlab.com \
+             -E sha256 -t 4H -S '' -s ''  - 
+    ; ) }
+
+exec_ssh() { ( set_env; unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
+exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@";
+); }
+
+
+#  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
+#  [ $# -gt 0 ] && exec_ssh "$@"
 #  fi
 
 
- ## Get/Set Environment + PID
-  set_env() {
-         [ -n "${RUN_SET_ONCE}" ] && { unset RUN_SET_ONCE;
-         [ ! -d '/run/user/'"$(id -u)"'/git_agent' ] && mkdir -p '/run/user/'"$(id -u)"'/git_agent'
-         
-         GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_agent/git_ssh_agent.sock
-         PIDFILE=/run/user/"$(id -u)"/git_agent/git_ssh_agent.pid
-         EXTERNAL_AUTH_SOCK="${SSH_AUTH_SOCK:-}"
-         EXTERNAL_AGENT_PID="${SSH_AGENT_PID:-}";
-         };
+
          
     SSH_AUTH_SOCK="${GIT_SSH_AUTH_SOCK:-}"
     [ -n "${GIT_SSH_AGENT_PID}" ] && SSH_AGENT_PID="${GIT_SSH_AGENT_PID:-}" export GIT_SSH_AGENT_PID SSH_AGENT_PID || unset GIT_SSH_AGENT_PID SSH_AGENT_PID
     export GIT_SSH_AUTH_SOCK SSH_AUTH_SOCK
-    export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
    }
+
