@@ -7,7 +7,7 @@ cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"
    err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;;
 esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
 main() { (
-AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '${print $1}')
+AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
 case "${#AUTHENTICATOR_DEVICES[@]}" in
               [0]) err 'No Authenticator present'
 ;; ''|0*|*[!0-9]*) err 'Invalid Input'
