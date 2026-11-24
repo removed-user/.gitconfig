@@ -8,26 +8,24 @@
          };
 
 [ -z "$GIT_SSH_AGENT_PID" ] && if [ -r "$PIDFILE" ]; then
-read -r GIT_SSH_AGENT_PID < "$PIDFILE"; 
-else 
+read -r GIT_SSH_AGENT_PID < "$PIDFILE"; else 
 ( exec ./git_agent_runner.sh )
 fi
 
    ### Adds to the env set by (internal) git_add; Sets options for command, and adds the key(s) recieved on stdin
     git_add_key() { ( 
      git_add() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-add "$@"; ); }
-       git_add \
+       git_add -t 4H -s '' -S '' \
          -H "${HOME}/.ssh/known_hosts/known_hosts-github" \
          -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" \
            -h github.com \
            -h gitlab.com \
-             -E sha256 -t 4H -S '' -s ''  - \
+             -E sha256 - \
     ; ) }
 
 exec_ssh() { ( set_env; unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
 exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@";
 ); }
-
 
 #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
 #  [ $# -gt 0 ] && exec_ssh "$@"
