@@ -28,7 +28,7 @@ if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" 
 APPLICATION="ssh:"
 fi
 
-## example
+CREDENTIAL_ID=$(
 fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
 awk \
 -v USERNAME="${USERNAME}" \
@@ -46,6 +46,8 @@ if ( user == USERNAME ) { found = 1; print id }
                 exit 1
             }
 }' 
+)"
+
 
 fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
 
