@@ -1,0 +1,7 @@
+#!/bin/dash
+
+END {
+    if ( $2 == "" || $4 == "") {
+      print "Error: matching credential not found" > "/dev/stderr"
+      exit 1
+    }
