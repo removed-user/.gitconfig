@@ -48,7 +48,7 @@ END {
 if ( user == USERNAME ) { print id } 
 }' 
 
-fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}"
+fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
 
 ); }
 main "$@"
