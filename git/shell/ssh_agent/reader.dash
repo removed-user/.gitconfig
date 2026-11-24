@@ -20,3 +20,9 @@ awk '{
     close(cmd)
     print $1, "->\n" full_output
 }' hex_list.txt
+
+
+cmd_c = "printf %s \"" cred_b64 "\" | base64 -d | xxd -p -c 0"
+    cmd_p = "printf %s \"" pub_b64  "\" | base64 -d | xxd -p -c 0"
+    cmd_c | getline cred_hex; close(cmd_c)
+    cmd_p | getline pub_hex;  close(cmd_p)
