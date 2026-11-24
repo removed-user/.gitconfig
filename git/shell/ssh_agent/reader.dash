@@ -17,6 +17,7 @@ case "${#AUTHENTICATOR_DEVICES[@]}" in
 
 
 PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOSTNAME}"
+USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
 
 
 
@@ -29,29 +30,24 @@ END {
       exit 1
     }
 
-
 ## example
 awk \
--v USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)" \
+-v USERNAME="${USERNAME}" \
 '{
     user = ""
     cmd = "printf \%s\" \"" $4 "\" | base64 -d "
-    cmd | getline user
+    cmd | getline user; close(cmd)
     close(cmd)
-if (user == USERNAME) {
-    print $1
-    }
+if ( user == USERNAME ) { print $2 } 
+
 }' 
 
 
 -v APPLICATION="${APPLICATION}"
-
-
-    cmd = "printf %s \"" var "\" | base64 -d | xxd -p -c 0"
-    cmd | getline var; close(cmd)
-
     fido2-token -L -k "${RELYING_PARTY}" "${AUTHENTICATOR_DEVICE}" |\
 awk '{
 id =$2
 user = $2
 }'
+
+fido2-token -I -k "${RELYING_PARTY}" -i "${CREDENTIAL_ID}"
