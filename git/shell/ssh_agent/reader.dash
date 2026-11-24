@@ -17,7 +17,6 @@ case "${#AUTHENTICATOR_DEVICES[@]}" in
 
 
 PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOSTNAME}"
-USERNAME=$(git config get --file="${PERHOST_FILE}" user.name)
 
 
 
@@ -32,13 +31,15 @@ END {
 
 
 ## example
-awk '{
-    cmd = "echo " $1 " | xxd -r -p | base64 -w 70"
-    output = ""
-    cmd | getline  output
+awk \
+-v USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)" \
+'{
+    user = ""
+    cmd = "printf \%s\" \"" $4 "\" | base64 -d "
+    cmd | getline user
     close(cmd)
     print $1, "\n" output
-}' hex_list.txt
+}' 
 
 
 -v APPLICATION="${APPLICATION}"
