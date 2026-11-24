@@ -20,8 +20,8 @@ case "${DEVICE_COUNT}" in
 PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOST}"
 [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
 
-USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
-APPLICATION='ssh:'"$(get_perhost_value "${PERHOST_FILE}"  host.name)"
+USERNAME="$(git config get --file=${PERHOST_FILE} user.name)"
+APPLICATION='ssh:'"$(get_perhost_value ${PERHOST_FILE} host.name)"
 
 
 
