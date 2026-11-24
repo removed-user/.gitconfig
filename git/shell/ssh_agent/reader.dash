@@ -1,6 +1,6 @@
 #!/bin/dash
 
--v target="$TARGET"
+-v APPLICATION="${APPLICATION}"
 
 
 END {
