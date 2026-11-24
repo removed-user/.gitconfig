@@ -1,0 +1,3 @@
+#!/bin/dash
+   #### Adds to the env set by git_add; Sets options for command, and adds the key recieved on stdin
+git_add_key() { ( git_add -H "${HOME}/.ssh/known_hosts/known_hosts-github" -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" -h github.com -h gitlab.com -E sha256 -t 4H -S '' -s ''  - ; ) }
