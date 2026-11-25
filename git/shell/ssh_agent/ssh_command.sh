@@ -32,15 +32,44 @@ exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@";
 
 
 set_args() { (
-  SSH_ARGS=""
-    opt() { printf -v SSH_ARGS '%s -o %q' "${SSH_ARGS}" "$1"; }
+### Hardened SSH Options for Git
+#### Most should be standard ssh config; But!
+##### Setting it here makes it work without a well configured host
+opt() { printf -v SSH_ARGS '%s -o %q' "${SSH_ARGS}" "$1"; }
+SSH_ARGS=""
 
+opt Tunnel=no
+opt StdinNull=no
+opt RequestTTY=no
+opt ForwardX11=no
+opt ForwardAgent=no
+opt EscapeChar=none
+opt RemoteCommand=none
+opt ClearAllForwardings=yes
+opt GSSAPIAuthentication=no
+opt PermitLoRemoteCommand=no
+opt PasswordAuthentication=no
+opt GSSAPIDelegateCredentials=no
+opt EnableEscapeCommandline=no
+opt KbdInteractiveAuthentication=no
+opt IdentityAgent=/run/user/%i/git_agent/git_ssh_agent.sock
+# Situational
+## Prevents servers from silently adding/rotating keys in your `known_hosts`
+opt UpdateHostKeys=no
+## Prevents SSH from automatically adding unencrypted disk keys into your agent. 
+opt AddKeysToAgent=no
+## Redundant Redundancy is redundant
+opt SessionType=default
+opt ForkAfterAuthentication=no
+opt HostbasedAuthentication=no
+opt NoHostAuthenticationForLocalhost=no
+opt ControlMaster=no
+opt IdentityFile=none
 
-set_host_keys() { files="";
-  HOSTLIST="gitlab github"
-   for host in ${HOSTLIST}; do
-     if [ -r "${HOME}/.ssh/known_hosts/known_hosts-${host}" ]; then  files="${files:+${files} }%d/.ssh/known_hosts/known_hosts-${host}";
-       fi; done; KH_FILES="${files}"
+set_host_keys() { files=""; for host in ${HOSTLIST}; do if [ -r "${HOME}/.ssh/known_hosts/known_hosts-${host}" ]; then files="${files:+${files} }%d/.ssh/known_hosts/known_hosts-${host}"; fi; done; KH_FILES="${files}"; }; 
+HOSTLIST="gitlab github" 
+HOSTLIST="${HOSTLIST}" set_host_keys
+
 
          if [ -n "${KH_FILES}" ]; then
 opt "GlobalKnownHostsFile=${KH_FILES}"
@@ -50,7 +79,8 @@ opt StrictHostKeyChecking=yes
          else 
 ## Fallback, allow new keys on new hosts
 opt StrictHostKeyChecking=accept-new
-         fi; }; set_host_keys }
+fi; 
+}
 
 
 
