@@ -2,7 +2,6 @@
 main() (
  ## Get/Set Environment + PID
   set_env() {         
-         ARGS="$@"
          UID="$(id -u)"
          PIDFILE=/run/user/"${UID}"/git_agent/git_ssh_agent.pid
          export GIT_SSH_AUTH_SOCK=/run/user/"${UID}"/git_agent/git_ssh_agent.sock
