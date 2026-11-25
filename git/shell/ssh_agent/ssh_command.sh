@@ -1,7 +1,8 @@
 #!/bin/dash
-
+main() (
  ## Get/Set Environment + PID
   set_env() {         
+         ARGS="$@"
          UID="$(id -u)"
          PIDFILE=/run/user/"${UID}"/git_agent/git_ssh_agent.pid
          export GIT_SSH_AUTH_SOCK=/run/user/"${UID}"/git_agent/git_ssh_agent.sock
@@ -25,7 +26,7 @@ fi
     ; ) }
 
 exec_ssh() { ( set_env; unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
-exec /usr/bin/ssh       "$@";
+exec /usr/bin/ssh    "$@";
 ); }
 ## -a -k -T -x -o ClearAllForwardings=yes
 
@@ -96,3 +97,4 @@ fi;
 #  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
 #  [ $# -gt 0 ] && exec_ssh "$@"
 #  fi
+)
