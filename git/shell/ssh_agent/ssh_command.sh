@@ -5,7 +5,7 @@ main() (
          _UID_="$(id -u)"
          PIDFILE=/run/user/"${_UID_}"/git_agent/git_ssh_agent.pid
          export GIT_SSH_AUTH_SOCK=/run/user/"${_UID_}"/git_agent/git_ssh_agent.sock
-         export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
+         export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY='' SSH_PKCS11_PROVIDER=''
          }; set_env
 
 [ -z "$GIT_SSH_AGENT_PID" ] && if [ -r "$PIDFILE" ]; then
