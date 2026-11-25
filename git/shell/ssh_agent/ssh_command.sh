@@ -2,9 +2,9 @@
 main() (
  ## Get/Set Environment + PID
   set_env() {         
-         UID="$(id -u)"
-         PIDFILE=/run/user/"${UID}"/git_agent/git_ssh_agent.pid
-         export GIT_SSH_AUTH_SOCK=/run/user/"${UID}"/git_agent/git_ssh_agent.sock
+         _UID_="$(id -u)"
+         PIDFILE=/run/user/"${_UID_}"/git_agent/git_ssh_agent.pid
+         export GIT_SSH_AUTH_SOCK=/run/user/"${_UID_}"/git_agent/git_ssh_agent.sock
          export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
          }; set_env
 
@@ -26,7 +26,6 @@ fi
 
 exec_ssh() { ( set_env; unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
 set_args
-
 eval "set -- ${SSH_ARGS} \"\$@\""
 exec /usr/bin/ssh "$@";
 ); }
@@ -73,7 +72,7 @@ opt PasswordAuthentication=no
 opt GSSAPIDelegateCredentials=no
 opt EnableEscapeCommandline=no
 opt KbdInteractiveAuthentication=no
-opt IdentityAgent=/run/user/%i/git_agent/git_ssh_agent.sock
+opt IdentityAgent=/run/user/"${_UID_}"/git_agent/git_ssh_agent.sock
 
 opt SessionType=default
 opt ForkAfterAuthentication=no
@@ -128,7 +127,8 @@ n)  git_add_key        ;;
 y)                     ;;
 esac
 
-[ $# -gt 0 ] && exec_ssh "$@"
-
+if [ $# -gt 0 ]; then 
+SSH_AGENT_PID="${GIT_SSH_AGENT_PID}" exec_ssh "$@"
+fi
 )
 main "$@"
