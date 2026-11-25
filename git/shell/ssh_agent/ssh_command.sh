@@ -13,10 +13,11 @@ print_startup_info() {
     printf '  Args   : %s\n' "${*:-none}" >&2
     printf '===========================\n' >&2
 }
-# Call at the start of main()
-if [ "${DEBUG}" = "1" ]; then
-    print_startup_info "$@"
-fi
+
+case "${caller_name}" in
+    *git*) ;;
+    *) print_startup_info ;;
+esac
 
  ## Get/Set Environment + PID
   set_env() {         
