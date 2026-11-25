@@ -46,6 +46,16 @@ opt() {
 }
 ### opt() { printf -v SSH_ARGS '%s -o %q' "${SSH_ARGS}" "$1"; }
 
+
+
+
+# Situational
+## Prevents servers from silently adding/rotating keys in your `known_hosts`
+opt UpdateHostKeys=no
+## Prevents SSH from automatically adding unencrypted disk keys into your agent. 
+opt AddKeysToAgent=no
+## Redundant Redundancy is redundant
+
 opt User=git
 opt BatchMode=yes
 
@@ -64,18 +74,28 @@ opt GSSAPIDelegateCredentials=no
 opt EnableEscapeCommandline=no
 opt KbdInteractiveAuthentication=no
 opt IdentityAgent=/run/user/%i/git_agent/git_ssh_agent.sock
-# Situational
-## Prevents servers from silently adding/rotating keys in your `known_hosts`
-opt UpdateHostKeys=no
-## Prevents SSH from automatically adding unencrypted disk keys into your agent. 
-opt AddKeysToAgent=no
-## Redundant Redundancy is redundant
+
 opt SessionType=default
 opt ForkAfterAuthentication=no
 opt HostbasedAuthentication=no
 opt NoHostAuthenticationForLocalhost=no
 opt ControlMaster=no
 opt IdentityFile=none
+
+opt ProxyCommand=none
+opt ProxyJump=none
+opt PKCS11Provider=none
+opt KnownHostsCommand=none
+opt PreferredAuthentications=publickey
+opt PubkeyAuthentication=yes
+opt CanonicalizeHostname=no
+opt VerifyHostKeyDNS=no
+opt VisualHostKey=no
+opt ControlPath=none
+opt ControlPersist=no
+
+
+
 
 set_host_keys() { files=""; for host in ${HOSTLIST}; do if [ -r "${HOME}/.ssh/known_hosts/known_hosts-${host}" ]; then files="${files:+${files} }%d/.ssh/known_hosts/known_hosts-${host}"; fi; done; KH_FILES="${files}"; }; 
 HOSTLIST="gitlab github" 
