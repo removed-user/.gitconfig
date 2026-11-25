@@ -26,7 +26,10 @@ fi
     ; ) }
 
 exec_ssh() { ( set_env; unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
-exec /usr/bin/ssh    "$@";
+set_args
+
+eval "set -- ${SSH_ARGS} \"\$@\""
+exec /usr/bin/ssh "$@";
 ); }
 ## -a -k -T -x -o ClearAllForwardings=yes
 
