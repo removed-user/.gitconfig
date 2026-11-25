@@ -78,7 +78,7 @@ opt StrictHostKeyChecking=yes
 ## Fallback, allow new keys on new hosts
 opt StrictHostKeyChecking=accept-new
 fi; 
-}
+); }
 
 
 
