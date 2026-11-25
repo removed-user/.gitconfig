@@ -53,3 +53,8 @@ fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE
 
 ); }
 main "$@"
+
+
+# 1. The Public Key (which fido2-token -I -k 'ssh:' -i "$CRED_ID" outputs in PEM format).
+# 2. The Application string (ssh:).
+# 3. The Key Handle (cred_id)—decoded from Base64 into raw binary/hex (base64 -d | xxd -p | tr -d '\n').
