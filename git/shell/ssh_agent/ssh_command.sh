@@ -10,7 +10,7 @@
 
 [ -z "$GIT_SSH_AGENT_PID" ] && if [ -r "$PIDFILE" ]; then
 read -r GIT_SSH_AGENT_PID < "$PIDFILE"; else 
-( exec "${HOME}"/git/shell/ssh_agent/git_agent_runner.sh )
+( exec "${HOME}"/.config/git/shell/ssh_agent/git_agent_runner.sh )
 fi
 
    ### Adds to the env set by (internal) git_add; Sets options for command, and adds the key(s) recieved on stdin
