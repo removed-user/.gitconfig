@@ -34,8 +34,14 @@ set_args() { (
 ### Hardened SSH Options for Git
 #### Most should be standard ssh config; But!
 ##### Setting it here makes it work without a well configured host
-opt() { printf -v SSH_ARGS '%s -o %q' "${SSH_ARGS}" "$1"; }
+
 SSH_ARGS=""
+opt() {
+  # Escapes any ' as '\'' and wraps the entire option in single quotes
+  val=$(printf '%s' "$1" | sed "s/'/'\\\\''/g")
+  SSH_ARGS="${SSH_ARGS} -o '${val}'"
+}
+### opt() { printf -v SSH_ARGS '%s -o %q' "${SSH_ARGS}" "$1"; }
 
 opt Tunnel=no
 opt StdinNull=no
