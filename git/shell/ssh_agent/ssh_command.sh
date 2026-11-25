@@ -2,6 +2,22 @@
 main() (
 message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; );
 
+print_startup_info() {
+    caller_name=$(ps -p "$PPID" -o comm= 2>/dev/null)
+    caller_args=$(ps -p "$PPID" -o args= 2>/dev/null)
+
+    printf '=== SSH Wrapper Startup ===\n' >&2
+    printf '  Script : %s (PID: %s)\n' "${0##*/}" "$$" >&2
+    printf '  Caller : %s (PPID: %s)\n' "${caller_name:-unknown}" "$PPID" >&2
+    printf '  Command: %s\n' "${caller_args:-unknown}" >&2
+    printf '  Args   : %s\n' "${*:-none}" >&2
+    printf '===========================\n' >&2
+}
+# Call at the start of main()
+if [ "${DEBUG}" = "1" ]; then
+    print_startup_info "$@"
+fi
+
  ## Get/Set Environment + PID
   set_env() {         
          _UID_="$(id -u)"
@@ -23,8 +39,7 @@ fi
          -H "${HOME}/.ssh/known_hosts/known_hosts-gitlab" \
            -h github.com \
            -h gitlab.com \
-             -E sha256 - \
-    ; ) }
+             -E sha256 -  ; ) }
 
 exec_ssh() { ( set_env; unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
   set_args
