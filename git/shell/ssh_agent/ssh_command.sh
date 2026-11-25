@@ -146,7 +146,7 @@ y)                     ;;
 esac
 
 if [ $# -gt 0 ]; then 
-SSH_AGENT_PID="${GIT_SSH_AGENT_PID}" exec_ssh "$@"
+exec_ssh "$@"
 fi
 )
 main "$@"
