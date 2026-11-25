@@ -31,7 +31,23 @@ exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@";
 ## -a -k -T -x -o ClearAllForwardings=yes
 
 
+set_args() { (
+set_host_keys() {
+    files=""; HOSTLIST="gitlab github"
+   for host in ${HOSTLIST}; do
+     if [ -r "${HOME}/.ssh/known_hosts/known_hosts-${host}" ]; then  files="${files:+${files} }%d/.ssh/known_hosts/known_hosts-${host}";
+       fi; done; KH_FILES="${files}"
 
+if [ -n "${KH_FILES}" ]; then
+opt "GlobalKnownHostsFile=${KH_FILES}"
+opt "UserKnownHostsFile=${KH_FILES}"
+## Refuses to connect to unknown or changed host keys
+opt StrictHostKeyChecking=yes
+else 
+## Fallback, allow new keys on new hosts
+opt StrictHostKeyChecking=accept-new
+fi
+}; set_host_keys }
 
 
 
