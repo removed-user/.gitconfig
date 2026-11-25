@@ -79,22 +79,23 @@ set_host_keys() { files=""; for host in ${HOSTLIST}; do if [ -r "${HOME}/.ssh/kn
 HOSTLIST="gitlab github" 
 HOSTLIST="${HOSTLIST}" set_host_keys
 
-
-         if [ -n "${KH_FILES}" ]; then
-opt "GlobalKnownHostsFile=${KH_FILES}"
-opt "UserKnownHostsFile=${KH_FILES}"
-## Refuses to connect to unknown or changed host keys
-opt StrictHostKeyChecking=yes
-         else 
-## Fallback, allow new keys on new hosts
-opt StrictHostKeyChecking=accept-new
+if [ -n "${KH_FILES}" ]; then
+   opt "GlobalKnownHostsFile=${KH_FILES}"
+   opt "UserKnownHostsFile=${KH_FILES}"
+   ## Refuses to connect to unknown or changed host keys
+   opt StrictHostKeyChecking=yes
+else 
+   ## Fallback, allow new keys on new hosts
+   opt StrictHostKeyChecking=accept-new
 fi; 
 ); }
 
+case "$KEYS_LOADED" in
+n)  git_add_key        ;;
+y)                     ;;
+esac
 
+[ $# -gt 0 ] && exec_ssh "$@"
 
-
-#  if [ "$KEYS_LOADED" = n ]; then git_add_key; fi
-#  [ $# -gt 0 ] && exec_ssh "$@"
-#  fi
 )
+main "$@"
