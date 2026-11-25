@@ -34,7 +34,7 @@ exec /usr/bin/ssh "$@";
 ## -a -k -T -x -o ClearAllForwardings=yes
 
 
-set_args() { (
+set_args() {
 ### Hardened SSH Options for Git
 #### Most should be standard ssh config; But!
 ##### Setting it here makes it work without a well configured host
@@ -91,7 +91,7 @@ else
    ## Fallback, allow new keys on new hosts
    opt StrictHostKeyChecking=accept-new
 fi; 
-); }
+}
 
 case "$KEYS_LOADED" in
 n)  git_add_key        ;;
