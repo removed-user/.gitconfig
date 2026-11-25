@@ -32,8 +32,8 @@ exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@";
 
 
 set_args() { (
-set_host_keys() {
-    files=""; HOSTLIST="gitlab github"
+set_host_keys() { files="";
+HOSTLIST="gitlab github"
    for host in ${HOSTLIST}; do
      if [ -r "${HOME}/.ssh/known_hosts/known_hosts-${host}" ]; then  files="${files:+${files} }%d/.ssh/known_hosts/known_hosts-${host}";
        fi; done; KH_FILES="${files}"
