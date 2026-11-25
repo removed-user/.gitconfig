@@ -95,6 +95,17 @@ opt VisualHostKey=no
 opt ControlPath=none
 opt ControlPersist=no
 
+opt LocalCommand=none
+opt PermitRemoteOpen=none
+opt GatewayPorts=no
+opt ExitOnForwardFailure=yes
+opt ForwardX11Trusted=no
+opt ForwardX11Timeout=1
+opt XAuthLocation=none
+opt NumberOfPasswordPrompts=0
+opt ProxyUseFdpass=no
+opt StreamLocalBindUnlink=no
+
 
 
 
