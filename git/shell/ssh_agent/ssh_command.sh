@@ -2,8 +2,9 @@
 
  ## Get/Set Environment + PID
   set_env() {         
-         PIDFILE=/run/user/"$(id -u)"/git_agent/git_ssh_agent.pid
-         export GIT_SSH_AUTH_SOCK=/run/user/"$(id -u)"/git_agent/git_ssh_agent.sock
+         UID="$(id -u)"
+         PIDFILE=/run/user/"${UID}"/git_agent/git_ssh_agent.pid
+         export GIT_SSH_AUTH_SOCK=/run/user/"${UID}"/git_agent/git_ssh_agent.sock
          export SSH_SK_PROVIDER='' SSH_ASKPASS='' SSH_ASKPASS_REQUIRE=never DISPLAY=''
          }; set_env
 
