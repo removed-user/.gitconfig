@@ -25,7 +25,7 @@ fi
     ; ) }
 
 exec_ssh() { ( set_env; unset GOAL PIDFILE EXTERNAL_AUTH_SOCK EXTERNAL_AGENT_PID HAS_SOCKET HAS_PIDFILE RUNNING KEYS_LOADED VALID_PID STALE_PID ORPHAN PID_SET PID_SOURCE GOAL_REACHED attempts
-exec /usr/bin/ssh -o User=git -o BatchMode=yes "$@";
+exec /usr/bin/ssh       "$@";
 ); }
 ## -a -k -T -x -o ClearAllForwardings=yes
 
@@ -42,6 +42,9 @@ opt() {
   SSH_ARGS="${SSH_ARGS} -o '${val}'"
 }
 ### opt() { printf -v SSH_ARGS '%s -o %q' "${SSH_ARGS}" "$1"; }
+
+opt User=git
+opt BatchMode=yes
 
 opt Tunnel=no
 opt StdinNull=no
