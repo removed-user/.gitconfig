@@ -63,7 +63,6 @@ opt Tunnel=no
 opt StdinNull=no
 opt RequestTTY=no
 opt ForwardX11=no
-opt ForwardX11Trusted=no
 opt ForwardAgent=no
 opt EscapeChar=none
 opt RemoteCommand=none
