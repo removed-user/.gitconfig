@@ -22,14 +22,12 @@ APPLICATION='ssh:'"$(git config get --file=${PERHOST_FILE} host.name)"
 github_fix
 
 
-CREDENTIAL_ID=$(
-fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
+CREDENTIAL_ID=$(fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
 awk \
 -v USERNAME="${USERNAME}" \
-'{         
-    id = $2; user = $4
+'{  id = $2; user = $4
     cmd = "printf \%s\" \"" user "\" | base64 -d "
-    cmd | getline username; close(cmd)
+    cmd | getline username; close(cmd); exit 0
 if ( username == USERNAME ) { found = 1; print id } 
 END { if (!found) { print "Error: matching credential not found" > "/dev/stderr"; exit 1; }; }' 
 )"
