@@ -1,5 +1,5 @@
 #!/bin/dash
-main() { (
+generate_fido2_stub() { (
 message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
 
 AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
@@ -51,8 +51,7 @@ END { if (!found) { print "Error: matching credential not found" > "/dev/stderr"
 
 
 ); }
-main "$@"
-
+generate_fido2_stub
 
 # 1. The Public Key (which fido2-token -I -k 'ssh:' -i "$CRED_ID" outputs in PEM format).
 # 2. The Application string (ssh:).
