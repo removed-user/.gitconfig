@@ -14,6 +14,10 @@ set_params() {
 github_fix
 }
 
+#   KEY_TYPES
+### sk-ssh-ed25519@openssh.com
+### sk-ecdsa-sha2-nistp256@openssh.com
+
 KEY_TYPE_HEX="$(printf '%s' "$KEY_TYPE" | xxd -p | tr -d '\n')"
 
 
