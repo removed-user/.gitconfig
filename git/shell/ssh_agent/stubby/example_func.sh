@@ -130,3 +130,35 @@ main() { (
 ); }
 
 main "$@"
+
+
+
+function parse_spki(spki_hex,    ed_len, ec_len) {
+    ed_len = length(ED25519_PREFIX)
+    ec_len = length(ECDSA_P256_PREFIX)
+
+    # Case: "${ED25519_PREFIX}"*
+    if (index(spki_hex, ED25519_PREFIX) == 1) {
+        KEYTYPE     = "sk-ssh-ed25519@openssh.com"
+        CURVE       = ""
+        RAW_PUB_HEX = substr(spki_hex, ed_len + 1)
+        return 1
+    }
+
+    # Case: "${ECDSA_P256_PREFIX}"*
+    if (index(spki_hex, ECDSA_P256_PREFIX) == 1) {
+        KEYTYPE     = "sk-ecdsa-sha2-nistp256@openssh.com"
+        CURVE       = "nistp256"
+        RAW_PUB_HEX = substr(spki_hex, ec_len + 1)
+        return 1
+    }
+
+    # Default case: *
+    err("Unsupported SPKI public key header: " spki_hex)
+    return 0
+}
+BEGIN {
+ED25519_PREFIX    = "302a300506032b6570032100"
+ECDSA_P256_PREFIX = "3059301306072a8648ce3d020106082a8648ce3d030107034200"
+
+}
