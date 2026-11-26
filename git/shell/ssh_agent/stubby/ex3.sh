@@ -37,6 +37,10 @@ case "${DEVICE_COUNT}" in
         }'
     ) || exit 1
 
+    OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
+    ENDING='-----END OPENSSH PRIVATE KEY-----'
+
+
     # 1. Extract PEM body, decode with base64 -d, and hex-encode with xxd
     SPKI_HEX="$(
         fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}" | \
@@ -58,10 +62,6 @@ case "${DEVICE_COUNT}" in
             -v cred_hex="${CRED_ID_HEX}" \
             -v checkint="${CHECKINT_HEX}" \
             -v comment_hex="${COMMENT_HEX}" '
-        function err(msg) {
-            print "[ERROR]: " msg > "/dev/stderr"
-            exit 1
-        }
         function u32(n) {
             return sprintf("%08x", n)
         }
@@ -96,8 +96,7 @@ case "${DEVICE_COUNT}" in
                 RAW_PUB_HEX = substr(spki_hex, ec_len + 1)
                 return 1
             }
-
-            err("Unsupported SPKI public key header: " spki_hex)
+            print "[ERROR]: Unsupported SPKI public key header: " spki_hex > "/dev/stderr"
             return 0
         }
         BEGIN {
@@ -111,7 +110,6 @@ case "${DEVICE_COUNT}" in
             app_blob   = ssh_str(app_hex)
             pub_blob   = key_type pub_fields app_blob
 
-            checkint = "deadbeefdeadbeef"
             flags    = "01"
 
             priv_body = checkint \
@@ -136,13 +134,9 @@ case "${DEVICE_COUNT}" in
                        u32(1) \
                        ssh_str(pub_blob) \
                        ssh_str(priv_body)
-
             print full_hex
         }' | xxd -r -p | base64 -w 70
     )" || exit 1
-
-    OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
-    ENDING='-----END OPENSSH PRIVATE KEY-----'
 
     printf '%s\n%s\n%s\n' "${OPENING}" "${KEY_BODY}" "${ENDING}"
 ); }
