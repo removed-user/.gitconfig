@@ -16,12 +16,14 @@ case "${DEVICE_COUNT}" in
     ;; esac
 }
 set_app() {
-    PERHOST_FILE="${HOME}/.config/git/host/perhost/${HOST}"; [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
-
-    USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
-    APPLICATION='ssh:'"$(git config get --file="${PERHOST_FILE}" host.name)"
     # Workaround githubs broken parser
-    if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then  APPLICATION="ssh:"; fi
+      github_fix() { if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then APPLICATION="ssh:"; fi; }
+    PERHOST_FILE="${HOME}/.config/git/host/perhost/${HOST}"; 
+    if [ -r "${PERHOST_FILE}" ]; then
+       APPLICATION='ssh:'"$(git config get --file="${PERHOST_FILE}" host.name)"
+       USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
+    else err 'Missing File: '"${PERHOST_FILE}"; fi
+    github_fix
 }
 
 
