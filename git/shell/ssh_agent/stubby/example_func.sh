@@ -14,7 +14,7 @@ case "${DEVICE_COUNT}" in
     ;;            [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset AUTHENTICATOR_DEVICES
     ;; esac
 
-    PERHOST_FILE="${HOME}/.config/git/host/perhost/${HOST}";  [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
+    PERHOST_FILE="${HOME}/.config/git/host/perhost/${HOST}"; [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
 
     USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
     APPLICATION='ssh:'"$(git config get --file="${PERHOST_FILE}" host.name)"
