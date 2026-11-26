@@ -49,12 +49,14 @@ case "${DEVICE_COUNT}" in
     CRED_ID_HEX="$(printf '%s' "${CREDENTIAL_ID}" | base64 -d | xxd -p | tr -d '\n')"
     APP_HEX="$(str_to_hex "${APPLICATION}")"
     COMMENT_HEX="$(str_to_hex "${USERNAME}@${HOST}")"
+    CHECKINT_HEX="$(dd if=/dev/urandom bs=4 count=1 2>/dev/null | xxd -p | tr -d '\n')"
 
     # 3. Strip SPKI ASN.1 header and assemble OpenSSH wire format in awk
     KEY_BODY="$(
         awk -v spki="${SPKI_HEX}" \
             -v app_hex="${APP_HEX}" \
             -v cred_hex="${CRED_ID_HEX}" \
+            -v checkint="${CHECKINT_HEX}" \
             -v comment_hex="${COMMENT_HEX}" '
         function err(msg) {
             print "[ERROR]: " msg > "/dev/stderr"
