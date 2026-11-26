@@ -27,7 +27,7 @@ case "${DEVICE_COUNT}" in
         awk -v USERNAME="${USERNAME}" '{
             id = $2
             user = $4
-            cmd = "printf \"%s\" \"" user "\" | base64 -d"
+            cmd = "printf '%s' '" user "' | base64 -d"
             cmd | getline username
             close(cmd)
             if (username == USERNAME) { found = 1; print id }
