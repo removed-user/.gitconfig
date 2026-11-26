@@ -31,8 +31,8 @@ main() { (
         fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" | \
         awk -v USERNAME="${USERNAME}" '{
             id = $2
-            user = ""
-            cmd = "printf \"%s\" \"" $4 "\" | base64 -d"
+            user = $4
+            cmd = "printf \"%s\" \"" user "\" | base64 -d"
             cmd | getline user
             close(cmd)
             if (user == USERNAME) { found = 1; print id }
