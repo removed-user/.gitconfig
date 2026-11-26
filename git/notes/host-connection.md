@@ -1,0 +1,11 @@
+### check connections
+```toml
+[connection]
+check.ssh.github = `ssh -T ssh://git@github.com/`
+check.ssh.gitlab = `ssh -T ssh://git@gitlab.com/`
+check.ssh.gitlab = `ssh -T ssh://git@codeberg.org/`
+```
+
+# Other hosts
+## Codeberg
+## Forgejo
