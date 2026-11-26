@@ -1,8 +1,6 @@
 #!/bin/dash
 message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}"; [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() { message err "$@"; exit 1; }; msg() { message msg "$@"; }
 
-str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
-
 main() { (
     HOST="${1:-github}"
 set_device() { AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}'); DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"; case "${DEVICE_COUNT}" in [2-9]) err 'More than one Authenticator present; pass `AUTHENTICATOR_DEVICE=` explicitly';; [0]) err 'No Authenticator present' ;; ''|0*|*[!0-9]*) err 'Invalid Input' ;; [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset AUTHENTICATOR_DEVICES;; esac }
@@ -22,9 +20,10 @@ set_device
 set_app
 
     CREDENTIAL_ID=$(fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" | awk -v USERNAME="${USERNAME}" '{  id = $2; user = $4; cmd = "printf '%s' '" user "' | base64 -d"; cmd | getline username; close(cmd); if (username == USERNAME) { found = 1; print id }  }; END { if (!found) { print "Error: matching credential not found" > "/dev/stderr"; exit 1 } }' )
-    OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
-    ENDING='-----END OPENSSH PRIVATE KEY-----'
 
+
+
+str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
 
     # 1. Extract PEM body, decode with base64 -d, and hex-encode with xxd
     SPKI_HEX="$(
@@ -36,9 +35,20 @@ set_app
 
     # 2. Decode CREDENTIAL_ID to hex with base64 -d and xxd
     CRED_ID_HEX="$(printf '%s' "${CREDENTIAL_ID}" | base64 -d | xxd -p | tr -d '\n')"
-    APP_HEX="$(str_to_hex "${APPLICATION}")"
     COMMENT_HEX="$(str_to_hex "${USERNAME}@${HOST}")"
+ 
+    APP_HEX="$(str_to_hex "${APPLICATION}")"
     CHECKINT_HEX="$(dd if=/dev/urandom bs=4 count=1 2>/dev/null | xxd -p | tr -d '\n')"
+    OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
+    ENDING='-----END OPENSSH PRIVATE KEY-----'
+    MAGIC_HEX="$(str_to_hex 'openssh-key-v1')"
+    NONE_HEX="$(str_to_hex 'none')"
+    ED_TYPE_HEX="$(str_to_hex 'sk-ssh-ed25519@openssh.com')"
+    EC_TYPE_HEX="$(str_to_hex 'sk-ecdsa-sha2-nistp256@openssh.com')"
+    P256_HEX="$(str_to_hex 'nistp256')"
+
+
+
 
     # 3. Strip SPKI ASN.1 header and assemble OpenSSH wire format in awk
     KEY_BODY="$(
