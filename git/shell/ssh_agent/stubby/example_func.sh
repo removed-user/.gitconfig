@@ -7,7 +7,7 @@ main() { (
     HOST="${1:-github}"
     AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
     DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"
-    case "${DEVICE_COUNT}" in
+case "${DEVICE_COUNT}" in
                 [2-9]) err 'More than one Authenticator present; pass `AUTHENTICATOR_DEVICE=` explicitly'
     ;;            [0]) err 'No Authenticator present'
     ;; ''|0*|*[!0-9]*) err 'Invalid Input'
