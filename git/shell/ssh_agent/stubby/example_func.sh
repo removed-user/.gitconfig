@@ -6,7 +6,7 @@ msg() { message msg "$@"; }
 str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
 
 main() { (
-    HOST="${1:-github.com}"
+    HOST="${1:-github}"
     AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
     DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"
     case "${DEVICE_COUNT}" in
