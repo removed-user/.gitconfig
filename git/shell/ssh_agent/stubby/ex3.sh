@@ -20,9 +20,7 @@ case "${DEVICE_COUNT}" in
     APPLICATION='ssh:'"$(git config get --file="${PERHOST_FILE}" host.name)"
 
     # Workaround githubs broken parser
-    if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then
-        APPLICATION="ssh:"
-    fi
+    if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then  APPLICATION="ssh:"; fi
 
     CREDENTIAL_ID=$(
         fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" | \
