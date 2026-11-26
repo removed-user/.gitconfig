@@ -3,9 +3,7 @@ message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}"; [
 err() { message err "$@"; exit 1; }
 msg() { message msg "$@"; }
 
-str_to_hex() {
-    printf '%s' "$1" | xxd -p | tr -d '\n'
-}
+str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
 
 main() { (
     HOST="${1:-github.com}"
