@@ -1,12 +1,6 @@
 #!/bin/dash
 message() { (
-RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'
-
-cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"
-   case $cmd in
-   msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;;
-   err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;;
-esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
+RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
 
 main() { (
 AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
@@ -18,6 +12,10 @@ case "${DEVICE_COUNT}" in
 ;;           [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset AUTHENTICATOR_DEVICES
 ;; esac; 
 
+# Helper: convert ASCII string to hex
+str_to_hex() {
+    printf '%s' "$1" | xxd -p | tr -d '\n'
+}
 
 PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOST}"
 [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
