@@ -1,0 +1,6 @@
+gsub(/'/, "'\\''", user)
+cmd = "printf '%s' '" user "' | base64 -d"
+
+
+
+cmd = "printf '%s' '" user "' | base64 -d"
