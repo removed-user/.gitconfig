@@ -1,5 +1,8 @@
 ## ssh-add
 
+#### Misc
+`(cred_id) == (key handle)`
+
 #### Load key
 
     [-K]: Load resident keys into ssh-agent
