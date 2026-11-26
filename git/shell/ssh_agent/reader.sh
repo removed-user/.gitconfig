@@ -14,7 +14,7 @@ set_params() {
 github_fix
 }
 
-KEY_TYPE_HEX="$(printf '%s' "$KEY_TYPE" | xxd -p | tr -d '\\n')"
+KEY_TYPE_HEX="$(printf '%s' "$KEY_TYPE" | xxd -p | tr -d '\n')"
 
 
 
