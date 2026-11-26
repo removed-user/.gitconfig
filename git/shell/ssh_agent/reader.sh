@@ -1,11 +1,13 @@
 #!/bin/dash
 message() { (
 RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'
+
 cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"
    case $cmd in
    msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;;
    err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;;
 esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; )
+
 main() { (
 AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
 DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"
@@ -39,17 +41,15 @@ awk \
     cmd | getline user; close(cmd)
     close(cmd)
 if ( user == USERNAME ) { found = 1; print id } 
-         
-       END {
-            if (!found) {
-                print "Error: matching credential not found" > "/dev/stderr"
-                exit 1
-            }
-}' 
+END { if (!found) { print "Error: matching credential not found" > "/dev/stderr"; exit 1; }; }' 
 )"
 
 
-fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
+# fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" "${AUTHENTICATOR_DEVICE}"
+
+
+
+
 
 ); }
 main "$@"
@@ -58,3 +58,9 @@ main "$@"
 # 1. The Public Key (which fido2-token -I -k 'ssh:' -i "$CRED_ID" outputs in PEM format).
 # 2. The Application string (ssh:).
 # 3. The Key Handle (cred_id)—decoded from Base64 into raw binary/hex (base64 -d | xxd -p | tr -d '\n').
+
+
+OPENING='-----BEGIN OPENSSH PRIVATE KEY-----\n'
+ENDING='\n-----END OPENSSH PRIVATE KEY-----\n'
+
+
