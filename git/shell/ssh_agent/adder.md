@@ -5,7 +5,6 @@
 * **Headers:** Exact `-----BEGIN OPENSSH PRIVATE KEY-----` and `-----END OPENSSH PRIVATE KEY-----` lines.
 * **Line Breaks:** Base64 body wrapped at 70 characters using Unix LF (`\n`), with **no** `\r`.
 * **Trailing Newline:** Must end with `\n` immediately after `-----END OPENSSH PRIVATE KEY-----`.
-* **Agent Socket:** `SSH_AUTH_SOCK` must point to an active `ssh-agent`.
 
 #### 2. `openssh-key-v1` Binary Layout (Before Base64 Encoding)
 *Note: `string` = `uint32` big-endian length prefix + raw bytes.*
