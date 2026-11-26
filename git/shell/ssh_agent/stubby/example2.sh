@@ -69,11 +69,13 @@ main() { (
     esac
 
     # 3. Prepare hex-encoded inputs for awk
+    APP_HEX="$(str_to_hex "${APPLICATION}")"
+    COMMENT_HEX="$(str_to_hex "${USERNAME}@${HOST}")"
+    CRED_ID_HEX="$(printf '%s' "${CREDENTIAL_ID}" | base64 -d | xxd -p | tr -d '\n')"
+
     KEYTYPE_HEX="$(str_to_hex "${KEYTYPE}")"
     CURVE_HEX="$(str_to_hex "${CURVE}")"
-    APP_HEX="$(str_to_hex "${APPLICATION}")"
-    CRED_ID_HEX="$(printf '%s' "${CREDENTIAL_ID}" | base64 -d | xxd -p | tr -d '\n')"
-    COMMENT_HEX="$(str_to_hex "${USERNAME}@${HOST}")"
+    
 
     # 4. Assemble OpenSSH wire format in awk, convert to binary, and base64 encode
     OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
