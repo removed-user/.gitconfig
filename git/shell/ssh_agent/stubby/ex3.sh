@@ -39,16 +39,16 @@ str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
  
     APP_HEX="$(str_to_hex "${APPLICATION}")"
     CHECKINT_HEX="$(dd if=/dev/urandom bs=4 count=1 2>/dev/null | xxd -p | tr -d '\n')"
-    OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
-    ENDING='-----END OPENSSH PRIVATE KEY-----'
+
     MAGIC_HEX="$(str_to_hex 'openssh-key-v1')"
     NONE_HEX="$(str_to_hex 'none')"
-    ED_TYPE_HEX="$(str_to_hex 'sk-ssh-ed25519@openssh.com')"
-    EC_TYPE_HEX="$(str_to_hex 'sk-ecdsa-sha2-nistp256@openssh.com')"
     P256_HEX="$(str_to_hex 'nistp256')"
 
+    ED_TYPE_HEX="$(str_to_hex 'sk-ssh-ed25519@openssh.com')"
+    EC_TYPE_HEX="$(str_to_hex 'sk-ecdsa-sha2-nistp256@openssh.com')"
 
-
+    OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
+    ENDING='-----END OPENSSH PRIVATE KEY-----'
 
     # 3. Strip SPKI ASN.1 header and assemble OpenSSH wire format in awk
     KEY_BODY="$(
