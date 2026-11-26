@@ -1,0 +1,14 @@
+#!/bin/dash
+generate_mdev_rule() {
+  for dev in /sys/class/hidraw/hidraw*; do
+    [ -r "$dev/device/uevent" ] || continue
+
+    # Optional: Check report_descriptor for FIDO usage page (0x06 0xd0 0xf1)
+    if [ -r "$dev/device/report_descriptor" ]; then
+      od -An -tx1 "$dev/device/report_descriptor" | tr -d ' \n' | grep -q '06d0f1' || continue
+    fi
+
+    hid_id=$(awk -F'=' '/^HID_ID=/{print $2}' "$dev/device/uevent")
+    [ -n "$hid_id" ] && printf '$HID_ID=%s;hidraw[0-9]* root:plugdev 660\n' "$hid_id"
+  done
+}
