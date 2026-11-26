@@ -4,11 +4,6 @@ message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}";  
 
 AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}')
 DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"; case "${DEVICE_COUNT}" in [0]) err 'No Authenticator present' ;; ''|0*|*[!0-9]*) err 'Invalid Input' ;; [2-9]) err 'More than one Authenticator present; pass `AUTHENTICATOR_DEVICE=` explicitly' ;; [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset AUTHENTICATOR_DEVICES ;; esac; 
-
-# Helper: convert ASCII string to hex
-str_to_hex() {
-    printf '%s' "$1" | xxd -p | tr -d '\n'
-}
 # Workaround githubs broken parser
 github_fix() { if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then APPLICATION="ssh:"; fi; }
 
@@ -20,6 +15,22 @@ USERNAME="$(git config get --file=${PERHOST_FILE} user.name)"
 APPLICATION='ssh:'"$(git config get --file=${PERHOST_FILE} host.name)"
 
 github_fix
+
+
+#----
+
+# Helpers: 
+  ## convert ASCII string to hex
+    str_to_hex() { ( printf '%s' "$1" | xxd -p | tr -d '\n'; ); }
+  ## Convert an integer length into a 4-byte big-endian hex string 
+    uint32_hex() { ( printf '%08x' "$1" ); } 
+  ## Pack binary string into an OpenSSH wire string (uint32 length + payload) 
+    pack_string_hex() { raw_hex="$1"; len=$(( ${#raw_hex} / 2 )); printf '%s%s' "$(uint32_hex "$len")" "$raw_hex"; }
+
+PUBKEY_HEX="$( fido2-token -I -k "${APPLICATION}" -i "${CREDENTIAL_ID}" ${DEVICE:+"$DEVICE"} | xxd -p | tr -d '\\n' )"
+
+
+
 
 
 CREDENTIAL_ID=$(fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
