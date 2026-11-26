@@ -7,5 +7,5 @@ check.ssh.gitlab = `ssh -T ssh://git@codeberg.org/`
 ```
 
 # Other hosts
-## Codeberg
-## Forgejo
+- `Codeberg`
+- `Forgejo`
