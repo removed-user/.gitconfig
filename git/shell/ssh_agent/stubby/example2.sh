@@ -22,7 +22,7 @@ main() { (
     [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
 
     USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
-    APPLICATION='ssh:'"$(get_perhost_value "${PERHOST_FILE}" host.name)"
+    APPLICATION='ssh:'"$(git config get --file="${PERHOST_FILE}" host.name)"
 
     # Workaround githubs broken parser
     if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then
