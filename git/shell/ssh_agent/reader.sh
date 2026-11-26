@@ -9,29 +9,28 @@ DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END
 str_to_hex() {
     printf '%s' "$1" | xxd -p | tr -d '\n'
 }
+# Workaround githubs broken parser
+github_fix() { if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then APPLICATION="ssh:"; fi; }
+
 
 PERHOST_FILE="${HOME}"/.config/git/host/perhost/"${HOST}"
 [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
 
 USERNAME="$(git config get --file=${PERHOST_FILE} user.name)"
-APPLICATION='ssh:'"$(get_perhost_value ${PERHOST_FILE} host.name)"
+APPLICATION='ssh:'"$(git config get --file=${PERHOST_FILE} host.name)"
 
-# Workaround githubs broken parser
-if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then
-APPLICATION="ssh:"
-fi
+github_fix
+
 
 CREDENTIAL_ID=$(
 fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
 awk \
 -v USERNAME="${USERNAME}" \
 '{         
-    id = $2
-    user = ""
-    cmd = "printf \%s\" \"" $4 "\" | base64 -d "
-    cmd | getline user; close(cmd)
-    close(cmd)
-if ( user == USERNAME ) { found = 1; print id } 
+    id = $2; user = $4
+    cmd = "printf \%s\" \"" user "\" | base64 -d "
+    cmd | getline username; close(cmd)
+if ( username == USERNAME ) { found = 1; print id } 
 END { if (!found) { print "Error: matching credential not found" > "/dev/stderr"; exit 1; }; }' 
 )"
 
