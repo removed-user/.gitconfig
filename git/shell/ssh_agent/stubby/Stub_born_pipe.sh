@@ -37,6 +37,12 @@ set_device; set_app
     print "(wanted: " USERNAME ", raw $4: " last_raw ")" > "/dev/stderr"
     } }' )
 
+
+## Flags 
+### 0x20 SSH_SK_FORCE_OPERATION
+### 0x04 SSH_SK_USER_VERIFICATION_REQUIRED
+### 0x01 SSH_SK_USER_PRESENCE_REQUIRED
+
     
     OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
     ENDING='-----END OPENSSH PRIVATE KEY-----'
