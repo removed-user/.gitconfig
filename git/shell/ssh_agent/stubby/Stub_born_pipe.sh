@@ -15,9 +15,9 @@ set_app() {
        github_workaround
 
 
-ENCODED_USERNAME=$(printf '%s' "${USERNAME}" | base64 -w 0)
-### Pad to 32 bytes - before base64 encoding, and passing to awk, to match the line with correct username 
-ENCODED_USERNAME32=$(printf '%s' "${USERNAME}" | dd bs=32 count=1 conv=sync 2>/dev/null | base64 -w 0)
+   ENCODED_USERNAME=$(printf '%s' "${USERNAME}" | base64 -w 0)
+   ### Pad to 32 bytes - before base64 encoding, and passing to awk, to match the line with correct username 
+   ENCODED_USERNAME32=$(printf '%s' "${USERNAME}" | dd bs=32 count=1 conv=sync 2>/dev/null | base64 -w 0)
 }
 set_device; set_app
 
@@ -30,15 +30,14 @@ set_device; set_app
     '{
     id = $2; 
     username = $4;
-#    user = $4; 
-#    cmd = "printf \047%s\047 \047" user "\047 | base64 -d";
-#    cmd | getline username; close(cmd);
     if (username == ENCODED_USERNAME || username == ENCODED_USERNAME32) { found = 1; print id }
     }; END { 
     if (!found) { 
     print "Error: matching credential not found;"
     print "(wanted: " USERNAME ", raw $4: " last_raw ")" > "/dev/stderr"
     } }' )
+
+    
     OPENING='-----BEGIN OPENSSH PRIVATE KEY-----'
     ENDING='-----END OPENSSH PRIVATE KEY-----'
 
@@ -113,9 +112,7 @@ set_device; set_app
 
             byte_len = length(priv_body) / 2
             pad_len  = (8 - (byte_len % 8)) % 8
-            for (i = 1; i <= pad_len; i++) {
-                priv_body = priv_body sprintf("%02x", i)
-            }
+            for (i = 1; i <= pad_len; i++) { priv_body = priv_body sprintf("%02x", i)  }
 
             full_hex = magic_hex "00" \
                        ssh_str(none_hex) \
