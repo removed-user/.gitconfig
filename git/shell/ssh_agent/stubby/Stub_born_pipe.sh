@@ -133,5 +133,6 @@ set_device; set_app
 
     printf '%s\n%s\n%s\n' "${OPENING}" "${KEY_BODY}" "${ENDING}"
 ); }
-
+AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICE:-}" \
+APPLICATION="${APPLICATION:-}" \
 main "$@"
