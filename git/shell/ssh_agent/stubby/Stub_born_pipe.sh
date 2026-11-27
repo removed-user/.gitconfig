@@ -30,9 +30,11 @@ set_device; set_app
     -v ENCODED_USERNAME="${ENCODED_USERNAME}" \
     -v ENCODED_USERNAME32="${ENCODED_USERNAME32}" \
     '{
-    id = $2; user = $4; 
-    cmd = "printf \047%s\047 \047" user "\047 | base64 -d";
-    cmd | getline username; close(cmd);
+    id = $2; 
+    username = $4;
+#    user = $4; 
+#    cmd = "printf \047%s\047 \047" user "\047 | base64 -d";
+#    cmd | getline username; close(cmd);
     if (username == ENCODED_USERNAME || username == ENCODED_USERNAME32) { found = 1; print id }
     }; END { 
     if (!found) { 
