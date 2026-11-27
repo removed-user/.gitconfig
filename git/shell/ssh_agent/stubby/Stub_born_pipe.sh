@@ -1,9 +1,7 @@
 #!/bin/dash
-message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}"; [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() { message err "$@"; exit 1; }; msg() { message msg "$@"; }
-
-str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
-
 main() { (
+   message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}"; [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() { message err "$@"; exit 1; }; msg() { message msg "$@"; }
+   str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
    github_workaround() { if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then  APPLICATION="ssh:"; fi }
 
 set_device() { AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}'); DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"; case "${DEVICE_COUNT}" in [2-9]) err 'More than one Authenticator present; pass "AUTHENTICATOR_DEVICE=" explicitly';; [0]) err 'No Authenticator present' ;; ''|0*|*[!0-9]*) err 'Invalid Input' ;; [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset AUTHENTICATOR_DEVICES;; esac }
