@@ -1,19 +1,16 @@
 #!/bin/dash
-main() { (
-   message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}"; [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() { message err "$@"; exit 1; }; msg() { message msg "$@"; }
+generate_key_stub() { (
    str_to_hex() { printf '%s' "$1" | xxd -p | tr -d '\n'; }
    github_workaround() { if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then  APPLICATION="ssh:"; fi }
 
 set_device() { AUTHENTICATOR_DEVICES=$(fido2-token -L | awk -F ':' '{print $1}'); DEVICE_COUNT="$(printf '%s\n' "${AUTHENTICATOR_DEVICES}" | awk 'NF {count++} END {print count+0}')"; case "${DEVICE_COUNT}" in [2-9]) err 'More than one Authenticator present; pass "AUTHENTICATOR_DEVICE=" explicitly';; [0]) err 'No Authenticator present' ;; ''|0*|*[!0-9]*) err 'Invalid Input' ;; [1]) AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICES}" && unset AUTHENTICATOR_DEVICES;; esac }
 set_app() {
-    HOST="${1:-github}"
+    HOST="${HOST:-github}"
     PERHOST_FILE="${HOME}/.config/git/host/perhost/${HOST}"; [ -r "${PERHOST_FILE}" ] || err 'Missing File: '"${PERHOST_FILE}"
-
     USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
     APPLICATION='ssh:'"$(git config get --file="${PERHOST_FILE}" host.name)"
     # Workaround githubs broken parser
        github_workaround
-
 
    ENCODED_USERNAME=$(printf '%s' "${USERNAME}" | base64 -w 0)
    ### Pad to 32 bytes - before base64 encoding, and passing to awk, to match the line with correct username 
@@ -36,7 +33,6 @@ set_device; set_app
     print "Error: matching credential not found;"
     print "(wanted: " USERNAME ", raw $4: " last_raw ")" > "/dev/stderr"
     } }' )
-
 
 ## Flags 
 ### 0x20 SSH_SK_FORCE_OPERATION
@@ -80,12 +76,8 @@ set_device; set_app
             -v ed_type_hex="${ED_TYPE_HEX}" \
             -v ec_type_hex="${EC_TYPE_HEX}" \
             -v p256_hex="${P256_HEX}" '
-        function u32(n) {
-            return sprintf("%08x", n)
-        }
-        function ssh_str(hex) {
-            return u32(length(hex) / 2) hex
-        }
+        function u32(n) { return sprintf("%08x", n) }
+        function ssh_str(hex) { return u32(length(hex) / 2) hex }
         BEGIN {
             spki = tolower(spki)
             ED25519_PREFIX    = "302a300506032b6570032100"
@@ -98,9 +90,7 @@ set_device; set_app
                 key_type   = ssh_str(ec_type_hex)
                 pub_fields = ssh_str(p256_hex) ssh_str(substr(spki, length(ECDSA_P256_PREFIX) + 1))
             } else {
-                print "[ERROR]: Unsupported SPKI public key header: " spki > "/dev/stderr"
-                exit 1
-            }
+                print "[ERROR]: Unsupported SPKI public key header: " spki > "/dev/stderr"; exit 1 }
 
             app_blob = ssh_str(app_hex)
             pub_blob = key_type pub_fields app_blob
@@ -130,9 +120,12 @@ set_device; set_app
             print full_hex
         }' | xxd -r -p | base64 -w 70
     )" || exit 1
-
     printf '%s\n%s\n%s\n' "${OPENING}" "${KEY_BODY}" "${ENDING}"
 ); }
+   git_add() { ( set_env; SSH_AUTH_SOCK="$GIT_SSH_AUTH_SOCK" SSH_AGENT_PID="$GIT_SSH_AGENT_PID" ssh-add "$@"; ); }
+   message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}"; [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() { message err "$@"; exit 1; }; msg() { message msg "$@"; }
+
 AUTHENTICATOR_DEVICE="${AUTHENTICATOR_DEVICE:-}" \
 APPLICATION="${APPLICATION:-}" \
-main "$@"
+generate_key_stub "$@" | git_add -
+
