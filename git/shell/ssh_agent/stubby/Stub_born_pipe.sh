@@ -14,17 +14,24 @@ set_app() {
     USERNAME="$(git config get --file="${PERHOST_FILE}" user.name)"
     APPLICATION='ssh:'"$(git config get --file="${PERHOST_FILE}" host.name)"
     # Workaround githubs broken parser
-    github_workaround
+       github_workaround
+       
+### Pad to 32 bytes - before base64 encoding, and passing to awk, to match the line with correct username 
+ENCODED_USERNAME=$(printf '%s' "${USERNAME}" | dd bs=32 count=1 conv=sync 2>/dev/null | base64 -w 0)
 }
 set_device
 set_app
 
     CREDENTIAL_ID=$(
-    fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" | awk -v USERNAME="${USERNAME}" '{
+    fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" |\
+    awk \
+    -v USERNAME="${USERNAME}" \
+    -v ENCODED_USERNAME="${ENCODED_USERNAME}" \
+    '{
     id = $2; user = $4; 
     cmd = "printf \047%s\047 \047" user "\047 | base64 -d";
     cmd | getline username; close(cmd);
-    if (username == USERNAME) { found = 1; print id }
+    if ( username == ENCODED_USERNAME ) { found = 1; print id }
     }; END { 
     if (!found) { 
     print "Error: matching credential not found; (wanted: " USERNAME ", raw $4: " last_raw ")" > "/dev/stderr"
