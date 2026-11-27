@@ -14,10 +14,7 @@ set_app() {
     else err 'Missing File: '"${PERHOST_FILE}"; fi
     github_fix
 }
-
-
-set_device
-set_app
+set_device; set_app
 
     CREDENTIAL_ID=$(fido2-token -L -k "${APPLICATION}" "${AUTHENTICATOR_DEVICE}" | awk -v USERNAME="${USERNAME}" '{  id = $2; user = $4; cmd = "printf '%s' '" user "' | base64 -d"; cmd | getline username; close(cmd); if (username == USERNAME) { found = 1; print id }  }; END { if (!found) { print "Error: matching credential not found" > "/dev/stderr"; exit 1 } }' )
 
