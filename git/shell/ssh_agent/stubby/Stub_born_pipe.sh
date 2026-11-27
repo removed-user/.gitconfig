@@ -14,8 +14,6 @@ set_app() {
     # Workaround githubs broken parser
     if [ "${APPLICATION}" = "ssh:github" ] || [ "${APPLICATION}" = "ssh:github.com" ]; then  APPLICATION="ssh:"; fi
 }
-
-
 set_device
 set_app
 
