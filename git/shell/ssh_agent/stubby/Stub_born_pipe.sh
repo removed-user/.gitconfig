@@ -19,7 +19,7 @@ set_app() {
 
 ENCODED_USERNAME=$(printf '%s' "${USERNAME}" | base64 -w 0)
 ### Pad to 32 bytes - before base64 encoding, and passing to awk, to match the line with correct username 
-32ENCODED_USERNAME=$(printf '%s' "${USERNAME}" | dd bs=32 count=1 conv=sync 2>/dev/null | base64 -w 0)
+ENCODED_USERNAME32=$(printf '%s' "${USERNAME}" | dd bs=32 count=1 conv=sync 2>/dev/null | base64 -w 0)
 }
 set_device; set_app
 
@@ -28,12 +28,12 @@ set_device; set_app
     awk \
     -v USERNAME="${USERNAME}" \
     -v ENCODED_USERNAME="${ENCODED_USERNAME}" \
-    -v 32ENCODED_USERNAME="${32ENCODED_USERNAME}" \
+    -v ENCODED_USERNAME32="${ENCODED_USERNAME32}" \
     '{
     id = $2; user = $4; 
     cmd = "printf \047%s\047 \047" user "\047 | base64 -d";
     cmd | getline username; close(cmd);
-    if (username == ENCODED_USERNAME || username == 32ENCODED_USERNAME) { found = 1; print id }
+    if (username == ENCODED_USERNAME || username == ENCODED_USERNAME32) { found = 1; print id }
     }; END { 
     if (!found) { 
     print "Error: matching credential not found;"
