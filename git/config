@@ -10,6 +10,7 @@
    attributesfile = ~/.config/git/attributes
    excludesFile = ~/.config/git/ignore
    sshCommand = "${HOME}"/.config/git/shell/ssh_agent/ssh_command.dash
+
 [ssh]
 variant = ssh
 
@@ -21,11 +22,18 @@ variant = ssh
 
 [diff]
    algorithm = histogram
-
+[merge]
+tool = nvimdiff
 [merge "null"]
 	name = null driver Ignores lockfiles
 	driver = true
+[fetch]
+prune = true
 
+[mergetool]
+    prompt = false
+[mergetool "nvimdiff"]
+    layout = "(LOCAL,REMOTE) / MERGED"
 [log]
    graphcolors = true
 
