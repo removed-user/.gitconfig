@@ -1,6 +1,6 @@
 #!/bin/dash
 main() (
-. "${GIT_CONFIG_DIR}/shell/ssh_agent/common.dash"
+. "${GIT_CONFIG_DIR}/shell/ssh_agent/common.sh"
 message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; );
 
 print_startup_info() {
