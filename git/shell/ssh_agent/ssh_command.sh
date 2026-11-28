@@ -1,6 +1,8 @@
 #!/bin/dash
 main() (
 . "${GIT_CONFIG_DIR}/shell/ssh_agent/common.sh"
+ ## Get/Set Environment + PID
+    set_env
 message() { ( RED='\033[0;31m'; GREEN='\033[0;32m'; CLR='\033[0m'; cmd="${1}";  [ $# -gt 0 ] && shift; MESSAGE="${*}"; case $cmd in msg) printf '%b%s%b: %s\n' "${GREEN}" '[STATUS]' "${CLR}" "${MESSAGE}" >&2;; err) printf '%b%s%b: %s\n' "${RED}" '[ERROR]' "${CLR}" "${MESSAGE}" >&2;; esac; ); }; err() ( message err "$@"; ); msg() ( message msg "$@"; );
 
 print_startup_info() {
@@ -19,9 +21,6 @@ case "${caller_name}" in
     *git*) ;;
     *) print_startup_info ;;
 esac
-
- ## Get/Set Environment + PID
-    set_env
 
 [ -z "$GIT_SSH_AGENT_PID" ] && if [ -r "$PIDFILE" ]; then
 read -r GIT_SSH_AGENT_PID < "$PIDFILE"; else 
