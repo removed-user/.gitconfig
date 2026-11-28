@@ -12,7 +12,7 @@
    sshCommand = "${HOME}"/.config/git/shell/ssh_agent/ssh_command.dash
 
 [ssh]
-variant = ssh
+   variant = ssh
 
 [init]
    defaultBranch = main
@@ -23,17 +23,21 @@ variant = ssh
 [diff]
    algorithm = histogram
 [merge]
-tool = nvimdiff
+   tool = nvimdiff
+
 [merge "null"]
 	name = null driver Ignores lockfiles
 	driver = true
+
 [fetch]
 prune = true
 
 [mergetool]
     prompt = false
+
 [mergetool "nvimdiff"]
     layout = "(LOCAL,REMOTE) / MERGED"
+
 [log]
    graphcolors = true
 
